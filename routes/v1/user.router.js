@@ -5,6 +5,6 @@ const { findUsers } = require("../../controllers").V1.UserController;
 
 // const { getUser } = require("../../middleware").JwtMiddleware;
 
-router.post("/find-users", findUsers);
+router.post("/find", findUsers);
 
 module.exports = router;

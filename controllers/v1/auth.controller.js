@@ -7,6 +7,7 @@ const {
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
 const bcrypt = require("bcryptjs");
+const ErrorResponse = require("../../utils/errorResponse");
 const { JwtService, Mailer } = require("../../services");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
@@ -62,7 +63,7 @@ obj.register = async (req, res) => {
   });
 };
 
-obj.login = async (req, res) => {
+obj.login = async (req, res, next) => {
   const { username, password } = req.body;
 
   // let's get user by given username
@@ -79,6 +80,9 @@ obj.login = async (req, res) => {
       "active",
     ],
   });
+
+  // user validation
+  if (!user) return next(new ErrorResponse("User not found"));
 
   let resCompare = bcrypt.compareSync(password, user.password);
 

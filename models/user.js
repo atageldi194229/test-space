@@ -73,7 +73,7 @@ module.exports = (sequelize, DataTypes) => {
     return bcrypt.compareSync(password, this.password);
   };
   // hashing password
-  User.prototype.hashPassword = function (pass) {
+  User.hashPassword = function (pass) {
     // let's hash password with bcryptjs
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(pass, salt);
