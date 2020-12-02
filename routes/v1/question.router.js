@@ -5,6 +5,6 @@ const { create } = require("../../controllers").V1.QuestionController;
 
 const { getUser } = require("../../middleware").JwtMiddleware;
 
-router.post("/", create);
+router.post("/", getUser, create);
 
 module.exports = router;
