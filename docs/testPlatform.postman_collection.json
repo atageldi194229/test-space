@@ -1,0 +1,370 @@
+{
+	"info": {
+		"_postman_id": "bc32656d-c47b-4827-87fc-f4bb14eda8f7",
+		"name": "testPlatform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "v1",
+			"item": [
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"firstName\": \"atasan\",\r\n    \"lastName\": \"atasan\",\r\n    \"username\": \"atasan\",\r\n    \"email\": \"atasan194229@gmail.com\",\r\n    \"phoneNumber\": \"+99364530230\",\r\n    \"birthDate\": \"2001-12-27\",\r\n    \"password\": \"atasan\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/register",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"register"
+									]
+								},
+								"description": "req: {\r\n    \"firstName\": \"atasan\",\r\n    \"lastName\": \"atasan\",\r\n    \"username\": \"atasan\",\r\n    \"email\": \"atasan194229@gmail.com\",\r\n    \"phoneNumber\": \"+99364530230\",\r\n    \"birthDate\": \"2001-12-27\",\r\n    \"password\": \"atasan\"\r\n}"
+							},
+							"response": []
+						},
+						{
+							"name": "login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "15361267-679e-459c-a79d-0641e060fff2",
+										"exec": [
+											"let resData = JSON.parse(responseBody);\r",
+											"\r",
+											"pm.globals.set(\"TOKEN\", resData.token);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"atasan\",\r\n    \"password\": \"atasan\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/login",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"login"
+									]
+								},
+								"description": "req: {\r\n    \"username\": \"atasan\",\r\n    \"password\": \"atasan\"\r\n}\r\n\r\nres: {\r\n    {\r\n    \"success\": true,\r\n    \"token\": \"...\",\r\n    \"user\": {\r\n        \"firstName\": \"atasan\",\r\n        \"lastName\": \"atasan\",\r\n        \"username\": \"atasan\",\r\n        \"birthDate\": \"2018-12-31T19:00:00.000Z\",\r\n        \"active\": true\r\n    }\r\n}"
+							},
+							"response": []
+						},
+						{
+							"name": "verifyCode",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/verify-code/{{verifyCode}}",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"verify-code",
+										"{{verifyCode}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "resendVerifyCode",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/resend-verify-code",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"resend-verify-code"
+									]
+								},
+								"description": "uses token"
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "tests",
+					"item": [
+						{
+							"name": "create",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"name\",\r\n    \"description\": \"description\",\r\n    \"isRandom\": false,\r\n    \"isPublic\": true,\r\n    \"language\": \"en\",\r\n    \"keywords\": \"sport game programming\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/tests",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "questions",
+					"item": [
+						{
+							"name": "create",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file1",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "file2",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "data",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "isRandom",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "testId",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/v1/questions",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"questions"
+									]
+								},
+								"description": "req:\r\nformdata:\r\n-> file1 = file\r\n-> file2 = file\r\n-> data = JSON data\r\n-> isRandom = boolean\r\n-> testId = test id which belongTo this question"
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "prices",
+					"item": [
+						{
+							"name": "get info",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/prices",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"prices"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "find users immidietly",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"text\": \"ata\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/users/find",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"find"
+									]
+								},
+								"description": "req: {\r\n    \"text\": \"atasan\"\r\n}\r\n\r\nres: {\r\n    \"success\": true,\r\n    \"users\": [\r\n        {\r\n            \"id\": 1,\r\n            \"username\": \"atasan\"\r\n        }\r\n    ]\r\n}"
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "payments",
+					"item": [],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "groups",
+					"item": [],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "prices",
+					"item": [
+						{
+							"name": "set price",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"type\": 0,\r\n    \"data\": \"json there\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/price",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"price"
+									]
+								},
+								"description": "removes old price, then adds new one, but old one will not dissapear, \\n\r\nclient should send TOKEN with request"
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
