@@ -44,6 +44,18 @@ const getQuestionData = {
     }
     return data;
   },
+  blank: function (data, files) {
+    const saveFile = (file) => {
+      let fileName = uuidv4() + file.name;
+      file.mv("public/uploads/question/" + fileName);
+      return "/uploads/question/" + fileName;
+    };
+    if (data.question.audio)
+      data.question.audio = saveFile(files[data.question.audio]);
+    if (data.question.image)
+      data.question.image = saveFile(files[data.question.image]);
+    return data;
+  },
 };
 
 obj.create = async (req, res, next) => {
@@ -56,6 +68,7 @@ obj.create = async (req, res, next) => {
   data = JSON.parse(data);
   if (type === 0) data = getQuestionData.singleChoice(data, req.files);
   else if (type === 1) data = getQuestionData.multiChoice(data, req.files);
+  else if (type === 5) data = getQuestionData.blank(data, req.files);
   else return next(new ErrorResponse("Invalid question type"));
   // save to db
   let question = await Question.create({
