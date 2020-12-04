@@ -78,12 +78,12 @@ module.exports = (sequelize, DataTypes) => {
     Payment.belongsTo(models.Price, { foreignKey: "tccPriceId" });
   };
   // Custom methods
-  Payment.prototype.balance = function (userId) {
+  Payment.prototype.balance = async function (userId) {
     let query = `SELECT
     CASE WHEN SUM(is_tsc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tsc - tsc_used) END TSC ,
     CASE WHEN SUM(is_tcc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tcc - tcc_used) END TCC
     FROM \`payments\` WHERE status = 1 and user_id = ${userId} and DATEDIFF(NOW(), allowed_at) <= 30`;
-    
+
     let res = await sequelize.query(query);
     let data = res[0][0];
     console.log(data);
