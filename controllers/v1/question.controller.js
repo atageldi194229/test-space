@@ -54,10 +54,8 @@ obj.create = async (req, res, next) => {
 
   let { data, type, isRandom, testId } = req.body;
   data = JSON.parse(data);
-  if (type === "singleChoice")
-    data = getQuestionData.singleChoice(data, req.files);
-  else if (type === "multiChoice")
-    data = getQuestionData.multiChoice(data, req.files);
+  if (type === 0) data = getQuestionData.singleChoice(data, req.files);
+  else if (type === 1) data = getQuestionData.multiChoice(data, req.files);
   else return next(new ErrorResponse("Invalid question type"));
   // save to db
   let question = await Question.create({
