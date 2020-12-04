@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       isRandom: {
         type: DataTypes.BOOLEAN,
-        defaultValue: 0,
+        defaultValue: false,
         allowNull: false,
         comment: "places of question answers",
       },

@@ -6,6 +6,7 @@ const QuestionController = require("./question.controller");
 const PriceController = require("./price.controller");
 const GroupController = require("./group.controller");
 const UserController = require("./user.controller");
+const PaymentController = require("./payment.controller");
 
 module.exports = {
   AuthController,
@@ -14,4 +15,5 @@ module.exports = {
   PriceController,
   GroupController,
   UserController,
+  PaymentController,
 };

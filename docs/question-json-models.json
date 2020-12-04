@@ -34,5 +34,55 @@
       }
     ],
     "correct": 2
+  },
+  "multiChoice": {
+    "question": {
+      "audio": {
+        "type": "audio",
+        "path": "/uploads/audio/qwerty.mp3"
+      },
+      "image": {
+        "type": "image",
+        "path": "/uploads/audio/qwerty.jpg"
+      },
+      "text": "Which one of them Capital is of Turkmenistan"
+    },
+    "answers": [
+      {
+        "key": 1,
+        "type": "text",
+        "value": "Turkmenabat"
+      },
+      {
+        "key": 2,
+        "type": "text",
+        "value": "Ashgabat"
+      },
+      {
+        "key": 3,
+        "type": "text",
+        "value": "Moskwa"
+      },
+      {
+        "key": 4,
+        "type": "image",
+        "value": "/uploads/images/tokyo.jpg"
+      }
+    ],
+    "correct": [1, 3, 4]
+  },
+  "blank": {
+    "question": {
+      "audio": {
+        "type": "audio",
+        "path": "/uploads/audio/qwerty.mp3"
+      },
+      "image": {
+        "type": "image",
+        "path": "/uploads/audio/qwerty.jpg"
+      },
+      "text": "Lorem [_blank_] doler [_blank_] omet."
+    },
+    "correct": ["ipsum", "sit"]
   }
 }

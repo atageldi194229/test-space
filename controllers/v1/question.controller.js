@@ -7,14 +7,16 @@ const {
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
+const ErrorResponse = require("../../utils/errorResponse");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
 const getQuestionData = {
   singleChoice: function (data, files) {
     const saveFile = (file) => {
-      file.mv("/public/uploads/question/" + file.name);
-      return "/uploads/question/" + file.name;
+      let fileName = uuidv4() + file.name;
+      file.mv("public/uploads/question/" + fileName);
+      return "/uploads/question/" + fileName;
     };
     if (data.question.audio)
       data.question.audio = saveFile(files[data.question.audio]);
@@ -24,6 +26,34 @@ const getQuestionData = {
       if (data.answers[i].type === "image")
         data.answers[i].value = saveFile(files[data.answers[i].value]);
     }
+    return data;
+  },
+  multiChoice: function (data, files) {
+    const saveFile = (file) => {
+      let fileName = uuidv4() + file.name;
+      file.mv("public/uploads/question/" + fileName);
+      return "/uploads/question/" + fileName;
+    };
+    if (data.question.audio)
+      data.question.audio = saveFile(files[data.question.audio]);
+    if (data.question.image)
+      data.question.image = saveFile(files[data.question.image]);
+    for (let i = 0; i < data.answers.length; i++) {
+      if (data.answers[i].type === "image")
+        data.answers[i].value = saveFile(files[data.answers[i].value]);
+    }
+    return data;
+  },
+  blank: function (data, files) {
+    const saveFile = (file) => {
+      let fileName = uuidv4() + file.name;
+      file.mv("public/uploads/question/" + fileName);
+      return "/uploads/question/" + fileName;
+    };
+    if (data.question.audio)
+      data.question.audio = saveFile(files[data.question.audio]);
+    if (data.question.image)
+      data.question.image = saveFile(files[data.question.image]);
     return data;
   },
 };
@@ -36,8 +66,10 @@ obj.create = async (req, res, next) => {
 
   let { data, type, isRandom, testId } = req.body;
   data = JSON.parse(data);
-  if (type === "singleChoice") data = getQuestionData.singleChoice(data, files);
-
+  if (type === 0) data = getQuestionData.singleChoice(data, req.files);
+  else if (type === 1) data = getQuestionData.multiChoice(data, req.files);
+  else if (type === 5) data = getQuestionData.blank(data, req.files);
+  else return next(new ErrorResponse("Invalid question type"));
   // save to db
   let question = await Question.create({
     type,

@@ -10,7 +10,7 @@ const asyncHandler = require("../../middleware/async");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
-obj.addGroup = async (req, res) => {
+obj.create = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   let { text } = req.body;
