@@ -38,7 +38,6 @@ obj.create = async (req, res) => {
   // res to the client with token
   res.status(200).json({
     success: true,
-    users,
   });
 };
 
