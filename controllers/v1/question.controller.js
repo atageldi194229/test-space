@@ -11,52 +11,30 @@ const ErrorResponse = require("../../utils/errorResponse");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
-const getQuestionData = {
-  singleChoice: function (data, files) {
-    const saveFile = (file) => {
-      let fileName = uuidv4() + file.name;
-      file.mv("public/uploads/question/" + fileName);
-      return "/uploads/question/" + fileName;
-    };
-    if (data.question.audio)
-      data.question.audio = saveFile(files[data.question.audio]);
-    if (data.question.image)
-      data.question.image = saveFile(files[data.question.image]);
+function saveFilesOfQuestion(type, data, files) {
+  const saveFile = (file) => {
+    let fileName = uuidv4() + file.name;
+    file.mv("public/uploads/question/" + fileName);
+    return "/uploads/question/" + fileName;
+  };
+
+  if (type < 0 || type > 5) return -1;
+
+  if (data.question.audio)
+    data.question.audio = saveFile(files[data.question.audio]);
+  if (data.question.image)
+    data.question.image = saveFile(files[data.question.image]);
+
+  if (type === 0 || type === 1) {
+    // if singleChoice or multiChoice
     for (let i = 0; i < data.answers.length; i++) {
       if (data.answers[i].type === "image")
         data.answers[i].value = saveFile(files[data.answers[i].value]);
     }
-    return data;
-  },
-  multiChoice: function (data, files) {
-    const saveFile = (file) => {
-      let fileName = uuidv4() + file.name;
-      file.mv("public/uploads/question/" + fileName);
-      return "/uploads/question/" + fileName;
-    };
-    if (data.question.audio)
-      data.question.audio = saveFile(files[data.question.audio]);
-    if (data.question.image)
-      data.question.image = saveFile(files[data.question.image]);
-    for (let i = 0; i < data.answers.length; i++) {
-      if (data.answers[i].type === "image")
-        data.answers[i].value = saveFile(files[data.answers[i].value]);
-    }
-    return data;
-  },
-  blank: function (data, files) {
-    const saveFile = (file) => {
-      let fileName = uuidv4() + file.name;
-      file.mv("public/uploads/question/" + fileName);
-      return "/uploads/question/" + fileName;
-    };
-    if (data.question.audio)
-      data.question.audio = saveFile(files[data.question.audio]);
-    if (data.question.image)
-      data.question.image = saveFile(files[data.question.image]);
-    return data;
-  },
-};
+  }
+
+  return data;
+}
 
 obj.create = async (req, res, next) => {
   console.log(JSON.stringify(req.body, null, 2));
@@ -65,11 +43,8 @@ obj.create = async (req, res, next) => {
   // uploadedFile.mv("./uploadedFiles/" + uploadedFile.name);
 
   let { data, type, isRandom, testId } = req.body;
-  data = JSON.parse(data);
-  if (type === 0) data = getQuestionData.singleChoice(data, req.files);
-  else if (type === 1) data = getQuestionData.multiChoice(data, req.files);
-  else if (type === 5) data = getQuestionData.blank(data, req.files);
-  else return next(new ErrorResponse("Invalid question type"));
+  data = saveFilesOfQuestion(type, JSON.parse(data), req.files);
+  if (data === -1) return next(new ErrorResponse("Invalid question type"));
   // save to db
   let question = await Question.create({
     type,
