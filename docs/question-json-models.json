@@ -84,5 +84,82 @@
       "text": "Lorem [_blank_] doler [_blank_] omet."
     },
     "correct": ["ipsum", "sit"]
+  },
+  "matching": {
+    "question": {
+      "audio": {
+        "type": "audio",
+        "path": "/uploads/audio/qwerty.mp3"
+      },
+      "image": {
+        "type": "image",
+        "path": "/uploads/audio/qwerty.jpg"
+      },
+      "text": "Which one of them Capital is of Turkmenistan"
+    },
+    "answers": {
+      "col1": [
+        {
+          "key": "a",
+          "value": "Ashgabat"
+        },
+        {
+          "key": "b",
+          "value": "Moscow"
+        },
+        {
+          "key": "c",
+          "value": "Tokyo"
+        }
+      ],
+      "col2": [
+        {
+          "key": 1,
+          "value": "Russia"
+        },
+        {
+          "key": 2,
+          "value": "Japan"
+        },
+        {
+          "key": 3,
+          "value": "Turkmenistan"
+        }
+      ]
+    },
+    "correct": {
+      "a": 3,
+      "b": 1,
+      "c": 2
+    }
+  },
+  "trueFalse": {
+    "question": {
+      "audio": {
+        "type": "audio",
+        "path": "/uploads/audio/qwerty.mp3"
+      },
+      "image": {
+        "type": "image",
+        "path": "/uploads/audio/qwerty.jpg"
+      },
+      "text": "Which one of them Capital is of Turkmenistan"
+    },
+    "correct": false
+  },
+  "normal": {
+    "question": {
+      "audio": {
+        "type": "audio",
+        "path": "/uploads/audio/qwerty.mp3"
+      },
+      "image": {
+        "type": "image",
+        "path": "/uploads/audio/qwerty.jpg"
+      },
+      "text": "What is the Capital of Turkmenistan"
+    },
+    "correct": "ashgabat"
   }
 }
+
