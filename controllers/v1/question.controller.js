@@ -36,7 +36,8 @@ obj.create = async (req, res, next) => {
 
   let { data, type, isRandom, testId } = req.body;
   data = JSON.parse(data);
-  if (type === "singleChoice") data = getQuestionData.singleChoice(data, files);
+  if (type === "singleChoice")
+    data = getQuestionData.singleChoice(data, req.files);
 
   // save to db
   let question = await Question.create({
