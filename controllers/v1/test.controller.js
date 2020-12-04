@@ -42,6 +42,17 @@ obj.create = async (req, res) => {
   });
 };
 
+// temporary function
+obj.getAll = async (req, res) => {
+  // get data from db
+  let tests = await Test.findAll();
+
+  res.status(200).json({
+    success: true,
+    tests,
+  });
+};
+
 // When exporting all collected data
 let keys = Object.keys(obj);
 // exclude some functions
