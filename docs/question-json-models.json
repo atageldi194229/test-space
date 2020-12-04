@@ -70,5 +70,19 @@
       }
     ],
     "correct": [1, 3, 4]
+  },
+  "blank": {
+    "question": {
+      "audio": {
+        "type": "audio",
+        "path": "/uploads/audio/qwerty.mp3"
+      },
+      "image": {
+        "type": "image",
+        "path": "/uploads/audio/qwerty.jpg"
+      },
+      "text": "Lorem [_blank_] doler [_blank_] omet."
+    },
+    "correct": ["ipsum", "sit"]
   }
 }
