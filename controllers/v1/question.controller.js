@@ -13,8 +13,9 @@ const obj = {};
 const getQuestionData = {
   singleChoice: function (data, files) {
     const saveFile = (file) => {
-      file.mv("/public/uploads/question/" + file.name);
-      return "/uploads/question/" + file.name;
+      let fileName = uuidv4() + file.name;
+      file.mv("public/uploads/question/" + fileName);
+      return "/uploads/question/" + fileName;
     };
     if (data.question.audio)
       data.question.audio = saveFile(files[data.question.audio]);
