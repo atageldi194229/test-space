@@ -21,3 +21,7 @@ blank: 5
 
 matching - de harply key - leri sanla owrup bilersin
 normal question - da correct answer lowercase bolmalydyr
+
+# Seeders
+
+addSomeRows.js - diyen file - da test uchin tayyar row - lar durandyr, node bilen ishledip goybersen boldy
