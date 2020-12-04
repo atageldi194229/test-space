@@ -41,12 +41,5 @@ module.exports = (sequelize, DataTypes) => {
     Price.belongsTo(models.User, { foreignKey: "createdBy" });
   };
 
-  // Custom methods
-  Price.methods = function (models, { sequelize, Sequelize }) {
-    return {
-      // methods there
-    };
-  };
-
   return Price;
 };

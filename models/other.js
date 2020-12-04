@@ -28,12 +28,5 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  // Custom methods
-  Other.methods = function (models, { sequelize, Sequelize }) {
-    return {
-      // methods there
-    };
-  };
-
   return Other;
 };

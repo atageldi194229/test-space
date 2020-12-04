@@ -45,12 +45,5 @@ module.exports = (sequelize, DataTypes) => {
     Test.hasMany(models.Question, { foreignKey: "testId" });
   };
 
-  // Custom methods
-  Test.methods = function (models, { sequelize, Sequelize }) {
-    return {
-      // methods there
-    };
-  };
-
   return Test;
 };

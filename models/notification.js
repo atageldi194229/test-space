@@ -27,12 +27,5 @@ module.exports = (sequelize, DataTypes) => {
     Notification.belongsTo(models.User, { foreignKey: "userId" });
   };
 
-  // Custom methods
-  Notification.methods = function (models, { sequelize, Sequelize }) {
-    return {
-      // methods there
-    };
-  };
-
   return Notification;
 };

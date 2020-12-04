@@ -60,13 +60,6 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  // Custom methods
-  User.methods = function (models, { sequelize, Sequelize }) {
-    return {
-      // methods there
-    };
-  };
-
   // Custom methods, recommended by sequelize
   // Comparing user password with given password
   User.prototype.comparePassword = function (pass) {

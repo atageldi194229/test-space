@@ -77,14 +77,7 @@ module.exports = (sequelize, DataTypes) => {
     Payment.belongsTo(models.Price, { foreignKey: "tscPriceId" });
     Payment.belongsTo(models.Price, { foreignKey: "tccPriceId" });
   };
-
   // Custom methods
-  Payment.methods = function (models, { sequelize, Sequelize }) {
-    return {
-      // methods there
-    };
-  };
-
   Payment.prototype.balance = function (userId) {
     // SELECT
     //   CASE WHEN SUM(is_tsc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tsc - tsc_used) END TSC ,

@@ -53,14 +53,6 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].methods) {
-    db[modelName].methods = db[modelName].methods(db, { sequelize, Sequelize });
-  } else {
-    db[modelName].methods = {};
-  }
-});
-
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

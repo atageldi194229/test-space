@@ -38,12 +38,5 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  // Custom methods
-  Question.methods = function (models, { sequelize, Sequelize }) {
-    return {
-      // methods there
-    };
-  };
-
   return Question;
 };
