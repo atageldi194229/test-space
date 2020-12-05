@@ -1,6 +1,6 @@
 ### Collaborators
 
-|name|email|
+name|email
 
 <hr />
-|Atasan|atageldi194229@gmail.com|
+Atasan|atageldi194229@gmail.com
