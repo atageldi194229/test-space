@@ -11,6 +11,10 @@ const ErrorResponse = require("../../utils/errorResponse");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 function saveFilesOfQuestion(type, data, files) {
   const saveFile = (file) => {
     let fileName = uuidv4() + file.name;
@@ -36,15 +40,42 @@ function saveFilesOfQuestion(type, data, files) {
   return data;
 }
 
+function randomizeMatchingQuestion(data) {
+  for (let i = 0; i < 20; i++) {
+    // get random two integer between 0 and arr.length
+    let k = getRndInteger(0, data.answers.col2.length);
+    let l = getRndInteger(0, data.answers.col2.length);
+    // swap values of answers
+    let c = data.answers.col2[k].value;
+    data.answers.col2[k].value = data.answers.col2[l].value;
+    data.answers.col2[l].value = c;
+
+    // swap correct answer keys
+    k = data.answers.col1[k].key;
+    l = data.answers.col1[l].key;
+
+    c = data.correct[k];
+    data.correct[k] = data.correct[l];
+    data.correct[l] = c;
+  }
+  return data;
+}
+
 obj.create = async (req, res, next) => {
   console.log(JSON.stringify(req.body, null, 2));
 
-  // let uploadedFile = req.files.uploadedFile;
-  // uploadedFile.mv("./uploadedFiles/" + uploadedFile.name);
-
+  // client data
   let { data, type, isRandom, testId } = req.body;
+
+  // save files of data
   data = saveFilesOfQuestion(type, JSON.parse(data), req.files);
+
+  // error test
   if (data === -1) return next(new ErrorResponse("Invalid question type"));
+
+  // if question type is 'matching' let's randomize it's answers
+  if (type === 4) randomizeMatchingQuestion(data);
+
   // save to db
   let question = await Question.create({
     type,
@@ -53,7 +84,7 @@ obj.create = async (req, res, next) => {
     testId,
   });
 
-  // res to the client with token
+  // client response
   res.status(200).json({
     success: true,
   });
