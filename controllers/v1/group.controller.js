@@ -52,7 +52,7 @@ obj.update = async (req, res, next) => {
   );
 
   // error test
-  if (Number.isInteger(updatedRows) && updatedRows > 0)
+  if (Number.isInteger(updatedRows) && updatedRows === 0)
     return next(new ErrorResponse("Row is not updated"));
 
   // client response
@@ -73,11 +73,79 @@ obj.destroy = async (req, res, next) => {
     userId = req.user.id;
 
   // request db
-  let deletedRows = await Group.destroy({ where: { id, userId } });
+  let updatedRows = await Group.destroy({ where: { id, userId } });
 
   // error test
-  if (Number.isInteger(deletedRows) && deletedRows > 0)
-    return next(new ErrorResponse("Row is not destroyed"));
+  if (Number.isInteger(updatedRows) && updatedRows === 0)
+    return next(new ErrorResponse("Row is not updated"));
+
+  // client response
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
+ * Add user to the group,
+ * action - /v1/groups/:id/user,
+ * method - post,
+ * token,
+ */
+obj.addUser = async (req, res, next) => {
+  // client data
+  let {
+    params: { id },
+    body: { userId },
+  } = req;
+
+  // request db
+  let group = await Group.findOne({ where: { id, userId: req.user.id } });
+
+  // error test
+  if (!group) return next(new ErrorResponse("Group is not found"));
+
+  let updatedRows = await GroupUser.create({
+    groupId: group.id,
+    userId,
+  });
+
+  // error test
+  if (Number.isInteger(updatedRows) && updatedRows === 0)
+    return next(new ErrorResponse("Row is not updated"));
+
+  // client response
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
+ * Remove user to the group,
+ * action - /v1/groups/:id/user,
+ * method - delete,
+ * token,
+ */
+obj.addUser = async (req, res, next) => {
+  // client data
+  let {
+    params: { id },
+    body: { userId },
+  } = req;
+
+  // request db
+  let group = await Group.findOne({ where: { id, userId: req.user.id } });
+
+  // error test
+  if (!group) return next(new ErrorResponse("Group is not found"));
+
+  let updatedRows = await GroupUser.destroy({
+    groupId: group.id,
+    userId,
+  });
+
+  // error test
+  if (Number.isInteger(updatedRows) && updatedRows === 0)
+    return next(new ErrorResponse("Row is not updated"));
 
   // client response
   res.status(200).json({
