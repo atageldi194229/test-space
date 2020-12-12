@@ -80,6 +80,7 @@ obj.login = async (req, res, next) => {
       [Op.or]: [{ username }, { email: username }],
     },
     attributes: [
+      "id",
       "firstName",
       "lastName",
       "username",

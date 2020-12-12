@@ -125,6 +125,15 @@ obj.update = async (req, res, next) => {
 
   // request db
   let question = await Question.findOne({ where: { id } });
+  // error test
+  if (!question) return next(new ErrorResponse("Question is not found"));
+
+  // test owner of this question
+  let test = await Test.findOne({
+    where: { id: question.testId, userId: req.user.id },
+  });
+  // error test
+  if (!test) return next(new ErrorResponse("Test is not found"));
 
   // save files of data if exists and delete trashed files
   if (data) {

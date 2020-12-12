@@ -125,12 +125,15 @@ obj.addUser = async (req, res, next) => {
  * method - delete,
  * token,
  */
-obj.addUser = async (req, res, next) => {
+obj.removeUser = async (req, res, next) => {
   // client data
   let {
     params: { id },
     body: { userId },
   } = req;
+
+  // log for experiment
+  console.log(req.body, req.user);
 
   // request db
   let group = await Group.findOne({ where: { id, userId: req.user.id } });

@@ -7,10 +7,10 @@ const {
   getOne,
 } = require("../../controllers").V1.TestController;
 
-const { getUser } = require("../../middleware").JwtMiddleware;
+const { verify } = require("../../middleware").JwtMiddleware;
 
 router.get("/", getAll);
-router.post("/", getUser, create);
-router.get("/:id", getUser, getOne);
+router.post("/", verify, create);
+router.get("/:id", verify, getOne);
 
 module.exports = router;
