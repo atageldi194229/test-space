@@ -77,7 +77,7 @@ obj.destroy = async (req, res, next) => {
 
   // error test
   if (Number.isInteger(deletedRows) && deletedRows > 0)
-    return next(new ErrorResponse("Row is not updated"));
+    return next(new ErrorResponse("Row is not destroyed"));
 
   // client response
   res.status(200).json({
