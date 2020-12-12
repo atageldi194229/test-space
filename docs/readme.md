@@ -31,6 +31,9 @@ yone create - den 2 sany uytgeshik yeri bar, olar:
 2. kone fayllar ochurilen bolsa olaryn path - lerini (serverdaki ugurlaryny) toplap ayratyn massiwe salyp servere ugratmaly (massiwi json - a salyp ony formdata 'deletedFiles' diyip append etsen amatly bolyar)
    ex: `["/uploads/...", "/uploads/..."]`
 
+Question - in type - ini uytgedip bolanok,
+sonam matching - i habarlashmaly, frontendchi mana nayli maglumatlar iberer we men ol maglumatlary create - daki yaly randomize etmelimi dalmi
+
 # how to write md file
 
 Welcome to the test-space wiki!
