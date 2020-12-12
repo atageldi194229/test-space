@@ -2,6 +2,7 @@
 
 const {
   User,
+  Group,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
@@ -43,6 +44,13 @@ obj.register = async (req, res) => {
     password: hash,
 
     verifyCode,
+  });
+
+  // add one group for the startter
+  await Group.create({
+    name: "Group",
+    description: "Group description",
+    userId: user.id,
   });
 
   // create token
@@ -127,10 +135,10 @@ obj.verification = async (req, res) => {
 
   if (updatedRowCount === 0) {
     // send to the 404
-    res.send("/404");
-  } else {
-    res.send("/main");
+    return res.send("/404");
   }
+
+  res.send("/main");
 };
 
 obj.resendVerificationCode = async (req, res) => {
