@@ -9,7 +9,9 @@ const QuestionRouter = require("./question.router");
 const PriceRouter = require("./price.router");
 const UserRouter = require("./user.router");
 const GroupRouter = require("./group.router");
+const { getUser } = require("../../middleware/jwt.middleware");
 
+ApiV1Router.use(getUser);
 ApiV1Router.use("/tests", TestRouter);
 ApiV1Router.use("/questions", QuestionRouter);
 ApiV1Router.use("/prices", PriceRouter);

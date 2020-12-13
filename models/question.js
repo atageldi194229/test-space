@@ -20,6 +20,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         comment: "places of question answers",
       },
+      editable: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false,
+        comment:
+          "can be edited or not, biri birinji gezek cozse hemishelik FALSE bolyar",
+      },
     },
     {
       charset: "utf8mb4",

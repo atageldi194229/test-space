@@ -7,6 +7,10 @@
 
 tokenin wagty gutarsa hokman tazeden login bolmalydyr, onda tokenin wagty gutarandygyny nadip bilmeli
 
+# Seeders
+
+addSomeRows.js - diyen file - da test uchin tayyar row - lar durandyr, node bilen ishledip goybersen boldy
+
 # About question model
 
 question type bazada integer gornishinde saklanylyar
@@ -14,9 +18,21 @@ question type bazada integer gornishinde saklanylyar
 matching - de harply key - leri sanla owrup bilersin
 normal question - da correct answer lowercase bolmalydyr
 
-# Seeders
+### Question edit api how it works
 
-addSomeRows.js - diyen file - da test uchin tayyar row - lar durandyr, node bilen ishledip goybersen boldy
+create - daki yaly data iberyan dazhe fayllaram create - daki yaly
+yone create - den 2 sany uytgeshik yeri bar, olar:
+
+1. taze fayl goshulanda yanynda taze goshulandygyny bildiryan bir zat gorkezmeli
+   - eger question - in ichindaki audio ya - da image tazelenen bolsa onda sheyle goymaly bolar:
+     `question: { newAudio: true, audio: "nameOfFileInFormData", newImage: true, image: "nameOfFileInFormData", }`
+   - eger answer - de taze file goshulan bolsa, onda:
+     `{ key: 1, type: "image", value: "nameOfFileInFormData", new: true, }`
+2. kone fayllar ochurilen bolsa olaryn path - lerini (serverdaki ugurlaryny) toplap ayratyn massiwe salyp servere ugratmaly (massiwi json - a salyp ony formdata 'deletedFiles' diyip append etsen amatly bolyar)
+   ex: `["/uploads/...", "/uploads/..."]`
+
+Question - in type - ini uytgedip bolanok,
+sonam matching - i habarlashmaly, frontendchi mana nayli maglumatlar iberer we men ol maglumatlary create - daki yaly randomize etmelimi dalmi
 
 # how to write md file
 

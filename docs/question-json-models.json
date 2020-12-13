@@ -1,14 +1,8 @@
 {
   "singleChoice": {
     "question": {
-      "audio": {
-        "type": "audio",
-        "path": "/uploads/audio/qwerty.mp3"
-      },
-      "image": {
-        "type": "image",
-        "path": "/uploads/audio/qwerty.jpg"
-      },
+      "audio": "/uploads/audio/qwerty.mp3",
+      "image": "/uploads/audio/qwerty.jpg",
       "text": "Which one of them Capital is of Turkmenistan"
     },
     "answers": [
@@ -37,14 +31,8 @@
   },
   "multiChoice": {
     "question": {
-      "audio": {
-        "type": "audio",
-        "path": "/uploads/audio/qwerty.mp3"
-      },
-      "image": {
-        "type": "image",
-        "path": "/uploads/audio/qwerty.jpg"
-      },
+      "audio": "/uploads/audio/qwerty.mp3",
+      "image": "/uploads/audio/qwerty.jpg",
       "text": "Which one of them Capital is of Turkmenistan"
     },
     "answers": [
@@ -73,28 +61,16 @@
   },
   "blank": {
     "question": {
-      "audio": {
-        "type": "audio",
-        "path": "/uploads/audio/qwerty.mp3"
-      },
-      "image": {
-        "type": "image",
-        "path": "/uploads/audio/qwerty.jpg"
-      },
+      "audio": "/uploads/audio/qwerty.mp3",
+      "image": "/uploads/audio/qwerty.jpg",
       "text": "Lorem [_blank_] doler [_blank_] omet."
     },
     "correct": ["ipsum", "sit"]
   },
   "matching": {
     "question": {
-      "audio": {
-        "type": "audio",
-        "path": "/uploads/audio/qwerty.mp3"
-      },
-      "image": {
-        "type": "image",
-        "path": "/uploads/audio/qwerty.jpg"
-      },
+      "audio": "/uploads/audio/qwerty.mp3",
+      "image": "/uploads/audio/qwerty.jpg",
       "text": "Which one of them Capital is of Turkmenistan"
     },
     "answers": {
@@ -135,28 +111,16 @@
   },
   "trueFalse": {
     "question": {
-      "audio": {
-        "type": "audio",
-        "path": "/uploads/audio/qwerty.mp3"
-      },
-      "image": {
-        "type": "image",
-        "path": "/uploads/audio/qwerty.jpg"
-      },
+      "audio": "/uploads/audio/qwerty.mp3",
+      "image": "/uploads/audio/qwerty.jpg",
       "text": "Which one of them Capital is of Turkmenistan"
     },
     "correct": false
   },
   "normal": {
     "question": {
-      "audio": {
-        "type": "audio",
-        "path": "/uploads/audio/qwerty.mp3"
-      },
-      "image": {
-        "type": "image",
-        "path": "/uploads/audio/qwerty.jpg"
-      },
+      "audio": "/uploads/audio/qwerty.mp3",
+      "image": "/uploads/audio/qwerty.jpg",
       "text": "What is the Capital of Turkmenistan"
     },
     "correct": "ashgabat"

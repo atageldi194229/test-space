@@ -3,36 +3,156 @@
 const {
   User,
   Group,
+  GroupUser,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
-const { v4: uuidv4 } = require("uuid");
+const ErrorResponse = require("../../utils/errorResponse");
 const obj = {};
 
+/**
+ * Create group,
+ * action - /v1/groups,
+ * method - post,
+ * token,
+ */
 obj.create = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
-  let { text } = req.body;
+  // client data
+  let { name, description } = req.body;
 
-  text = text.toLowerCase();
+  // request db
+  let group = await Group.create({ name, description, userId: req.user.id });
 
-  let users = await User.findAll({
-    where: {
-      username: sequelize.where(
-        sequelize.fn("LOWER", sequelize.col("User.username")),
-        "LIKE",
-        "%" + text + "%"
-      ),
-    },
-    order: [[sequelize.fn("LENGTH", sequelize.col("User.username")), "ASC"]],
-    attributes: ["id", "username"],
-  });
-
-  // res to the client with token
+  // client response
   res.status(200).json({
     success: true,
-    users,
+  });
+};
+
+/**
+ * Edit group name or description,
+ * action - /v1/groups/:id,
+ * method - put,
+ * token,
+ */
+obj.update = async (req, res, next) => {
+  // client data
+  let {
+    params: { id },
+    body: { name, description },
+  } = req;
+
+  // request db
+  let updatedRows = await Group.update(
+    { name, description },
+    { where: { id, userId: req.user.id } }
+  );
+
+  // error test
+  if (Number.isInteger(updatedRows) && updatedRows === 0)
+    return next(new ErrorResponse("Row is not updated"));
+
+  // client response
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
+ * Delete group,
+ * action - /v1/groups/:id,
+ * method - delete,
+ * token,
+ */
+obj.destroy = async (req, res, next) => {
+  // client data
+  let id = req.params.id,
+    userId = req.user.id;
+
+  // request db
+  let updatedRows = await Group.destroy({ where: { id, userId } });
+
+  // error test
+  if (Number.isInteger(updatedRows) && updatedRows === 0)
+    return next(new ErrorResponse("Row is not updated"));
+
+  // client response
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
+ * Add user to the group,
+ * action - /v1/groups/:id/user,
+ * method - post,
+ * token,
+ */
+obj.addUser = async (req, res, next) => {
+  // client data
+  let {
+    params: { id },
+    body: { userId },
+  } = req;
+
+  // request db
+  let group = await Group.findOne({ where: { id, userId: req.user.id } });
+
+  // error test
+  if (!group) return next(new ErrorResponse("Group is not found"));
+
+  let updatedRows = await GroupUser.create({
+    groupId: group.id,
+    userId,
+  });
+
+  // error test
+  if (Number.isInteger(updatedRows) && updatedRows === 0)
+    return next(new ErrorResponse("Row is not updated"));
+
+  // client response
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
+ * Remove user to the group,
+ * action - /v1/groups/:id/user,
+ * method - delete,
+ * token,
+ */
+obj.removeUser = async (req, res, next) => {
+  // client data
+  let {
+    params: { id },
+    body: { userId },
+  } = req;
+
+  // log for experiment
+  console.log(req.body, req.user);
+
+  // request db
+  let group = await Group.findOne({ where: { id, userId: req.user.id } });
+
+  // error test
+  if (!group) return next(new ErrorResponse("Group is not found"));
+
+  let updatedRows = await GroupUser.destroy({
+    groupId: group.id,
+    userId,
+  });
+
+  // error test
+  if (Number.isInteger(updatedRows) && updatedRows === 0)
+    return next(new ErrorResponse("Row is not updated"));
+
+  // client response
+  res.status(200).json({
+    success: true,
   });
 };
 

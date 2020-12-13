@@ -33,6 +33,7 @@ obj.create = async (req, res) => {
     isAllowed,
     language,
     keywords,
+    userId: req.user.id,
   });
 
   // res to the client with token
@@ -50,6 +51,23 @@ obj.getAll = async (req, res) => {
   res.status(200).json({
     success: true,
     tests,
+  });
+};
+
+// getUser middlw used
+obj.getOne = async (req, res) => {
+  let { id } = req.params;
+
+  let options = {
+    where: { id, userId: req.user.id },
+    include: [{ association: "Questions" }],
+  };
+
+  let test = await Test.findOne(options);
+
+  res.status(200).json({
+    success: true,
+    test,
   });
 };
 
