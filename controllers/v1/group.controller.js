@@ -12,6 +12,25 @@ const ErrorResponse = require("../../utils/errorResponse");
 const obj = {};
 
 /**
+ * get groups,
+ * action - /v1/groups,
+ * method - get,
+ * token,
+ */
+obj.getAll = async (req, res) => {
+  console.log(JSON.stringify(req.body, null, 2));
+
+  // request db
+  let groups = await Group.findAll({ userId: req.user.id });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    groups,
+  });
+};
+
+/**
  * Create group,
  * action - /v1/groups,
  * method - post,
