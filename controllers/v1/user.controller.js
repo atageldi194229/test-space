@@ -69,8 +69,9 @@ obj.getOneByName = async (req, res, next) => {
   // preapare data
   let resData = {};
 
+  // remove private infos
   for (let i in keys) {
-    resData[keys[i]] = user[keys[i]];
+    if (user[keys[i] + "A"] === true) resData[keys[i]] = user[keys[i]];
   }
 
   // username always public

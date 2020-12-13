@@ -39,7 +39,7 @@ obj.getAll = async (req, res) => {
  * method - get,
  * token,
  */
-obj.getOne = async (req, res) => {
+obj.getOne = async (req, res, next) => {
   // client data
   let { id } = req.params;
 
@@ -55,10 +55,21 @@ obj.getOne = async (req, res) => {
     ],
   });
 
+  // error test
+  if (!group) return next(new ErrorResponse("Group is not found"));
+
+  // prepare data
+  let resData = {
+    id: group.id,
+    name: group.name,
+    description: group.description,
+    users: group.Users,
+  };
+
   // client response
   res.status(200).json({
     success: true,
-    group,
+    group: resData,
   });
 };
 
@@ -193,8 +204,10 @@ obj.removeUser = async (req, res, next) => {
   if (!group) return next(new ErrorResponse("Group is not found"));
 
   let updatedRows = await GroupUser.destroy({
-    groupId: group.id,
-    userId,
+    where: {
+      groupId: group.id,
+      userId,
+    },
   });
 
   // error test
