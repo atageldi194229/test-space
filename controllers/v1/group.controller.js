@@ -21,7 +21,7 @@ obj.getAll = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   // request db
-  let groups = await Group.findAll({ userId: req.user.id });
+  let groups = await Group.findAll({ where: { userId: req.user.id } });
 
   // client response
   res.status(200).json({
