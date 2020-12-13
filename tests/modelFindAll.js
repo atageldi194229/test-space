@@ -5,6 +5,6 @@ const { Group } = require("../models");
     where: { userId: 1 },
     attributes: ["name", "description"],
   });
-  console.log(groups);
+  console.log(JSON.stringify(groups, null, 2));
   process.exit();
 })();

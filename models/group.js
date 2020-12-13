@@ -28,5 +28,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "groupId",
     });
   };
+
   return Group;
 };
