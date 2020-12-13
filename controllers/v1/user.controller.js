@@ -35,6 +35,54 @@ obj.findUsers = async (req, res) => {
   });
 };
 
+/**
+ * get user by username
+ * action - /v1/users/atasan
+ * method - get
+ * token
+ */
+obj.getOneByName = async (req, res, next) => {
+  // client data
+  let { username } = req.params;
+
+  let keys = [
+    "username",
+    "firstName",
+    "lastName",
+    "email",
+    "image",
+    "birthDate",
+    "phoneNumber",
+    "country",
+    "city",
+    "gender",
+    "job",
+    "bio",
+  ];
+
+  // request db
+  let user = await User.findOne({
+    where: { username },
+    attributes: [...keys.map((e) => e), ...keys.map((e) => e + "A")],
+  });
+
+  // preapare data
+  let resData = {};
+
+  for (let i in keys) {
+    resData[keys[i]] = user[keys[i]];
+  }
+
+  // username always public
+  resData.username = user.username;
+
+  // client response
+  res.status(200).json({
+    success: true,
+    user: resData,
+  });
+};
+
 // When exporting all collected data
 let keys = Object.keys(obj);
 // exclude some functions
