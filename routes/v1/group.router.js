@@ -7,10 +7,12 @@ const {
   destroy,
   addUser,
   removeUser,
+  getAll,
 } = require("../../controllers").V1.GroupController;
 
 const { verify } = require("../../middleware").JwtMiddleware;
 
+router.get("/", verify, getAll);
 router.post("/", verify, create);
 router.put("/:id", verify, update);
 router.delete("/:id", verify, destroy);
