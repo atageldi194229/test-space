@@ -204,8 +204,10 @@ obj.removeUser = async (req, res, next) => {
   if (!group) return next(new ErrorResponse("Group is not found"));
 
   let updatedRows = await GroupUser.destroy({
-    groupId: group.id,
-    userId,
+    where: {
+      groupId: group.id,
+      userId,
+    },
   });
 
   // error test
