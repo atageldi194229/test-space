@@ -21,12 +21,44 @@ obj.getAll = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   // request db
-  let groups = await Group.findAll({ where: { userId: req.user.id } });
+  let groups = await Group.findAll({
+    where: { userId: req.user.id },
+    attributes: ["id", "name", "description"],
+  });
 
   // client response
   res.status(200).json({
     success: true,
     groups,
+  });
+};
+
+/**
+ * get one by id group,
+ * action - /v1/groups/:id,
+ * method - get,
+ * token,
+ */
+obj.getOne = async (req, res) => {
+  // client data
+  let { id } = req.params;
+
+  // request db
+  let group = await Group.findOne({
+    where: { id, userId: req.user.id },
+    attributes: ["id", "name", "description"],
+    include: [
+      {
+        association: "Users",
+        attributes: ["username"],
+      },
+    ],
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    group,
   });
 };
 
