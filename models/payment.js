@@ -78,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
     Payment.belongsTo(models.Price, { foreignKey: "tccPriceId" });
   };
   // Custom methods
-  Payment.prototype.balance = async function (userId) {
+  Payment.balance = async function (userId) {
     let query = `SELECT
     CASE WHEN SUM(is_tsc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tsc - tsc_used) END TSC ,
     CASE WHEN SUM(is_tcc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tcc - tcc_used) END TCC
@@ -89,13 +89,6 @@ module.exports = (sequelize, DataTypes) => {
     console.log(data);
 
     return data;
-    // SELECT
-    //   CASE WHEN SUM(is_tsc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tsc - tsc_used) END TSC ,
-    //   CASE WHEN SUM(is_tcc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tcc - tcc_used) END TCC
-    //   FROM `payments` WHERE status = 1 and user_id = 1 and DATEDIFF(NOW(), allowed_at) <= 30
-    // -- EGERDE BIR SANYN ACTIVE UNLIMITED BAR BOLSA UNLIMITED TSC BAR. BOLMASA NACESI ACTIVE BOLSA GALANYNY CYKARYAR
-    // -- UNLIMITED DIYSE ULANYBERSIN ARKAYYN TA UNLIMITED PAYMENT VAGTY DOLYANCA.
-    // -- FIRST IN FIRST OUT (FIFO) UNUTMA UNLIMITED YOK BOLSA BIRINCE TOLEGDEN BASHLAP USED GOSHUP BASHLAMALY. :)
   };
 
   return Payment;

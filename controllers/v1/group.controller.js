@@ -63,6 +63,7 @@ obj.getOne = async (req, res, next) => {
     id: group.id,
     name: group.name,
     description: group.description,
+    // let's remove unneeded properties
     users: group.Users.map((e) => ({ id: e.id, username: e.username })),
   };
 
