@@ -35,7 +35,7 @@ obj.findUsers = async (req, res) => {
       ),
     },
     order: [[sequelize.fn("LENGTH", sequelize.col("User.username")), "ASC"]],
-    attributes: ["id", "username"],
+    attributes: ["id", "username", "image"],
   });
 
   // client response
@@ -84,8 +84,9 @@ obj.getOneByName = async (req, res, next) => {
     if (user[keys[i] + "A"] === true) resData[keys[i]] = user[keys[i]];
   }
 
-  // username always public
+  // username, image always public
   resData.username = user.username;
+  resData.image = user.image;
 
   // client response
   res.status(200).json({

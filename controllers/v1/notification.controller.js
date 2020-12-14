@@ -9,7 +9,7 @@ const {
 const asyncHandler = require("../../middleware/async");
 const obj = {};
 
-obj.create = async (req, res) => {
+obj.sendInvitation = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   // get from client
