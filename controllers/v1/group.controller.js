@@ -50,7 +50,7 @@ obj.getOne = async (req, res, next) => {
     include: [
       {
         association: "Users",
-        attributes: ["username"],
+        attributes: ["id", "username"],
       },
     ],
   });
@@ -63,7 +63,7 @@ obj.getOne = async (req, res, next) => {
     id: group.id,
     name: group.name,
     description: group.description,
-    users: group.Users,
+    users: group.Users.map((e) => ({ id: e.id, username: e.username })),
   };
 
   // client response

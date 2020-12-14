@@ -13,7 +13,7 @@ obj.sendInvitation = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   // get from client
-
+  let { users } = req.body;
   // save to db
 
   // res to the client with token
