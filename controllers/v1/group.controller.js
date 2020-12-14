@@ -231,6 +231,7 @@ obj.findGroups = async (req, res, next) => {
   let { text } = req.body;
 
   // validate data
+  text = text && "";
   text = text.toLowerCase();
 
   // request db

@@ -9,13 +9,23 @@ const asyncHandler = require("../../middleware/async");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
+/**
+ * Search users by their username
+ * action - /v1/users/find
+ * method - post
+ * token
+ */
 obj.findUsers = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
+  // client data
   let { text } = req.body;
 
+  // validate data
+  text = text && "";
   text = text.toLowerCase();
 
+  // request db
   let users = await User.findAll({
     where: {
       username: sequelize.where(
@@ -28,7 +38,7 @@ obj.findUsers = async (req, res) => {
     attributes: ["id", "username"],
   });
 
-  // res to the client with token
+  // client response
   res.status(200).json({
     success: true,
     users,
