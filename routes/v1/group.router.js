@@ -9,11 +9,13 @@ const {
   removeUser,
   getAll,
   getOne,
+  findGroups,
 } = require("../../controllers").V1.GroupController;
 
 const { verify } = require("../../middleware").JwtMiddleware;
 
 router.get("/", verify, getAll);
+router.post("/find", verify, findGroups);
 router.get("/:id", verify, getOne);
 router.post("/", verify, create);
 router.post("/:id/user", verify, addUser);

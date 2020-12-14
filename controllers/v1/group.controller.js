@@ -220,6 +220,40 @@ obj.removeUser = async (req, res, next) => {
   });
 };
 
+/**
+ * search groups by their name
+ * action - /v1/groups/find
+ * method - post
+ * token
+ */
+obj.findGroups = async (req, res, next) => {
+  // client data
+  let { text } = req.body;
+
+  // validate data
+  text = text.toLowerCase();
+
+  // request db
+  let groups = await Group.findAll({
+    where: {
+      name: sequelize.where(
+        sequelize.fn("LOWER", sequelize.col("Group.name")),
+        "LIKE",
+        "%" + text + "%"
+      ),
+      userId: req.user.id,
+    },
+    order: [[sequelize.fn("LENGTH", sequelize.col("Group.name")), "ASC"]],
+    attributes: ["id", "name", "description"],
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    groups,
+  });
+};
+
 // When exporting all collected data
 let keys = Object.keys(obj);
 // exclude some functions
