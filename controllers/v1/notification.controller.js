@@ -3,6 +3,7 @@
 const {
   User,
   Notification,
+  NotificationUser,
   sequelize,
   Payment,
   GroupUser,
@@ -59,13 +60,84 @@ obj.sendInvitation = async (req, res, next) => {
   });
 };
 
-// temporary function
-obj.getAll = async (req, res) => {
-  // get data from db
-  // let notifications = await Notification.findAll();
+/**
+ * set read to the notification
+ * action - /v1/notifications/:id/read
+ * method - post
+ * token
+ */
+obj.setRead = async (req, res, next) => {
+  // client data
+  let notificationId = req.params.id,
+    userId = req.user.id;
 
+  // request db
+  await NotificationUser.update(
+    { read: true },
+    { where: { userId, notificationId } }
+  );
+
+  // cliect response
   res.status(200).json({
     success: true,
+  });
+};
+
+/**
+ * get unread notifiactions
+ * action - /v1/notifications/unread
+ * method - get
+ * token
+ */
+obj.getUnread = async (req, res, next) => {
+  // client data
+  let userId = req.user.id;
+
+  // request db
+  let ids = (
+    await NotificationUser.findAll({
+      where: { userId, read: false },
+      attributes: ["notificationId"],
+    })
+  ).map((e) => e.notificationId);
+  let notifications = await Notification.findAll({
+    where: { id: ids },
+    order: [["createdAt", "asc"]],
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    notifications,
+  });
+};
+
+/**
+ * get all notifiactions
+ * action - /v1/notifications
+ * method - get
+ * token
+ */
+obj.getAll = async (req, res) => {
+  // client data
+  let userId = req.user.id;
+
+  // request db
+  let ids = (
+    await NotificationUser.findAll({
+      where: { userId },
+      attributes: ["notificationId"],
+    })
+  ).map((e) => e.notificationId);
+  let notifications = await Notification.findAll({
+    where: { id: ids },
+    order: [["createdAt", "desc"]],
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    notifications,
   });
 };
 
