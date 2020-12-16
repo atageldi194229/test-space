@@ -59,6 +59,7 @@ const model = (sequelize, DataTypes) => {
     });
     User.belongsToMany(models.Notification, {
       through: { model: "NotificationUser" },
+      foreignKey: "userId",
     });
   };
 
