@@ -105,6 +105,14 @@ obj.getUnread = async (req, res, next) => {
     order: [["createdAt", "asc"]],
   });
 
+  // prepare data
+  notifications = notifications.map((e) => ({
+    id: e.id,
+    type: e.type,
+    content: e.content,
+    createdAt: e.createdAt,
+  }));
+
   // client response
   res.status(200).json({
     success: true,
