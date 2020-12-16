@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
   let NotificationUser = sequelize.define(
     "NotificationUser",
     {
@@ -16,3 +16,5 @@ module.exports = (sequelize, DataTypes) => {
 
   return NotificationUser;
 };
+
+module.exports = { model };

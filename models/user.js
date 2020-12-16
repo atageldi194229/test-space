@@ -2,7 +2,7 @@
 
 const bcrypt = require("bcryptjs");
 
-module.exports = (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
   let User = sequelize.define(
     "User",
     {
@@ -77,3 +77,5 @@ module.exports = (sequelize, DataTypes) => {
 
   return User;
 };
+
+module.exports = { model };

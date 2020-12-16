@@ -106,61 +106,18 @@ obj.canSendInvitation = async (req, res, next) => {
   if (!Array.isArray(userIds) || !Array.isArray(groupIds))
     return next(new ErrorResponse("Validation error"));
 
-  // request db
-  let groupUsers = await GroupUser.findAll({
-    where: { groupId: groupIds },
-    attributes: [`userId`],
+  let data = await Payment.canSendInvitation(req.user.id, {
+    userIds,
+    groupIds,
   });
-
-  // validate data and add to other users
-  userIds = [...userIds, ...groupUsers.map((e) => e.userId)];
-
-  // remove repeating values
-  let mp = {};
-  for (let i = 0; i < userIds.length; i++) {
-    if (!mp[userIds[i]]) mp[userIds[i]] = 1;
-    else mp[userIds[i]]++;
-  }
-  userIds = Object.keys(mp);
-
-  // calculation starts
-  let userCount = userIds.length,
-    canSend = false,
-    dublicatedUsers = userIds.filter((e) => mp[e] > 1).map((e) => Number(e)),
-    tsc = {};
-
-  // calculation request db
-  let days30 = 30 * 24 * 60 * 60 * 1000;
-  let payments = await Payment.findAll({
-    where: {
-      allowedAt: {
-        [Op.gte]: new Date(new Date() - days30),
-      },
-      status: 1,
-    },
-    // order: [["createdAt", "asc"]],
-  });
-
-  for (let i = 0; i < payments.length; i++) {
-    if (payments[i].isTscUnlimited === true) canSend = true;
-    else userCount -= payments[i].tsc - payments[i].tscUsed;
-  }
-  if (canSend) tsc.rest = "unlimited";
-
-  tsc.need = userIds.length; // gerekli bolan tsc
-  tsc.lack = canSend || userCount < 0 ? 0 : userCount; // yene shuncha tsc gerek
-  tsc.rest = tsc.rest || (-userCount < 0 ? 0 : -userCount); // shuncha galar
-
-  if (userCount <= 0) canSend = true;
-  // calculation ends
 
   // client response
   res.status(200).json({
     success: true,
     data: {
-      canSend,
-      tsc,
-      dublicatedUsers,
+      canSend: data.canSend,
+      tsc: data.tsc,
+      dublicatedUsers: data.dublicatedUsers,
     },
   });
 };
