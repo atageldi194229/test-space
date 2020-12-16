@@ -13,6 +13,12 @@ const asyncHandler = require("../../middleware/async");
 const ErrorResponse = require("../../utils/errorResponse");
 const obj = {};
 
+/**
+ * Send test invitation to the users
+ * action - /v1/notifications/send-invitation
+ * method - post
+ * token
+ */
 obj.sendInvitation = async (req, res, next) => {
   // get from client
   let { userIds, groupIds } = req.body;

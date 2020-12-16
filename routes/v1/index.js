@@ -22,7 +22,7 @@ ApiV1Router.use("/prices", PriceRouter);
 ApiV1Router.use("/users", UserRouter);
 ApiV1Router.use("/groups", GroupRouter);
 ApiV1Router.use("/payments", PaymentRouter);
-ApiV1Router.use("/notification", NotificationRouter);
+ApiV1Router.use("/notifications", NotificationRouter);
 ApiV1Router.use("/", AuthRouter);
 
 module.exports = ApiV1Router;
