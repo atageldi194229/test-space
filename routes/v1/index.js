@@ -3,6 +3,7 @@
 const express = require("express");
 const ApiV1Router = express.Router();
 
+// routers
 const AuthRouter = require("./auth.router");
 const TestRouter = require("./test.router");
 const QuestionRouter = require("./question.router");
@@ -10,6 +11,8 @@ const PriceRouter = require("./price.router");
 const UserRouter = require("./user.router");
 const GroupRouter = require("./group.router");
 const PaymentRouter = require("./payment.router");
+const NotificationRouter = require("./notification.router");
+// middleware
 const { getUser } = require("../../middleware/jwt.middleware");
 
 ApiV1Router.use(getUser);
@@ -19,6 +22,7 @@ ApiV1Router.use("/prices", PriceRouter);
 ApiV1Router.use("/users", UserRouter);
 ApiV1Router.use("/groups", GroupRouter);
 ApiV1Router.use("/payments", PaymentRouter);
+ApiV1Router.use("/notification", NotificationRouter);
 ApiV1Router.use("/", AuthRouter);
 
 module.exports = ApiV1Router;

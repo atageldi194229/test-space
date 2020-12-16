@@ -161,6 +161,29 @@ const methods = ({ Payment, GroupUser, Sequelize: { Op } }) => {
       payments,
     };
   };
+
+  Payment.useTsc = async (userId, { tscCount, payments }) => {
+    for (let i = 0; i < payments.length; i++) {
+      let tsc = payments[i].tsc,
+        tscUsed = payments[i].tscUsed,
+        isTscUnlimited = payments[i].isTscUnlimited;
+
+      let a = tsc - tscUsed;
+      if (isTscUnlimited || tscCount < a) {
+        tscUsed += tscCount;
+        tscCount = 0;
+      } else {
+        tscCount -= a;
+        tscUsed = tsc;
+      }
+
+      await payments[i].update({ tscUsed });
+
+      if (tscCount <= 0) return true;
+    }
+
+    return false;
+  };
 };
 
 module.exports = { model, methods };

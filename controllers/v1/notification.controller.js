@@ -10,9 +10,10 @@ const {
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
+const ErrorResponse = require("../../utils/errorResponse");
 const obj = {};
 
-obj.sendInvitation = async (req, res) => {
+obj.sendInvitation = async (req, res, next) => {
   // get from client
   let { userIds, groupIds } = req.body;
 
@@ -21,6 +22,30 @@ obj.sendInvitation = async (req, res) => {
   groupIds = groupIds || [];
   if (!Array.isArray(userIds) || !Array.isArray(groupIds))
     return next(new ErrorResponse("Validation error"));
+
+  // check if client can send invitaition
+  let data = await Payment.canSendInvitation(req.user.id, {
+    userIds,
+    groupIds,
+  });
+
+  // error test
+  if (!data.canSend)
+    return next(new ErrorResponse("Could not send invitation"));
+
+  // request db (set used to payment tsc)
+  let isTscUsed = await Payment.useTsc(req.user.id, {
+    tscCount: data.tsc.need,
+    payments: data.payments,
+  });
+
+  // error test
+  if (!isTscUsed)
+    return next(new ErrorResponse("Error when using tsc from payment"));
+
+  // send invitation
+  // via notification
+  // via mail
 
   // res to the client with token
   res.status(200).json({
