@@ -101,8 +101,10 @@ obj.canSendInvitation = async (req, res, next) => {
   let { userIds, groupIds } = req.body;
 
   // validate data
-  // if (!Array.isArray(userIds) || !Array.isArray(groupIds))
-  // return next(new ErrorResponse("Validation error"))
+  userIds = userIds || [];
+  groupIds = groupIds || [];
+  if (!Array.isArray(userIds) || !Array.isArray(groupIds))
+    return next(new ErrorResponse("Validation error"));
 
   // request db
   let groupUsers = await GroupUser.findAll({
@@ -124,6 +126,7 @@ obj.canSendInvitation = async (req, res, next) => {
   // calculation starts
   let userCount = userIds.length,
     canSend = false,
+    dublicatedUsers = userIds.filter((e) => mp[e] > 1).map((e) => Number(e)),
     tsc = {};
 
   // calculation request db
@@ -157,7 +160,7 @@ obj.canSendInvitation = async (req, res, next) => {
     data: {
       canSend,
       tsc,
-      dublicatedUsers: userIds.filter((e) => mp[e] > 1).map((e) => Number(e)),
+      dublicatedUsers,
     },
   });
 };
