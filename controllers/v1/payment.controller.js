@@ -152,7 +152,6 @@ obj.canSendInvitation = async (req, res, next) => {
   // calculation ends
 
   // client response
-
   res.status(200).json({
     success: true,
     data: {
