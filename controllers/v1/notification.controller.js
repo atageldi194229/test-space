@@ -123,16 +123,25 @@ obj.getAll = async (req, res) => {
   let userId = req.user.id;
 
   // request db
-  let ids = (
-    await NotificationUser.findAll({
-      where: { userId },
-      attributes: ["notificationId"],
-    })
-  ).map((e) => e.notificationId);
+  let data = await NotificationUser.findAll({
+    where: { userId },
+    attributes: ["notificationId", "read"],
+  });
   let notifications = await Notification.findAll({
-    where: { id: ids },
+    where: { id: data.map((e) => e.notificationId) },
     order: [["createdAt", "desc"]],
   });
+
+  // prepare data
+  let read = {};
+  data.forEach((e) => (read[e.notificationId] = e.read));
+  notifications = notifications.map((e) => ({
+    id: e.id,
+    read: read[e.id],
+    type: e.type,
+    content: e.content,
+    createdAt: e.createdAt,
+  }));
 
   // client response
   res.status(200).json({
