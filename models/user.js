@@ -2,7 +2,7 @@
 
 const bcrypt = require("bcryptjs");
 
-module.exports = (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
   let User = sequelize.define(
     "User",
     {
@@ -59,6 +59,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     User.belongsToMany(models.Notification, {
       through: { model: "NotificationUser" },
+      foreignKey: "userId",
     });
   };
 
@@ -77,3 +78,5 @@ module.exports = (sequelize, DataTypes) => {
 
   return User;
 };
+
+module.exports = { model };

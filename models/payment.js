@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = (sequelize, DataTypes) => {
+const model = (sequelize, DataTypes) => {
   let Payment = sequelize.define(
     "Payment",
     {
@@ -78,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
     Payment.belongsTo(models.Price, { foreignKey: "tccPriceId" });
   };
   // Custom methods
-  Payment.prototype.balance = async function (userId) {
+  Payment.balance = async function (userId) {
     let query = `SELECT
     CASE WHEN SUM(is_tsc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tsc - tsc_used) END TSC ,
     CASE WHEN SUM(is_tcc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tcc - tcc_used) END TCC
@@ -89,14 +89,101 @@ module.exports = (sequelize, DataTypes) => {
     console.log(data);
 
     return data;
-    // SELECT
-    //   CASE WHEN SUM(is_tsc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tsc - tsc_used) END TSC ,
-    //   CASE WHEN SUM(is_tcc_unlimited) >= 1 THEN 'UNLIMITED' ELSE SUM(tcc - tcc_used) END TCC
-    //   FROM `payments` WHERE status = 1 and user_id = 1 and DATEDIFF(NOW(), allowed_at) <= 30
-    // -- EGERDE BIR SANYN ACTIVE UNLIMITED BAR BOLSA UNLIMITED TSC BAR. BOLMASA NACESI ACTIVE BOLSA GALANYNY CYKARYAR
-    // -- UNLIMITED DIYSE ULANYBERSIN ARKAYYN TA UNLIMITED PAYMENT VAGTY DOLYANCA.
-    // -- FIRST IN FIRST OUT (FIFO) UNUTMA UNLIMITED YOK BOLSA BIRINCE TOLEGDEN BASHLAP USED GOSHUP BASHLAMALY. :)
   };
 
   return Payment;
 };
+
+const methods = ({ Payment, GroupUser, Sequelize: { Op } }) => {
+  Payment.canSendInvitation = async (userId, { userIds, groupIds }) => {
+    // validate data
+    userIds = userIds || [];
+    groupIds = groupIds || [];
+    if (!Array.isArray(userIds) || !Array.isArray(groupIds))
+      return next(new ErrorResponse("Validation error"));
+
+    // request db
+    let groupUsers = await GroupUser.findAll({
+      where: { groupId: groupIds },
+      attributes: [`userId`],
+    });
+
+    // validate data and add to other users
+    userIds = [...userIds, ...groupUsers.map((e) => e.userId)];
+
+    // remove repeating values
+    let mp = {};
+    for (let i = 0; i < userIds.length; i++) {
+      if (!mp[userIds[i]]) mp[userIds[i]] = 1;
+      else mp[userIds[i]]++;
+    }
+    userIds = Object.keys(mp);
+
+    // calculation starts
+    let userCount = userIds.length,
+      canSend = false,
+      dublicatedUsers = userIds.filter((e) => mp[e] > 1).map((e) => Number(e)),
+      tsc = {};
+
+    // calculation request db
+    let days30 = 30 * 24 * 60 * 60 * 1000;
+    let payments = await Payment.findAll({
+      where: {
+        allowedAt: {
+          [Op.gte]: new Date(new Date() - days30),
+        },
+        status: 1,
+        userId,
+      },
+      // order: [["createdAt", "asc"]],
+    });
+
+    for (let i = 0; i < payments.length; i++) {
+      if (payments[i].isTscUnlimited === true) canSend = true;
+      else userCount -= payments[i].tsc - payments[i].tscUsed;
+    }
+    if (canSend) tsc.rest = "unlimited";
+
+    tsc.need = userIds.length; // gerekli bolan tsc
+    tsc.lack = canSend || userCount < 0 ? 0 : userCount; // yene shuncha tsc gerek
+    tsc.rest = tsc.rest || (-userCount < 0 ? 0 : -userCount); // shuncha galar
+
+    if (userCount <= 0) canSend = true;
+    // calculation ends
+
+    return {
+      canSend,
+      dublicatedUsers,
+      tsc,
+
+      userId,
+      userIds,
+      payments,
+    };
+  };
+
+  Payment.useTsc = async (userId, { tscCount, payments }) => {
+    for (let i = 0; i < payments.length; i++) {
+      let tsc = payments[i].tsc,
+        tscUsed = payments[i].tscUsed,
+        isTscUnlimited = payments[i].isTscUnlimited;
+
+      let a = tsc - tscUsed;
+      if (isTscUnlimited || tscCount < a) {
+        tscUsed += tscCount;
+        tscCount = 0;
+      } else {
+        tscCount -= a;
+        tscUsed = tsc;
+      }
+
+      await payments[i].update({ tscUsed });
+
+      if (tscCount <= 0) return true;
+    }
+
+    return false;
+  };
+};
+
+module.exports = { model, methods };

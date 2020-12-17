@@ -50,7 +50,7 @@ obj.getOne = async (req, res, next) => {
     include: [
       {
         association: "Users",
-        attributes: ["username"],
+        attributes: ["id", "username"],
       },
     ],
   });
@@ -63,7 +63,8 @@ obj.getOne = async (req, res, next) => {
     id: group.id,
     name: group.name,
     description: group.description,
-    users: group.Users,
+    // let's remove unneeded properties
+    users: group.Users.map((e) => ({ id: e.id, username: e.username })),
   };
 
   // client response
@@ -217,6 +218,41 @@ obj.removeUser = async (req, res, next) => {
   // client response
   res.status(200).json({
     success: true,
+  });
+};
+
+/**
+ * search groups by their name
+ * action - /v1/groups/find
+ * method - post
+ * token
+ */
+obj.findGroups = async (req, res, next) => {
+  // client data
+  let { text } = req.body;
+
+  // validate data
+  text = text && "";
+  text = text.toLowerCase();
+
+  // request db
+  let groups = await Group.findAll({
+    where: {
+      name: sequelize.where(
+        sequelize.fn("LOWER", sequelize.col("Group.name")),
+        "LIKE",
+        "%" + text + "%"
+      ),
+      userId: req.user.id,
+    },
+    order: [[sequelize.fn("LENGTH", sequelize.col("Group.name")), "ASC"]],
+    attributes: ["id", "name", "description"],
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    groups,
   });
 };
 

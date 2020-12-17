@@ -82,7 +82,7 @@
 							"response": []
 						},
 						{
-							"name": "verifyCode",
+							"name": "verify code",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -101,7 +101,7 @@
 							"response": []
 						},
 						{
-							"name": "resendVerifyCode",
+							"name": "resend verification code",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -311,13 +311,487 @@
 				},
 				{
 					"name": "payments",
-					"item": [],
+					"item": [
+						{
+							"name": "buy TSC&TCC",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/payments",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"payments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check can user send invitation",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userIds\": [1],\r\n    \"groupIds\": [2, 3]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/payments/tsc/check",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"payments",
+										"tsc",
+										"check"
+									]
+								}
+							},
+							"response": []
+						}
+					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
 					"name": "groups",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/groups",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get one",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/groups/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"usc\",\r\n    \"description\": \"student console\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/groups",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add user",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/groups/1/user",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"groups",
+										"1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Lorem\",\r\n    \"description\": \"ipsum\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/groups/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "destroy",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/groups/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "remove user",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/groups/1/user",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"groups",
+										"1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find groups immidietly",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"text\": \"us\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/groups/find",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"groups",
+										"find"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "pages",
 					"item": [],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "notifications",
+					"item": [
+						{
+							"name": "send invitation",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userIds\": [1],\r\n    \"groupIds\": [2, 3],\r\n    \"testId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/notifications/send-invitation",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"notifications",
+										"send-invitation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get unread",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/notifications/unread",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"notifications",
+										"unread"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/notifications",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"notifications"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "read",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/notifications/1/read",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"notifications",
+										"1",
+										"read"
+									]
+								}
+							},
+							"response": []
+						}
+					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				}

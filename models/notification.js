@@ -1,6 +1,8 @@
 "use strict";
 
-module.exports = (sequelize, DataTypes) => {
+const notificationUser = require("./notification-user");
+
+const model = (sequelize, DataTypes) => {
   let Notification = sequelize.define(
     "Notification",
     {
@@ -26,8 +28,21 @@ module.exports = (sequelize, DataTypes) => {
 
     Notification.belongsToMany(models.User, {
       through: { model: "NotificationUser" },
+      foreignKey: "notificationId",
     });
   };
 
   return Notification;
 };
+
+const methods = ({ Notification, NotificationUser }) => {
+  Notification.setRead = async (userId, notificationId) => {
+    // request db
+    return await NotificationUser.update(
+      { read: true },
+      { where: { userId, notificationId } }
+    );
+  };
+};
+
+module.exports = { model, methods };

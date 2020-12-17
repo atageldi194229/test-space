@@ -4,6 +4,9 @@ const {
   Price,
   Payment,
   sequelize,
+  User,
+  Group,
+  GroupUser,
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
@@ -84,6 +87,38 @@ obj.buyProduct = async (req, res, next) => {
   // res to the client with token
   res.status(200).json({
     success: true,
+  });
+};
+
+/**
+ * check if client can sent invitation
+ * action - /v1/payment/tsc/check
+ * method - post
+ * token
+ */
+obj.canSendInvitation = async (req, res, next) => {
+  // client data
+  let { userIds, groupIds } = req.body;
+
+  // validate data
+  userIds = userIds || [];
+  groupIds = groupIds || [];
+  if (!Array.isArray(userIds) || !Array.isArray(groupIds))
+    return next(new ErrorResponse("Validation error"));
+
+  let data = await Payment.canSendInvitation(req.user.id, {
+    userIds,
+    groupIds,
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    data: {
+      canSend: data.canSend,
+      tsc: data.tsc,
+      dublicatedUsers: data.dublicatedUsers,
+    },
   });
 };
 
