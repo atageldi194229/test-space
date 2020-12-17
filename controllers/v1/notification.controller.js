@@ -12,6 +12,7 @@ const {
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
 const ErrorResponse = require("../../utils/errorResponse");
+const notificationUser = require("../../models/notification-user");
 const obj = {};
 
 /**
@@ -22,7 +23,7 @@ const obj = {};
  */
 obj.sendInvitation = async (req, res, next) => {
   // get from client
-  let { userIds, groupIds } = req.body;
+  let { userIds, groupIds, testId } = req.body;
 
   // validate data
   userIds = userIds || [];
@@ -52,6 +53,15 @@ obj.sendInvitation = async (req, res, next) => {
 
   // send invitation
   // via notification
+  let notification = await Notification.create({
+    content: `You invited to test with id ${testId}`,
+  });
+  let updatedRows = await NotificationUser.bulkCreate(
+    data.userIds.map((userId) => ({
+      userId,
+      notificationId: notification.id,
+    }))
+  );
   // via mail
 
   // res to the client with token
@@ -72,10 +82,7 @@ obj.setRead = async (req, res, next) => {
     userId = req.user.id;
 
   // request db
-  await NotificationUser.update(
-    { read: true },
-    { where: { userId, notificationId } }
-  );
+  await Notification.setRead(userId, notificationId);
 
   // cliect response
   res.status(200).json({
@@ -156,6 +163,12 @@ obj.getAll = async (req, res) => {
     success: true,
     notifications,
   });
+
+  // request db (set read to those notifications)
+  await Notification.setRead(
+    userId,
+    data.filter((e) => !e.read).map((e) => e.notificationId)
+  );
 };
 
 // When exporting all collected data

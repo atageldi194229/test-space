@@ -1,5 +1,7 @@
 "use strict";
 
+const notificationUser = require("./notification-user");
+
 const model = (sequelize, DataTypes) => {
   let Notification = sequelize.define(
     "Notification",
@@ -33,4 +35,14 @@ const model = (sequelize, DataTypes) => {
   return Notification;
 };
 
-module.exports = { model };
+const methods = ({ Notification, NotificationUser }) => {
+  Notification.setRead = async (userId, notificationId) => {
+    // request db
+    return await NotificationUser.update(
+      { read: true },
+      { where: { userId, notificationId } }
+    );
+  };
+};
+
+module.exports = { model, methods };
