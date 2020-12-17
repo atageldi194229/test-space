@@ -202,7 +202,7 @@ obj.destroy = async (req, res, next) => {
 
   // request db
   let updatedRows = await NotificationUser.destroy({
-    where: { userId, notifiactionId },
+    where: { userId, notificationId },
   });
 
   // error test
