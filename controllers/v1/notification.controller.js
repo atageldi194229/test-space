@@ -146,10 +146,17 @@ obj.getUnread = async (req, res, next) => {
  */
 obj.getAll = async (req, res) => {
   // client data
-  let userId = req.user.id;
+  let userId = req.user.id,
+    { limit, offset } = req.query;
+
+  // validate data
+  limit = limit || 20;
+  offset = offset || 0;
 
   // request db
   let data = await NotificationUser.findAll({
+    limit,
+    offset,
     where: { userId },
     attributes: ["notificationId", "read"],
   });
