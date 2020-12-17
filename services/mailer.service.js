@@ -17,7 +17,7 @@ class Mailer {
     });
   }
 
-  async sendMail(obj) {
+  async sendMail({ to, subject, text }) {
     // Generate test SMTP service account from ethereal.email
     // Only needed if you don't have a real mail account for testing
     // let testAccount = await nodemailer.createTestAccount();
@@ -25,9 +25,9 @@ class Mailer {
     // send mail with defined transport object
     let info = await this.transporter.sendMail({
       from: `"Test Space 👻" <${mailerConfig.user}>`, // sender address
-      to: `${obj.to}`, // "bar@example.com, baz@example.com", // list of receivers
-      subject: "Verification", // Subject line
-      text: "Authentication", // plain text body
+      to, // "bar@example.com, baz@example.com", // list of receivers
+      subject, // Subject line
+      text, // plain text body
       // html: "<b>Hello world?</b>", // html body
     });
 
@@ -58,6 +58,18 @@ class Mailer {
     // Preview only available when sending through an Ethereal account
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+  }
+
+  async sendTestInvitation({ to, testId, userId }) {
+    let str = "";
+    if (to.length > 0) str += to[0];
+    for (let i = 1; i < to.length; i++) str += `,${to[i]}`;
+
+    await this.sendMail({
+      to: str,
+      subject: `Invitation`,
+      text: `You invited to test with id ${testId} by user id ${userId}`,
+    });
   }
 }
 

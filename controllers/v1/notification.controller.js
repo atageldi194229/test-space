@@ -13,6 +13,7 @@ const {
 const asyncHandler = require("../../middleware/async");
 const ErrorResponse = require("../../utils/errorResponse");
 const notificationUser = require("../../models/notification-user");
+const { Mailer } = require("../../services");
 const obj = {};
 
 /**
@@ -51,7 +52,7 @@ obj.sendInvitation = async (req, res, next) => {
   if (!isTscUsed)
     return next(new ErrorResponse("Error when using tsc from payment"));
 
-  // send invitation
+  // send invitation start
   // via notification
   let notification = await Notification.create({
     content: `You invited to test with id ${testId}`,
@@ -63,6 +64,16 @@ obj.sendInvitation = async (req, res, next) => {
     }))
   );
   // via mail
+  let to = (
+    await User.findAll({
+      where: { id: data.userIds },
+      attributes: ["email"],
+    })
+  ).map((e) => e.email);
+  await Mailer.sendTestInvitation({ to, testId, userId: req.user.id }).catch(
+    console.log
+  );
+  // send invitation end
 
   // res to the client with token
   res.status(200).json({
