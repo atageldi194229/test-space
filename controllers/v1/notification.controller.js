@@ -146,10 +146,17 @@ obj.getUnread = async (req, res, next) => {
  */
 obj.getAll = async (req, res) => {
   // client data
-  let userId = req.user.id;
+  let userId = req.user.id,
+    { limit, offset } = req.query;
+
+  // validate data
+  limit = limit || 20;
+  offset = offset || 0;
 
   // request db
   let data = await NotificationUser.findAll({
+    limit,
+    offset,
     where: { userId },
     attributes: ["notificationId", "read"],
   });
@@ -180,6 +187,32 @@ obj.getAll = async (req, res) => {
     userId,
     data.filter((e) => !e.read).map((e) => e.notificationId)
   );
+};
+
+/**
+ * delete notifiaction
+ * action - /v1/notifications/:id
+ * method - delete
+ * token
+ */
+obj.destroy = async (req, res, next) => {
+  // client data
+  let userId = req.user.id,
+    notificationId = req.params.id;
+
+  // request db
+  let updatedRows = await NotificationUser.destroy({
+    where: { userId, notifiactionId },
+  });
+
+  // error test
+  if (!updatedRows)
+    return next(new ErrorResponse("Could not delete notification"));
+
+  // client response
+  res.status(200).json({
+    success: true,
+  });
 };
 
 // When exporting all collected data
