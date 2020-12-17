@@ -189,6 +189,32 @@ obj.getAll = async (req, res) => {
   );
 };
 
+/**
+ * delete notifiaction
+ * action - /v1/notifications/:id
+ * method - delete
+ * token
+ */
+obj.destroy = async (req, res, next) => {
+  // client data
+  let userId = req.user.id,
+    notificationId = req.params.id;
+
+  // request db
+  let updatedRows = await NotificationUser.destroy({
+    where: { userId, notifiactionId },
+  });
+
+  // error test
+  if (!updatedRows)
+    return next(new ErrorResponse("Could not delete notification"));
+
+  // client response
+  res.status(200).json({
+    success: true,
+  });
+};
+
 // When exporting all collected data
 let keys = Object.keys(obj);
 // exclude some functions
