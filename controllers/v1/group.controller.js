@@ -249,10 +249,22 @@ obj.findGroups = async (req, res, next) => {
     attributes: ["id", "name", "description"],
   });
 
+  // prepare response data
+  let data = [];
+
+  for (let i = 0; i < groups.length; i++) {
+    data.push({
+      id: groups[i].id,
+      name: groups[i].name,
+      description: groups[i].description,
+      userCount: await groups[i].countUsers(),
+    });
+  }
+
   // client response
   res.status(200).json({
     success: true,
-    groups,
+    groups: data,
   });
 };
 
