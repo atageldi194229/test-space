@@ -54,20 +54,43 @@ obj.getAll = async (req, res) => {
   });
 };
 
-// getUser middlw used
+/**
+ * Get one test with their questions
+ * action - /v1/tests/:id
+ * method - get
+ * token
+ */
 obj.getOne = async (req, res) => {
+  // client data
   let { id } = req.params;
 
+  // prepare query options
   let options = {
     where: { id, userId: req.user.id },
     include: [{ association: "Questions" }],
   };
 
+  // request db
   let test = await Test.findOne(options);
 
+  // prepare response data
+  let data = {
+    id: test.id,
+    name: test.name,
+    description: test.description,
+    questions: test.Questions.map((e) => ({
+      id: e.id,
+      type: e.type,
+      data: e.data,
+      isRandom: e.isRandom,
+      editable: e.editable,
+    })),
+  };
+
+  // client response
   res.status(200).json({
     success: true,
-    test,
+    test: data,
   });
 };
 

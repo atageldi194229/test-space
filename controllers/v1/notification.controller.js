@@ -190,7 +190,7 @@ obj.getAll = async (req, res) => {
 };
 
 /**
- * delete notifiaction
+ * delete notification
  * action - /v1/notifications/:id
  * method - delete
  * token

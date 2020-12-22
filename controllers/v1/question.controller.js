@@ -156,6 +156,45 @@ obj.update = async (req, res, next) => {
   });
 };
 
+/**
+ * get one question
+ * action - /v1/questions/:id
+ * method - get
+ * token
+ */
+obj.getOne = async (req, res, next) => {
+  // client data
+  let id = req.params.id;
+
+  // request db
+  let question = await Question.findOne({ where: { id } });
+
+  // error test
+  if (!question) return next(new ErrorResponse("Question is not found"));
+
+  // test owner of this question
+  let test = await Test.findOne({
+    where: { id: question.testId, userId: req.user.id },
+  });
+  // error test
+  if (!test) return next(new ErrorResponse("Test is not found"));
+
+  // prepare data
+  let data = {
+    id: question.id,
+    type: question.type,
+    data: JSON.parse(question.data),
+    isRandom: question.isRandom,
+    editable: question.editable,
+  };
+
+  // client response
+  res.status(200).json({
+    success: true,
+    question: data,
+  });
+};
+
 // When exporting all collected data
 let keys = Object.keys(obj);
 // exclude some functions
