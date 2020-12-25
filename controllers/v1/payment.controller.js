@@ -14,7 +14,7 @@ const ErrorResponse = require("../../utils/errorResponse");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
-obj.buyProduct = async (req, res, next) => {
+obj.buyTscAndTcc = async (req, res, next) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   // init data
@@ -36,11 +36,7 @@ obj.buyProduct = async (req, res, next) => {
       where: { type: 3, status: true },
     });
 
-  // tsc = tsc.data;
-  // tcc = tcc.data;
-  // tscUnlimitedPrice = tscUnlimitedPrice.data;
-  // tccUnlimitedPrice = tccUnlimitedPrice.data;
-
+  // client data
   let data = { userId: req.user.id },
     { body } = req; // body: { tsc, tcc }
 
