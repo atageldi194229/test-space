@@ -25,10 +25,16 @@ const model = (sequelize, DataTypes) => {
         allowNull: false,
         comment: "number of question included in the test",
       },
-      users: {
+      invitedUsers: {
         type: DataTypes.TEXT,
         allowNull: false,
         comment: "json array, includes ids of invited users",
+      },
+      participantCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "number of participants",
       },
       correctAnswerAverage: {
         type: DataTypes.FLOAT,
