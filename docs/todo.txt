@@ -1,2 +1,2 @@
 1 - create trigger when user_results created add one to solve count of questions
-2 - 
+2 - tokenin wagty gutarsa hokman tazeden login bolmalydyr, onda tokenin wagty gutarandygyny nadip bilmeli
