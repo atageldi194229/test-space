@@ -45,8 +45,9 @@ obj.buyTscAndTcc = async (req, res, next) => {
     data.isTscUnlimited = true;
     data.tscPriceId = tscUnlimitedPrice.id;
   } else {
-    data.tsc = Number(body.tsc);
+    data.tsc = Number(body.tsc) || 0;
 
+    // finding price of tsc
     let a = -1,
       v = JSON.parse(tsc.data);
     for (let i = 0; i < v.length; i++) {
@@ -65,8 +66,9 @@ obj.buyTscAndTcc = async (req, res, next) => {
     data.isTccUnlimited = true;
     data.tccPriceId = tccUnlimitedPrice.id;
   } else {
-    data.tcc = Number(body.tcc);
+    data.tcc = Number(body.tcc) || 0;
 
+    // finding price of tcc
     let a = -1,
       v = JSON.parse(tcc.data);
     for (let i = 0; i < v.length; i++) {
@@ -79,6 +81,8 @@ obj.buyTscAndTcc = async (req, res, next) => {
     data.tccMoney = a * data.tcc;
     data.tccPriceId = tcc.id;
   }
+
+  let payment = await Payment.create(data);
 
   // res to the client with token
   res.status(200).json({
