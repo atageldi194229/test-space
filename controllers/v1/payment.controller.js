@@ -14,6 +14,12 @@ const ErrorResponse = require("../../utils/errorResponse");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
+/**
+ * buy tsc and tcc
+ * action - /v1/payment/buy
+ * method - post
+ * token
+ */
 obj.buyTscAndTcc = async (req, res, next) => {
   console.log(JSON.stringify(req.body, null, 2));
 
@@ -118,6 +124,26 @@ obj.canSendInvitation = async (req, res, next) => {
       canSend: data.canSend,
       tsc: data.tsc,
       dublicatedUsers: data.dublicatedUsers,
+    },
+  });
+};
+
+/**
+ * check if client can create test
+ * action - /v1/payment/tcc/check
+ * method - post
+ * token
+ */
+obj.canCreateTest = async (req, res, next) => {
+  // response db
+  let data = await Payment.canCreateTest(req.user.id);
+
+  // client response
+  res.status(200).json({
+    success: true,
+    data: {
+      canSend: data.canSend,
+      tcc: data.tcc,
     },
   });
 };

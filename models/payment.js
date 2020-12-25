@@ -184,6 +184,70 @@ const methods = ({ Payment, GroupUser, Sequelize: { Op } }) => {
 
     return false;
   };
+
+  Payment.canCreateTest = async (userId) => {
+    // calculation starts
+    let testCount = 1,
+      canSend = false,
+      tcc = {};
+
+    // calculation request db
+    let days30 = 30 * 24 * 60 * 60 * 1000;
+    let payments = await Payment.findAll({
+      where: {
+        allowedAt: {
+          [Op.gte]: new Date(new Date() - days30),
+        },
+        status: 1,
+        userId,
+      },
+      // order: [["createdAt", "asc"]],
+    });
+
+    for (let i = 0; i < payments.length; i++) {
+      if (payments[i].isTccUnlimited === true) canSend = true;
+      else testCount -= payments[i].tcc - payments[i].tccUsed;
+    }
+    if (canSend) tcc.rest = "unlimited";
+
+    tcc.need = 1; // gerekli bolan tcc
+    tcc.lack = canSend || testCount < 0 ? 0 : testCount; // yene shuncha tcc gerek
+    tcc.rest = tcc.rest || (-testCount < 0 ? 0 : -testCount); // shuncha galar
+
+    if (testCount <= 0) canSend = true;
+    // calculation ends
+
+    return {
+      canSend,
+      tcc,
+
+      userId,
+      payments,
+    };
+  };
+
+  Payment.useTcc = async (userId, { tccCount, payments }) => {
+    for (let i = 0; i < payments.length; i++) {
+      let tcc = payments[i].tcc,
+        tccUsed = payments[i].tccUsed,
+        isTccUnlimited = payments[i].isTccUnlimited;
+
+      let a = tcc - tccUsed;
+      if (isTccUnlimited || tccCount < a) {
+        tccUsed += tccCount;
+        tccCount = 0;
+      } else {
+        tccCount -= a;
+        tccUsed = tcc;
+      }
+
+      await payments[i].update({ tccUsed });
+
+      if (tccCount <= 0) return true;
+    }
+
+    return false;
+  };
 };
 
 module.exports = { model, methods };
