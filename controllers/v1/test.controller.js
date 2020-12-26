@@ -7,7 +7,6 @@ const {
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
-const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
 obj.create = async (req, res) => {
