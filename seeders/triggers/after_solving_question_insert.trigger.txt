@@ -1,0 +1,7 @@
+CREATE TRIGGER after_solving_question_insert AFTER INSERT ON solving_questions FOR EACH ROW BEGIN
+    IF NEW.is_correct = '1' THEN
+        UPDATE user_results SET user_results.correct_answer_count = user_results.correct_answer_count + 1 WHERE user_results.id = NEW.user_result_id;
+    ELSE
+        UPDATE user_results SET user_results.incorrect_answer_count = user_results.incorrect_answer_count + 1 WHERE user_results.id = NEW.user_result_id;
+    END IF;
+END;

@@ -1,16 +1,3 @@
-# Files
-
-- question-json-models.json
-- testPlatform.postman_collection.json
-
-# !!!
-
-tokenin wagty gutarsa hokman tazeden login bolmalydyr, onda tokenin wagty gutarandygyny nadip bilmeli
-
-# Seeders
-
-addSomeRows.js - diyen file - da test uchin tayyar row - lar durandyr, node bilen ishledip goybersen boldy
-
 # About question model
 
 question type bazada integer gornishinde saklanylyar

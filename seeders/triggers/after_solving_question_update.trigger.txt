@@ -1,0 +1,11 @@
+CREATE TRIGGER after_solving_question_update AFTER UPDATE ON solving_questions FOR EACH ROW BEGIN
+    IF NEW.is_correct = '1' AND OLD.is_correct = '0' THEN
+        UPDATE user_results SET
+            user_results.correct_answer_count = user_results.correct_answer_count + 1,
+            user_results.incorrect_answer_count = user_results.incorrect_answer_count - 1 WHERE user_results.id = NEW.user_result_id;
+    ELSEIF NEW.is_correct = '0' AND OLD.is_correct = '1' THEN
+        UPDATE user_results SET
+            user_results.correct_answer_count = user_results.correct_answer_count - 1,
+            user_results.incorrect_answer_count = user_results.incorrect_answer_count + 1 WHERE user_results.id = NEW.user_result_id;
+    END IF;
+END;

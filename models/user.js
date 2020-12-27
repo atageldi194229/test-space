@@ -52,13 +52,19 @@ const model = (sequelize, DataTypes) => {
     // associations there
     User.hasMany(models.Payment, { foreignKey: "userId" });
     User.hasMany(models.Test, { foreignKey: "userId" });
+    User.hasMany(models.SolvingTest, { foreignKey: "userId" });
     User.hasMany(models.Group, { foreignKey: "userId" });
+    User.hasMany(models.UserResult, { foreignKey: "userId" });
     User.belongsToMany(models.Group, {
       through: "GroupUser",
       foreignKey: "userId",
     });
     User.belongsToMany(models.Notification, {
       through: { model: "NotificationUser" },
+      foreignKey: "userId",
+    });
+    User.belongsToMany(models.Test, {
+      through: { model: "PinnedTest" },
       foreignKey: "userId",
     });
   };

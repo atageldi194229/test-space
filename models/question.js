@@ -27,6 +27,31 @@ const model = (sequelize, DataTypes) => {
         comment:
           "can be edited or not, biri birinji gezek cozse hemishelik FALSE bolyar",
       },
+
+      solveCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "how many times this question is solved",
+      },
+      correctCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "how many correct answered results",
+      },
+      incorrectCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "how many incorrect answered results",
+      },
+      emptyCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "how many empty answered results",
+      },
     },
     {
       charset: "utf8mb4",
@@ -39,10 +64,8 @@ const model = (sequelize, DataTypes) => {
   Question.associate = function (models) {
     // associations there
 
-    Question.belongsTo(models.Test, {
-      foreignKey: "testId",
-      comment: "test id which belongs this question",
-    });
+    Question.belongsTo(models.Test, { foreignKey: "testId" });
+    Question.hasMany(models.SolvingQuestion, { foreignKey: "questionId" });
   };
 
   return Question;

@@ -7,7 +7,6 @@ const {
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
-const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
 obj.create = async (req, res) => {
@@ -24,6 +23,12 @@ obj.create = async (req, res) => {
     keywords,
   } = req.body;
 
+  // check if client can create test
+  let data = await Payment.canCreateTest(req.user.id);
+
+  // error test
+  if (!data.canSend) return next(new ErrorResponse("Could not create test"));
+
   // save to db
   let test = await Test.create({
     name,
@@ -34,6 +39,12 @@ obj.create = async (req, res) => {
     language,
     keywords,
     userId: req.user.id,
+  });
+
+  // now let's eat user's tcc
+  let isTccUsed = await Payment.useTcc(req.user.id, {
+    tccCount: data.tcc.need,
+    payments: data.payments,
   });
 
   // res to the client with token

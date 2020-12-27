@@ -14,7 +14,13 @@ const ErrorResponse = require("../../utils/errorResponse");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
-obj.buyProduct = async (req, res, next) => {
+/**
+ * buy tsc and tcc
+ * action - /v1/payment/buy
+ * method - post
+ * token
+ */
+obj.buyTscAndTcc = async (req, res, next) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   // init data
@@ -36,11 +42,7 @@ obj.buyProduct = async (req, res, next) => {
       where: { type: 3, status: true },
     });
 
-  // tsc = tsc.data;
-  // tcc = tcc.data;
-  // tscUnlimitedPrice = tscUnlimitedPrice.data;
-  // tccUnlimitedPrice = tccUnlimitedPrice.data;
-
+  // client data
   let data = { userId: req.user.id },
     { body } = req; // body: { tsc, tcc }
 
@@ -49,8 +51,9 @@ obj.buyProduct = async (req, res, next) => {
     data.isTscUnlimited = true;
     data.tscPriceId = tscUnlimitedPrice.id;
   } else {
-    data.tsc = Number(body.tsc);
+    data.tsc = Number(body.tsc) || 0;
 
+    // finding price of tsc
     let a = -1,
       v = JSON.parse(tsc.data);
     for (let i = 0; i < v.length; i++) {
@@ -69,8 +72,9 @@ obj.buyProduct = async (req, res, next) => {
     data.isTccUnlimited = true;
     data.tccPriceId = tccUnlimitedPrice.id;
   } else {
-    data.tcc = Number(body.tcc);
+    data.tcc = Number(body.tcc) || 0;
 
+    // finding price of tcc
     let a = -1,
       v = JSON.parse(tcc.data);
     for (let i = 0; i < v.length; i++) {
@@ -83,6 +87,8 @@ obj.buyProduct = async (req, res, next) => {
     data.tccMoney = a * data.tcc;
     data.tccPriceId = tcc.id;
   }
+
+  let payment = await Payment.create(data);
 
   // res to the client with token
   res.status(200).json({
@@ -118,6 +124,26 @@ obj.canSendInvitation = async (req, res, next) => {
       canSend: data.canSend,
       tsc: data.tsc,
       dublicatedUsers: data.dublicatedUsers,
+    },
+  });
+};
+
+/**
+ * check if client can create test
+ * action - /v1/payment/tcc/check
+ * method - post
+ * token
+ */
+obj.canCreateTest = async (req, res, next) => {
+  // response db
+  let data = await Payment.canCreateTest(req.user.id);
+
+  // client response
+  res.status(200).json({
+    success: true,
+    data: {
+      canSend: data.canSend,
+      tcc: data.tcc,
     },
   });
 };
