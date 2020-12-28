@@ -7,6 +7,8 @@ const {
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
+const { update } = require("./question.controller");
+const { ErrorResponse } = require("../../utils");
 const obj = {};
 
 obj.create = async (req, res) => {
@@ -51,6 +53,48 @@ obj.create = async (req, res) => {
   res.status(200).json({
     success: true,
     testId: test.id,
+  });
+};
+
+/**
+ * update test data
+ * action - /v1/tests/:id
+ * method - put
+ * token
+ */
+obj.update = async (req, res, next) => {
+  // client data
+  let {
+      name,
+      description,
+      isRandom,
+      isPublic,
+      isAllowed,
+      language,
+      keywords,
+    } = req.body,
+    userId = req.user.id,
+    id = req.params.id;
+
+  // save to db
+  let updatedRows = await Test.update(
+    {
+      name,
+      description,
+      isRandom,
+      isPublic,
+      isAllowed,
+      language,
+      keywords,
+    },
+    { where: { userId, id } }
+  );
+
+  if (!updatedRows) return next(new ErrorResponse("Couldn't update"));
+
+  // res to the client with token
+  res.status(200).json({
+    success: true,
   });
 };
 
