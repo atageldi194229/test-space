@@ -103,6 +103,7 @@ obj.findUsers = async (req, res) => {
   // request db
   let users = await User.findAll({
     where: {
+      active: true,
       username: sequelize.where(
         sequelize.fn("LOWER", sequelize.col("User.username")),
         "LIKE",
