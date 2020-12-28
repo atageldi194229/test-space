@@ -1,5 +1,7 @@
 "use strict";
 
+const { randomizeArray } = require("../utils");
+
 const model = (sequelize, DataTypes) => {
   let Question = sequelize.define(
     "Question",
@@ -63,6 +65,23 @@ const model = (sequelize, DataTypes) => {
   };
 
   return Question;
+};
+
+const methods = ({ Question }) => {
+  Question.prototype.getPreparedData = () => {
+    let data = JSON.parse(this.data);
+    delete data.correct;
+
+    if (this.isRandom === true) {
+      if ([0, 1].indexOf(this.type) > -1) randomizeArray(data.answers, 10);
+      if (this.type === 4) {
+        randomizeArray(data.answers.col1, 5);
+        randomizeArray(data.answers.col2, 5);
+      }
+    }
+
+    return data;
+  };
 };
 
 module.exports = { model };
