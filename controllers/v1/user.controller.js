@@ -10,6 +10,81 @@ const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
 /**
+ * get my profile
+ * action - /v1/users/my/account
+ * method - get
+ * token
+ */
+obj.getMyAccount = async (req, res, next) => {
+  // client data
+  let id = req.user.id;
+
+  let keys = [
+    "username",
+    "firstName",
+    "lastName",
+    "email",
+    "image",
+    "birthDate",
+    "phoneNumber",
+    "country",
+    "city",
+    "gender",
+    "job",
+    "bio",
+  ];
+
+  // request db
+  let user = await User.findOne({
+    where: { id },
+    attributes: [...keys.map((e) => e), ...keys.map((e) => e + "A")],
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    user,
+  });
+};
+
+/**
+ * update my profile
+ * action - /v1/users/my/account
+ * method - put
+ * token
+ */
+obj.updateMyAccount = async (req, res, next) => {
+  // client data
+  let id = req.user.id;
+
+  let keys = [
+    "firstName",
+    "lastName",
+    "birthDate",
+    "country",
+    "city",
+    "gender",
+    "job",
+    "bio",
+  ];
+
+  // prepare data to update
+  let data = {};
+  for (let key in keys) {
+    data[key] = req.body[key];
+    data[key] = req.body[key + "A"];
+  }
+
+  // request db
+  let user = await User.update(data, { where: { id } });
+
+  // client response
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
  * Search users by their username
  * action - /v1/users/find
  * method - post
