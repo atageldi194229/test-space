@@ -84,4 +84,4 @@ const methods = ({ Question }) => {
   };
 };
 
-module.exports = { model };
+module.exports = { model, methods };
