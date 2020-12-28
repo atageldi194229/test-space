@@ -11,6 +11,12 @@ const { update } = require("./question.controller");
 const { ErrorResponse } = require("../../utils");
 const obj = {};
 
+/**
+ * create test
+ * action - /v1/tests
+ * method - post
+ * token
+ */
 obj.create = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
