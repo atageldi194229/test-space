@@ -1,5 +1,7 @@
 "use strict";
 
+const { randomizeArray } = require("../utils");
+
 const model = (sequelize, DataTypes) => {
   let Question = sequelize.define(
     "Question",
@@ -46,12 +48,6 @@ const model = (sequelize, DataTypes) => {
         allowNull: false,
         comment: "how many incorrect answered results",
       },
-      emptyCount: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-        allowNull: false,
-        comment: "how many empty answered results",
-      },
     },
     {
       charset: "utf8mb4",
@@ -71,4 +67,51 @@ const model = (sequelize, DataTypes) => {
   return Question;
 };
 
-module.exports = { model };
+const methods = ({ Question }) => {
+  Question.prototype.getPreparedData = () => {
+    let data = JSON.parse(this.data);
+    delete data.correct;
+
+    if (this.isRandom === true) {
+      if ([0, 1].indexOf(this.type) > -1) randomizeArray(data.answers, 10);
+      if (this.type === 4) {
+        randomizeArray(data.answers.col1, 5);
+        randomizeArray(data.answers.col2, 5);
+      }
+    }
+
+    return data;
+  };
+
+  Question.prototype.isAnswerCorrect = (answer) => {
+    let isCorrect = false;
+    let { correct } = JSON.parse(this.data);
+
+    if (this.type === 1 && correct.length === answer.length) {
+      correct.sort((a, b) => a - b);
+      answer.sort((a, b) => a - b);
+      isCorrect = true;
+      for (let i = 0; i < correct.length; i++) {
+        if (correct[i] !== answer[i]) {
+          isCorrect = false;
+          break;
+        }
+      }
+    } else if (
+      this.type === 4 &&
+      Object.keys(answer).length === Object.keys(correct).length
+    ) {
+      isCorrect = true;
+      for (let i in answer) {
+        if (correct[i] !== answer[i]) {
+          isCorrect = false;
+          break;
+        }
+      }
+    } else if (answer === correct) isCorrect = true;
+
+    return isCorrect;
+  };
+};
+
+module.exports = { model, methods };

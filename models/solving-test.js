@@ -48,12 +48,6 @@ const model = (sequelize, DataTypes) => {
         allowNull: false,
         comment: "average of incorrect answers",
       },
-      emptyAnswerAverage: {
-        type: DataTypes.FLOAT,
-        defaultValue: 0,
-        allowNull: false,
-        comment: "average of empty answers",
-      },
     },
     {
       charset: "utf8mb4",

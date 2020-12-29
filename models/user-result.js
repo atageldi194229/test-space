@@ -24,12 +24,6 @@ const model = (sequelize, DataTypes) => {
         allowNull: false,
         comment: "count of incorrect answered questions",
       },
-      emptyAnswerCount: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-        allowNull: false,
-        comment: "count of not answered questions",
-      },
     },
     {
       charset: "utf8mb4",
