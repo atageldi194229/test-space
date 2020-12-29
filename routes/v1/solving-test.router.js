@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const { getAll, solveTest } = require("../../controllers").V1.TestController;
+const {
+  getAll,
+  solveTest,
+} = require("../../controllers").V1.SolvingTestController;
 
 const { verify } = require("../../middleware").JwtMiddleware;
 
