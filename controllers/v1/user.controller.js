@@ -122,14 +122,14 @@ obj.findUsers = async (req, res) => {
 };
 
 /**
- * get user by username
- * action - /v1/users/atasan
+ * get user by id
+ * action - /v1/users/:id
  * method - get
  * token
  */
-obj.getOneByName = async (req, res, next) => {
+obj.getOne = async (req, res, next) => {
   // client data
-  let { username } = req.params;
+  let { id } = req.params;
 
   let keys = [
     "username",
@@ -148,7 +148,7 @@ obj.getOneByName = async (req, res, next) => {
 
   // request db
   let user = await User.findOne({
-    where: { username },
+    where: { id },
     attributes: [...keys.map((e) => e), ...keys.map((e) => e + "A")],
   });
 
