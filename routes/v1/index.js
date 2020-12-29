@@ -12,6 +12,7 @@ const UserRouter = require("./user.router");
 const GroupRouter = require("./group.router");
 const PaymentRouter = require("./payment.router");
 const NotificationRouter = require("./notification.router");
+const SolvingTestRouter = require("./solving-test.router");
 const UserResultRouter = require("./user-result.router");
 // middleware
 const { getUser } = require("../../middleware/jwt.middleware");
@@ -24,6 +25,7 @@ ApiV1Router.use("/users", UserRouter);
 ApiV1Router.use("/groups", GroupRouter);
 ApiV1Router.use("/payments", PaymentRouter);
 ApiV1Router.use("/notifications", NotificationRouter);
+ApiV1Router.use("/solving-tests", SolvingTestRouter);
 ApiV1Router.use("/user-results", UserResultRouter);
 ApiV1Router.use("/", AuthRouter);
 
