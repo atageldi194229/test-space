@@ -82,6 +82,36 @@ const methods = ({ Question }) => {
 
     return data;
   };
+
+  Question.prototype.isAnswerCorrect = (answer) => {
+    let isCorrect = false;
+    let { correct } = JSON.parse(this.data);
+
+    if (this.type === 1 && correct.length === answer.length) {
+      correct.sort((a, b) => a - b);
+      answer.sort((a, b) => a - b);
+      isCorrect = true;
+      for (let i = 0; i < correct.length; i++) {
+        if (correct[i] !== answer[i]) {
+          isCorrect = false;
+          break;
+        }
+      }
+    } else if (
+      this.type === 4 &&
+      Object.keys(answer).length === Object.keys(correct).length
+    ) {
+      isCorrect = true;
+      for (let i in answer) {
+        if (correct[i] !== answer[i]) {
+          isCorrect = false;
+          break;
+        }
+      }
+    } else if (answer === correct) isCorrect = true;
+
+    return isCorrect;
+  };
 };
 
 module.exports = { model, methods };
