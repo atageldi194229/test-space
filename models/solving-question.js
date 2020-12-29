@@ -34,4 +34,15 @@ const model = (sequelize, DataTypes) => {
   return SolvingQuestion;
 };
 
-module.exports = { model };
+const methods = ({ SolvingQuestion }) => {
+  SolvingQuestion.upsert = (values, condition) => {
+    return SolvingQuestion.findOne({ where: condition }).then(function (obj) {
+      // update
+      if (obj) return obj.update(values);
+      // insert
+      return SolvingQuestion.create({ ...values, ...condition });
+    });
+  };
+};
+
+module.exports = { model, methods };
