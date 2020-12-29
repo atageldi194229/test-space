@@ -128,6 +128,33 @@
 								"description": "uses token"
 							},
 							"response": []
+						},
+						{
+							"name": "user checker",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\":\"\",\r\n    \"email\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/user-checker",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"user-checker"
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -168,6 +195,103 @@
 									"path": [
 										"v1",
 										"tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"\",\r\n    \"description\": \"\",\r\n    \"isRandom\": false,\r\n    \"isPublic\": true,\r\n    \"isAllowed\": true,\r\n    \"language\": \"\",\r\n    \"keywords\": \"sport nahar top\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/tests/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAll",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/tests",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get one",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/tests/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"1"
 									]
 								}
 							},
@@ -243,6 +367,64 @@
 								"description": "req:\r\nformdata:\r\n-> file1 = file\r\n-> file2 = file\r\n-> data = JSON data\r\n-> isRandom = boolean\r\n-> testId = test id which belongTo this question"
 							},
 							"response": []
+						},
+						{
+							"name": "get one",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/questions/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"questions",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/questions/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"questions",
+										"1"
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -304,6 +486,96 @@
 								"description": "req: {\r\n    \"text\": \"atasan\"\r\n}\r\n\r\nres: {\r\n    \"success\": true,\r\n    \"users\": [\r\n        {\r\n            \"id\": 1,\r\n            \"username\": \"atasan\"\r\n        }\r\n    ]\r\n}"
 							},
 							"response": []
+						},
+						{
+							"name": "get my account",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/users/my/account",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"my",
+										"account"
+									]
+								},
+								"description": "send token and you will get your data"
+							},
+							"response": []
+						},
+						{
+							"name": "update my account",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"firstName\": \"\",\r\n    \"lastName\": \"\",\r\n    \"birthDate\": \"\",\r\n    \"country\": \"\",\r\n    \"city\": \"\",\r\n    \"gender\": true,\r\n    \"job\": \"\",\r\n    \"bio\": \"\",\r\n\r\n    \"firstNameA\": \"\",\r\n    \"lastNameA\": \"\",\r\n    \"birthDateA\": \"\",\r\n    \"countryA\": \"\",\r\n    \"cityA\": \"\",\r\n    \"genderA\": \"\",\r\n    \"jobA\": \"\",\r\n    \"bioA\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/users/my/account",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"my",
+										"account"
+									]
+								},
+								"description": "you can change only this data: \r\n[\r\n    \"firstName\",\r\n    \"lastName\",\r\n    \"birthDate\",\r\n    \"country\",\r\n    \"city\",\r\n    \"gender\",\r\n    \"job\",\r\n    \"bio\",\r\n    \"firstNameA\",\r\n    \"lastNameA\",\r\n    \"birthDateA\",\r\n    \"countryA\",\r\n    \"cityA\",\r\n    \"genderA\",\r\n    \"jobA\",\r\n    \"bioA\",\r\n  ]\r\n\r\n  gender -> boolean (true - boy, false - girl )"
+							},
+							"response": []
+						},
+						{
+							"name": "get one by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/users/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -315,7 +587,7 @@
 						{
 							"name": "buy TSC&TCC",
 							"request": {
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"url": {
 									"raw": "{{URL}}/v1/payments",
@@ -363,6 +635,45 @@
 										"v1",
 										"payments",
 										"tsc",
+										"check"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "check can user create test",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/payments/tcc/check",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"payments",
+										"tcc",
 										"check"
 									]
 								}
@@ -786,6 +1097,207 @@
 										"notifications",
 										"1",
 										"read"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/notification/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"notification",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "user results",
+					"item": [
+						{
+							"name": "solve question",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"answer\": 3\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/user-results/1/questions/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"user-results",
+										"1",
+										"questions",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "remove solved question",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/user-results/1/questions/2",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"user-results",
+										"1",
+										"questions",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "solving tests",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/solving-tests",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"solving-tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "can solve test",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/solving-tests/1/can-solve",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"solving-tests",
+										"1",
+										"can-solve"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "start solve test",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/solving-tests/1/start-solve",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"solving-tests",
+										"1",
+										"start-solve"
 									]
 								}
 							},
