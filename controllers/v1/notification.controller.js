@@ -4,6 +4,7 @@ const {
   User,
   Notification,
   NotificationUser,
+  SolvingTest,
   sequelize,
   Payment,
   GroupUser,
@@ -23,8 +24,10 @@ const obj = {};
  * token
  */
 obj.sendInvitation = async (req, res, next) => {
+  _;
   // get from client
-  let { userIds, groupIds, testId } = req.body;
+  let { userIds, groupIds, testId, startTime, endTime, solveTime } = req.body,
+    userId = req.user.id;
 
   // validate data
   userIds = userIds || [];
@@ -33,7 +36,7 @@ obj.sendInvitation = async (req, res, next) => {
     return next(new ErrorResponse("Validation error"));
 
   // check if client can send invitaition
-  let data = await Payment.canSendInvitation(req.user.id, {
+  let data = await Payment.canSendInvitation(userId, {
     userIds,
     groupIds,
   });
@@ -43,7 +46,7 @@ obj.sendInvitation = async (req, res, next) => {
     return next(new ErrorResponse("Could not send invitation"));
 
   // request db (set used to payment tsc)
-  let isTscUsed = await Payment.useTsc(req.user.id, {
+  let isTscUsed = await Payment.useTsc(userIds, {
     tscCount: data.tsc.need,
     payments: data.payments,
   });
@@ -52,10 +55,20 @@ obj.sendInvitation = async (req, res, next) => {
   if (!isTscUsed)
     return next(new ErrorResponse("Error when using tsc from payment"));
 
+  // request db (create solvingTest)
+  let solvingTest = await SolvingTest.create({
+    testId,
+    userId,
+    startTime,
+    endTime,
+    solveTime,
+    invitedUsers: JSON.stringify(data.userIds),
+  });
+
   // send invitation start
   // via notification
   let notification = await Notification.create({
-    content: `You invited to test with id ${testId}`,
+    content: `You invited to solving_test with id ${solvingTest.id}`,
   });
   let updatedRows = await NotificationUser.bulkCreate(
     data.userIds.map((userId) => ({
@@ -70,14 +83,18 @@ obj.sendInvitation = async (req, res, next) => {
       attributes: ["email"],
     })
   ).map((e) => e.email);
-  await Mailer.sendTestInvitation({ to, testId, userId: req.user.id }).catch(
-    console.log
-  );
+  await Mailer.sendTestInvitation({
+    to,
+    testId: solvingTest.id, // correct it
+    userId: req.user.id,
+  }).catch(console.log);
   // send invitation end
 
   // res to the client with token
   res.status(200).json({
     success: true,
+    link: "www.testSpace.com.tm/solve-test/" + SolvingTest.id,
+    solvingTestId: solvingTest.id,
   });
 };
 
