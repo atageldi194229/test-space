@@ -60,7 +60,7 @@ class Mailer {
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
   }
 
-  async sendTestInvitation({ to, testId, userId }) {
+  async sendTestInvitation({ to, link, userId }) {
     let str = "";
     if (to.length > 0) str += to[0];
     for (let i = 1; i < to.length; i++) str += `,${to[i]}`;
@@ -68,7 +68,7 @@ class Mailer {
     await this.sendMail({
       to: str,
       subject: `Invitation`,
-      text: `You invited to test with id ${testId} by user id ${userId}`,
+      text: `You invited to solve test. Link: ${link}`,
     });
   }
 }

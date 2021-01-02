@@ -63,12 +63,16 @@ obj.sendInvitation = async (req, res, next) => {
     endTime,
     solveTime,
     invitedUsers: JSON.stringify(data.userIds),
+    link,
   });
 
   // send invitation start
   // via notification
   let notification = await Notification.create({
-    content: `You invited to solving_test with id ${solvingTest.id}`,
+    content: `You invited to solve test. Link: ${link.replace(
+      ":id",
+      solvingTest.id
+    )}`,
   });
   let updatedRows = await NotificationUser.bulkCreate(
     data.userIds.map((userId) => ({
@@ -85,6 +89,7 @@ obj.sendInvitation = async (req, res, next) => {
   ).map((e) => e.email);
   await Mailer.sendTestInvitation({
     to,
+    link: link.replace(":id", solvingTest.id),
     testId: solvingTest.id, // correct it
     userId: req.user.id,
   }).catch(console.log);
