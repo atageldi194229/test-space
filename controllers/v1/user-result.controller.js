@@ -40,13 +40,7 @@ obj.solveQuestion = async (req, res, next) => {
     return next(new ErrorResponse("Permission denied"));
 
   // time test
-  if (
-    !(
-      !userResult.finishedAt &&
-      userResult.startAt + solvingTest.solveTime > new Date() &&
-      solvingTest.endTime > new Date()
-    )
-  )
+  if (!solvingTest.isTimeToSolve(userResult))
     return next(new ErrorResponse("It is not time to solve"));
 
   // knowing is it correct answer
