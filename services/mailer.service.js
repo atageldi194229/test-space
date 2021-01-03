@@ -8,12 +8,12 @@ const mailer = require("../config/mailer.json");
 const oAuth2Client = new google.auth.OAuth2(
   mailer.OAuth2.clientId,
   mailer.OAuth2.clientSecret,
-  mailer.OAuth2.redirectUri,
+  mailer.OAuth2.redirectUri
 );
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 class Mailer {
-  constructor() {
+  async constructor() {
     const accessToken = await oAuth2Client.getAccessToken();
     // create reusable transporter object using the default SMTP transport
     this.transporter = nodemailer.createTransport({
@@ -27,7 +27,7 @@ class Mailer {
         clientId: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
         refreshToken: REFRESH_TOKEN,
-        accessToken, 
+        accessToken,
         // user: mailerConfig.user, // testAccount.user, // generated ethereal user
         // pass: mailerConfig.pass, // testAccount.pass, // generated ethereal password
       },
