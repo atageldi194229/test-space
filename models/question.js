@@ -68,13 +68,13 @@ const model = (sequelize, DataTypes) => {
 };
 
 const methods = ({ Question }) => {
-  Question.prototype.getPreparedData = () => {
-    let data = JSON.parse(this.data);
+  Question.prototype.getPreparedData = (obj) => {
+    let data = JSON.parse(obj.data);
     delete data.correct;
 
-    if (this.isRandom === true) {
-      if ([0, 1].indexOf(this.type) > -1) randomizeArray(data.answers, 10);
-      if (this.type === 4) {
+    if (obj.isRandom === true) {
+      if ([0, 1].indexOf(obj.type) > -1) randomizeArray(data.answers, 10);
+      if (obj.type === 4) {
         randomizeArray(data.answers.col1, 5);
         randomizeArray(data.answers.col2, 5);
       }
@@ -83,11 +83,11 @@ const methods = ({ Question }) => {
     return data;
   };
 
-  Question.prototype.isAnswerCorrect = (answer) => {
+  Question.prototype.isAnswerCorrect = (obj, answer) => {
     let isCorrect = false;
-    let { correct } = JSON.parse(this.data);
+    let { correct } = JSON.parse(obj.data);
 
-    if (this.type === 1 && correct.length === answer.length) {
+    if (obj.type === 1 && correct.length === answer.length) {
       correct.sort((a, b) => a - b);
       answer.sort((a, b) => a - b);
       isCorrect = true;
@@ -98,7 +98,7 @@ const methods = ({ Question }) => {
         }
       }
     } else if (
-      this.type === 4 &&
+      obj.type === 4 &&
       Object.keys(answer).length === Object.keys(correct).length
     ) {
       isCorrect = true;

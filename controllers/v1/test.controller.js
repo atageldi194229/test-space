@@ -104,11 +104,64 @@ obj.update = async (req, res, next) => {
   });
 };
 
-// temporary function
+/**
+ * get all tests by userId
+ * action - /v1/tests
+ * method - get
+ * token
+ */
 obj.getAll = async (req, res) => {
-  // get data from db
-  let tests = await Test.findAll();
+  // client data
+  const userId = req.user.id,
+    limit = parseInt(req.params.limit) || 20,
+    offset = parseInt(req.params.offset) || 0;
 
+  // get data from db
+  let tests = await Test.findAll({
+    limit,
+    offset,
+    order: [["createdAt", "desc"]],
+    where: { userId },
+    attributes: [
+      "id",
+      "name",
+      "description",
+      "isRandom",
+      "isPublic",
+      "isAllowed",
+      "image",
+      "language",
+      "keywords",
+    ],
+  });
+
+  res.status(200).json({
+    success: true,
+    tests,
+  });
+};
+
+/**
+ * get all public tests
+ * action - /v1/tests/public
+ * method - get
+ * token
+ */
+obj.getPublic = async (req, res) => {
+  // client data
+  const limit = parseInt(req.params.limit) || 20,
+    offset = parseInt(req.params.offset) || 0;
+
+  // request db
+  let tests = await Test.findAll({
+    limit,
+    offset,
+    order: [["createdAt", "desc"]],
+    where: { isPublic: true },
+    attributes: ["id", "name", "description", "image", "language", "keywords"],
+  });
+
+  // client data
   res.status(200).json({
     success: true,
     tests,

@@ -1,3 +1,7 @@
 1 - create trigger when user_results created add one to solve count of questions
 2 - tokenin wagty gutarsa hokman tazeden login bolmalydyr, onda tokenin wagty gutarandygyny nadip bilmeli
 3 - middleware verify ichinde user-in accountynyn verify bolan bolmadygyny barla
+
+4 - codeError
+5 - tregger
+6 - maybe give popularity to tests
