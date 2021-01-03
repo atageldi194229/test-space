@@ -67,4 +67,14 @@ const model = (sequelize, DataTypes) => {
   return SolvingTest;
 };
 
-module.exports = { model };
+const methods = ({ SolvingTest }) => {
+  SolvingTest.prototype.isTimeToSolve = async function (userResult) {
+    return (
+      !userResult.finishedAt &&
+      userResult.startAt + solvingTest.solveTime > new Date() &&
+      solvingTest.endTime > new Date()
+    );
+  };
+};
+
+module.exports = { model, methods };
