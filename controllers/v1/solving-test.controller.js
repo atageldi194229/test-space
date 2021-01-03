@@ -175,11 +175,7 @@ obj.startSolvingTest = async (req, res, next) => {
         solvingTestId,
         userId,
       });
-    } else if (
-      !userResult.finishedAt &&
-      userResult.startAt + solvingTest.solveTime > new Date() &&
-      solvingTest.endTime > new Date()
-    ) {
+    } else if (solvingTest.isTimeToSolve(userResult)) {
       data.status = "solving";
     } else {
       return next(new ErrorResponse("It is not time to solve"));
