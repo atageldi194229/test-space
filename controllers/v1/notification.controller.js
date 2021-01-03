@@ -62,7 +62,7 @@ obj.sendInvitation = async (req, res, next) => {
     startTime,
     endTime,
     solveTime,
-    invitedUsers: JSON.stringify(data.userIds),
+    invitedUsers: JSON.stringify(data.userIds.map((e) => parseInt(e))),
     link,
   });
 
