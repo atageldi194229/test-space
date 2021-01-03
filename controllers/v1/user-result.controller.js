@@ -54,7 +54,7 @@ obj.solveQuestion = async (req, res, next) => {
     where: { id: questionId },
     attributes: ["type", "data"],
   });
-  let isCorrect = question.isAnswerCorrect(answer);
+  let isCorrect = question.isAnswerCorrect(question, answer);
 
   await SolvingQuestion.upsert(
     { answer, isCorrect },
