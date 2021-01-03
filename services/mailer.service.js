@@ -1,69 +1,77 @@
 "use strict";
 
 const nodemailer = require("nodemailer");
-const mailerConfig = require("../config/mailer");
+const { google } = require("googleapis");
+
+const mailer = require("../config/mailer.json");
+
+const oAuth2Client = new google.auth.OAuth2(
+  mailer.OAuth2.clientId,
+  mailer.OAuth2.clientSecret,
+  mailer.OAuth2.redirectUri
+);
+oAuth2Client.setCredentials({ refresh_token: mailer.OAuth2.refreshToken });
 
 class Mailer {
-  constructor() {
-    // create reusable transporter object using the default SMTP transport
-    this.transporter = nodemailer.createTransport({
-      host: mailerConfig.host,
-      port: mailerConfig.port,
-      secure: mailerConfig.secure, // true for 465, false for other ports
+  constructor() {}
+
+  async init() {
+    const transporterOptions = {
+      service: "gmail",
+      // host: mailer.host,
+      // port: mailer.port,
+      // secure: mailer.secure,
       auth: {
-        user: mailerConfig.user, // testAccount.user, // generated ethereal user
-        pass: mailerConfig.pass, // testAccount.pass, // generated ethereal password
+        type: "OAuth2",
+        user: mailer.user,
+        clientId: mailer.clientId,
+        clientSecret: mailer.clientSecret,
+        refreshToken: mailer.refreshToken,
+        accessToken: (await oAuth2Client.getAccessToken()).token,
       },
-    });
+    };
+
+    this.transporter = nodemailer.createTransport(transporterOptions);
   }
 
   async sendMail({ to, subject, text }) {
-    // Generate test SMTP service account from ethereal.email
-    // Only needed if you don't have a real mail account for testing
-    // let testAccount = await nodemailer.createTestAccount();
+    await this.init();
 
-    // send mail with defined transport object
-    let info = await this.transporter.sendMail({
-      from: `"Test Space 👻" <${mailerConfig.user}>`, // sender address
-      to, // "bar@example.com, baz@example.com", // list of receivers
-      subject, // Subject line
-      text, // plain text body
-      // html: "<b>Hello world?</b>", // html body
-    });
+    let payload = {
+      from: `"Test Space 👻" <${mailer.user}>`,
+      to,
+      subject,
+      text,
+    };
+
+    let info = await this.transporter.sendMail(payload);
 
     console.log("Message sent: %s", info.messageId);
-    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-    // Preview only available when sending through an Ethereal account
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
   }
 
   async sendVerificationCode(obj) {
-    // send mail with defined transport object
+    await this.init();
+
     let info = await this.transporter.sendMail({
-      from: `"Test Space 👻✉📝" <${mailerConfig.user}>`, // sender address
-      to: `${obj.to}`, // "bar@example.com, baz@example.com", // list of receivers
-      subject: "Verify your account", // Subject line
-      // text: "Authentication", // plain text body
+      from: `"Test Space 👻✉📝" <${mailer.user}>`,
+      to: `${obj.to}`,
+      subject: "Verify your account",
       html: `
         <b>Verification link</b> 
-        <a href="http://192.168.5.99:3007/v1/verify-code/${obj.verifyCode}">${obj.verifyCode}</a>
-      `, // html body
+        <a href="http://testspace.com.tm/api/v1/verify-code/${obj.verifyCode}">${obj.verifyCode}</a>
+      `,
     });
 
     console.log("Message sent: %s", info.messageId);
-    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-    // Preview only available when sending through an Ethereal account
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
   }
 
   async sendTestInvitation({ to, link, userId }) {
-    let str = "";
-    if (to.length > 0) str += to[0];
-    for (let i = 1; i < to.length; i++) str += `,${to[i]}`;
+    let str = to.join();
+
+    // if (to.length > 0) str += to[0];
+    // for (let i = 1; i < to.length; i++) str += `,${to[i]}`;
 
     await this.sendMail({
       to: str,
@@ -74,17 +82,3 @@ class Mailer {
 }
 
 module.exports = new Mailer();
-
-/*
-
-let message = {
-    ...
-    html: 'Embedded image: <img src="cid:unique@nodemailer.com"/>',
-    attachments: [{
-        filename: 'image.png',
-        path: '/path/to/file',
-        cid: 'unique@nodemailer.com' //same cid value as in the html img src
-    }]
-}
-
-*/
