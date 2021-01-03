@@ -194,7 +194,7 @@ obj.startSolvingTest = async (req, res, next) => {
     data.questions = questions.map((e) => ({
       id: e.id,
       type: e.type,
-      data: e.getPreparedData(),
+      data: e.getPreparedData(e),
     }));
 
     if ((solvingTest.Test.isRandom = true))
