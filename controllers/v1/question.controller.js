@@ -9,7 +9,6 @@ const {
 const asyncHandler = require("../../middleware/async");
 const ErrorResponse = require("../../utils/errorResponse");
 const { saveFile, deleteFiles } = require("../utils/fileUpload");
-const fs = require("fs");
 const obj = {};
 
 function getRndInteger(min, max) {
