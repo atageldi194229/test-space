@@ -118,7 +118,6 @@ obj.updateMyAccountImage = async (req, res, next) => {
  * Search users by their username
  * action - /v1/users/find
  * method - post
- * token
  */
 obj.findUsers = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
@@ -155,7 +154,6 @@ obj.findUsers = async (req, res) => {
  * get user by id
  * action - /v1/users/:id
  * method - get
- * token
  */
 obj.getOne = async (req, res, next) => {
   // client data
