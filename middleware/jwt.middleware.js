@@ -1,4 +1,5 @@
 const { JwtService } = require("../services");
+const ErrorResponse = require("../utils/errorResponse");
 
 class JwtMiddleware {
   constructor() {}
@@ -21,9 +22,7 @@ class JwtMiddleware {
     const bearer = req.header("Authorization") || "";
     const token = bearer.split(" ")[1];
     const valid = JwtService.verify(token);
-    return valid
-      ? next()
-      : res.status(401).json({ success: false, error: "Unauthorized" });
+    return valid ? next() : next(new ErrorResponse("Unauthorized", 1, 401));
   }
 
   hasRole(role) {
@@ -35,7 +34,7 @@ class JwtMiddleware {
       // console.Log(decoded, foundRole);
       return foundRole
         ? next()
-        : res.status(403).send({ error: "Access Denied" });
+        : next(new ErrorResponse("Access Denied", 2, 403));
     };
   }
 
@@ -49,7 +48,7 @@ class JwtMiddleware {
       );
       return foundAllRoles
         ? next()
-        : res.status(403).send({ error: "Access Denied" });
+        : next(new ErrorResponse("Access Denied", 2, 403));
     };
   }
 
@@ -61,7 +60,7 @@ class JwtMiddleware {
       const foundAnyRole = roles.some((e) => e === decoded.payload.role);
       return foundAnyRole
         ? next()
-        : res.status(403).send({ error: "Access Denied" });
+        : next(new ErrorResponse("Access Denied", 2, 403));
     };
   }
 }
