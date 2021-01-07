@@ -26,4 +26,4 @@ Gerekli bolan triggerler:
 + [user_results] (insert) bolanda [questions] - daki hemme teste degishli bolanlarynyn {solve_count, empty_count} diyen columna +1 goshmaly
     we [solving_tests] - den {participant_count} - yny +1 kopeltmeli we {empty_answer_average} - inin valuesyny update etmeli, eger shu modelde bashga update etmeli columnlar bolsa olaram etmeli
     we [this] modeldaki {empty_answer_count} - yny hem testin questionlerinin sanyny dakmaly
-+ [solving_tests] (insert, update, delete) [questions, user_results] modeldaki columnlary update etmeli
++ [solving_questions] (insert, update, delete) [questions, user_results] modeldaki columnlary update etmeli
