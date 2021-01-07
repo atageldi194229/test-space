@@ -6,7 +6,7 @@ const {
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
-const { v4: uuidv4 } = require("uuid");
+const { saveFile, deleteFile } = require("../../utils/fileUpload");
 const obj = {};
 
 /**
