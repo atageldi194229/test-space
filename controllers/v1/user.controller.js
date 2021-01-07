@@ -85,6 +85,36 @@ obj.updateMyAccount = async (req, res, next) => {
 };
 
 /**
+ * update my image
+ * action - /v1/users/my/account/image
+ * method - put
+ * token
+ */
+obj.updateMyAccountImage = async (req, res, next) => {
+  // client data
+  let id = req.user.id,
+    file = req.files["image"];
+
+  // request db
+  let user = await User.findOne({
+    where: { id },
+    attributes: ["image", "id"],
+  });
+
+  if (user.image) deleteFile(user.image);
+  let image = saveFile(file, "user");
+
+  // request db (save changes)
+  let updatedRows = await user.update({ image });
+  if (!updatedRows) return next(new ErrorResponse("Couldn't update"));
+
+  // res to the client with token
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
  * Search users by their username
  * action - /v1/users/find
  * method - post
