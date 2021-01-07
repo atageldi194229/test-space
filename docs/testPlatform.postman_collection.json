@@ -45,7 +45,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "15361267-679e-459c-a79d-0641e060fff2",
 										"exec": [
 											"let resData = JSON.parse(responseBody);\r",
 											"\r",
@@ -155,10 +154,19 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "login",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "tests",
@@ -239,7 +247,7 @@
 							"response": []
 						},
 						{
-							"name": "getAll",
+							"name": "get all",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -296,10 +304,67 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "update image",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/v1/tests/1/image",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"1",
+										"image"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get public",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/tests/public",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"public"
+									]
+								}
+							},
+							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "questions",
@@ -426,9 +491,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "prices",
@@ -451,9 +514,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "users",
@@ -531,7 +592,7 @@
 										}
 									]
 								},
-								"method": "POST",
+								"method": "PUT",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -559,6 +620,48 @@
 							"response": []
 						},
 						{
+							"name": "update my account image",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/v1/users/my/account/image",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"my",
+										"account",
+										"image"
+									]
+								},
+								"description": "you can change only this data: \r\n[\r\n    \"firstName\",\r\n    \"lastName\",\r\n    \"birthDate\",\r\n    \"country\",\r\n    \"city\",\r\n    \"gender\",\r\n    \"job\",\r\n    \"bio\",\r\n    \"firstNameA\",\r\n    \"lastNameA\",\r\n    \"birthDateA\",\r\n    \"countryA\",\r\n    \"cityA\",\r\n    \"genderA\",\r\n    \"jobA\",\r\n    \"bioA\",\r\n  ]\r\n\r\n  gender -> boolean (true - boy, false - girl )"
+							},
+							"response": []
+						},
+						{
 							"name": "get one by id",
 							"request": {
 								"method": "GET",
@@ -577,9 +680,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "payments",
@@ -587,7 +688,7 @@
 						{
 							"name": "buy TSC&TCC",
 							"request": {
-								"method": "POST",
+								"method": "GET",
 								"header": [],
 								"url": {
 									"raw": "{{URL}}/v1/payments",
@@ -680,9 +781,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "groups",
@@ -964,15 +1063,11 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "pages",
-					"item": [],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					"item": []
 				},
 				{
 					"name": "notifications",
@@ -1121,9 +1216,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "user results",
@@ -1208,9 +1301,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "solving tests",
@@ -1302,13 +1393,40 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "finish solve test",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/solving-tests/1/finish-solve",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"solving-tests",
+										"1",
+										"finish-solve"
+									]
+								}
+							},
+							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "admin",
@@ -1344,13 +1462,9 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
