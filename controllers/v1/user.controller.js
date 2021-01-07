@@ -6,7 +6,7 @@ const {
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
-const { v4: uuidv4 } = require("uuid");
+const { saveFile, deleteFile } = require("../../utils/fileUpload");
 const obj = {};
 
 /**
@@ -85,10 +85,39 @@ obj.updateMyAccount = async (req, res, next) => {
 };
 
 /**
+ * update my image
+ * action - /v1/users/my/account/image
+ * method - put
+ * token
+ */
+obj.updateMyAccountImage = async (req, res, next) => {
+  // client data
+  let id = req.user.id,
+    file = req.files["image"];
+
+  // request db
+  let user = await User.findOne({
+    where: { id },
+    attributes: ["image", "id"],
+  });
+
+  if (user.image) deleteFile(user.image);
+  let image = saveFile(file, "user");
+
+  // request db (save changes)
+  let updatedRows = await user.update({ image });
+  if (!updatedRows) return next(new ErrorResponse("Couldn't update"));
+
+  // res to the client with token
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
  * Search users by their username
  * action - /v1/users/find
  * method - post
- * token
  */
 obj.findUsers = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
@@ -125,7 +154,6 @@ obj.findUsers = async (req, res) => {
  * get user by id
  * action - /v1/users/:id
  * method - get
- * token
  */
 obj.getOne = async (req, res, next) => {
   // client data

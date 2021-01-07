@@ -7,8 +7,8 @@ const {
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
-const { update } = require("./question.controller");
 const { ErrorResponse } = require("../../utils");
+const { deleteFile, saveFile } = require("../../utils/fileUpload");
 const obj = {};
 
 /**
@@ -96,6 +96,40 @@ obj.update = async (req, res, next) => {
     { where: { userId, id } }
   );
 
+  if (!updatedRows) return next(new ErrorResponse("Couldn't update"));
+
+  // res to the client with token
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
+ * update test image
+ * action - /v1/tests/:id/image
+ * method - put
+ * token
+ */
+obj.updateImage = async (req, res, next) => {
+  // client data
+  let userId = req.user.id,
+    file = req.files["image"],
+    id = req.params.id;
+
+  // request db
+  let test = await Test.findOne({
+    where: { userId, id },
+    attributes: ["image", "userId", "id"],
+  });
+
+  // error test
+  if (!test) return next(new ErrorResponse("Could not find"));
+
+  if (test.image) deleteFile(test.image);
+  let image = saveFile(file, "test");
+
+  // request db (save changes)
+  let updatedRows = await test.update({ image });
   if (!updatedRows) return next(new ErrorResponse("Couldn't update"));
 
   // res to the client with token

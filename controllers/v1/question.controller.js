@@ -8,8 +8,7 @@ const {
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
 const ErrorResponse = require("../../utils/errorResponse");
-const { v4: uuidv4 } = require("uuid");
-const fs = require("fs");
+const { saveFile, deleteFiles } = require("../../utils/fileUpload");
 const obj = {};
 
 function getRndInteger(min, max) {
@@ -17,18 +16,12 @@ function getRndInteger(min, max) {
 }
 
 function saveFilesOfQuestion(type, data, files, edit = false) {
-  const saveFile = (file) => {
-    let fileName = uuidv4() + file.name;
-    file.mv("public/uploads/question/" + fileName);
-    return "/uploads/question/" + fileName;
-  };
-
   if (type < 0 || type > 5) return -1;
 
   if ((edit && data.question.newAudio) || data.question.audio)
-    data.question.audio = saveFile(files[data.question.audio]);
+    data.question.audio = saveFile(files[data.question.audio], "question");
   if ((edit && data.question.newImage) || data.question.image)
-    data.question.image = saveFile(files[data.question.image]);
+    data.question.image = saveFile(files[data.question.image], "question");
 
   delete data.question.newAudio;
   delete data.question.newImage;
@@ -37,7 +30,10 @@ function saveFilesOfQuestion(type, data, files, edit = false) {
     // if singleChoice or multiChoice
     for (let i = 0; i < data.answers.length; i++) {
       if ((edit && data.answers[i].new) || data.answers[i].type === "image")
-        data.answers[i].value = saveFile(files[data.answers[i].value]);
+        data.answers[i].value = saveFile(
+          files[data.answers[i].value],
+          "question"
+        );
       delete data.answers[i].new;
     }
   }
@@ -64,17 +60,6 @@ function randomizeMatchingQuestion(data) {
     data.correct[l] = c;
   }
   return data;
-}
-
-function deleteFiles(files) {
-  try {
-    if (!files) return;
-    for (let i = 0; i < files.length; i++) {
-      fs.unlinkSync("public" + files[i]);
-    }
-  } catch (err) {
-    console.log(err);
-  }
 }
 
 /**
@@ -138,7 +123,7 @@ obj.update = async (req, res, next) => {
   // save files of data if exists and delete trashed files
   if (data) {
     data = saveFilesOfQuestion(type, JSON.parse(data), req.files, true);
-    deleteFiles(JSON.parse(deleteFiles));
+    deleteFiles(JSON.parse(deletedFiles));
 
     // if question type is 'matching' let's randomize it's answers
     if (qusetion.type === 4) randomizeMatchingQuestion(data);

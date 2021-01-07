@@ -84,7 +84,7 @@ obj.canSolveTest = async (req, res, next) => {
   // error test
   if (!solvingTest) return next(new ErrorResponse("Something went wrong"));
   if (JSON.parse(solvingTest.invitedUsers).indexOf(parseInt(userId)) === -1)
-    return next(new ErrorResponse("Could not find route", 404));
+    return next(new ErrorResponse("Could not find route", null, 404));
 
   // prepare data
   let data = {};
@@ -190,7 +190,7 @@ obj.startSolvingTest = async (req, res, next) => {
     data.questions = questions.map((e) => ({
       id: e.id,
       type: e.type,
-      data: e.getPreparedData(e),
+      data: e.getPreparedData(),
     }));
 
     if ((solvingTest.Test.isRandom = true))
@@ -213,6 +213,30 @@ obj.startSolvingTest = async (req, res, next) => {
   res.status(200).json({
     success: true,
     ...data,
+  });
+};
+
+/**
+ * finish solving test
+ * action - /v1/solving-tests/:id/finish-solve
+ * method - post
+ * token
+ */
+obj.finishSolvingTest = async (req, res, next) => {
+  // client data
+  let userId = req.user.id,
+    solvingTestId = req.params.id;
+
+  // request db
+  let userResult = await UserResult.findOne({
+    where: { userId, solvingTestId, finishedAt: null },
+  });
+
+  if (userResult) await userResult.update({ finishedAt: new Date() });
+
+  // client response
+  res.status(200).json({
+    success: true,
   });
 };
 

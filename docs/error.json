@@ -1,0 +1,17 @@
+[
+  {
+    "error": "Undefined",
+    "errorCode": -1,
+    "statusCode": 0
+  },
+  {
+    "error": "Unauthorized",
+    "errorCode": 1,
+    "statusCode": 401
+  },
+  {
+    "error": "Access Denied",
+    "errorCode": 2,
+    "statusCode": 403
+  }
+]

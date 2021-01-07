@@ -1,0 +1,13 @@
+CREATE TRIGGER after_user_result_insert AFTER INSERT ON user_results FOR EACH ROW BEGIN
+	DECLARE test_id__ INT(11);
+	
+	/* update solving_tests.participant_count */
+	UPDATE solving_tests SET 
+		solving_tests.participant_count = solving_tests.participant_count + 1 WHERE solving_tests.id = NEW.solving_test_id;
+	
+	/* get test_id */
+	SELECT test_id INTO test_id__ FROM solving_tests WHERE solving_tests.id = NEW.solving_test_id;
+	
+	UPDATE questions SET 
+		questions.solve_count = questions.solve_count + 1 WHERE solving_tests.id = test_id__;
+END;

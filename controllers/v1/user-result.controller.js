@@ -4,6 +4,7 @@ const {
   User,
   UserResult,
   Question,
+  SolvingQuestion,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
@@ -44,11 +45,11 @@ obj.solveQuestion = async (req, res, next) => {
     return next(new ErrorResponse("It is not time to solve"));
 
   // knowing is it correct answer
-  let question = await Question({
+  let question = await Question.findOne({
     where: { id: questionId },
     attributes: ["type", "data"],
   });
-  let isCorrect = question.isAnswerCorrect(question, answer);
+  let isCorrect = question.isAnswerCorrect(answer);
 
   await SolvingQuestion.upsert(
     { answer, isCorrect },
