@@ -9,12 +9,12 @@ const {
   getOne,
 } = require("../../controllers").V1.UserController;
 
-// const { getUser } = require("../../middleware").JwtMiddleware;
+const { verify } = require("../../middleware").JwtMiddleware;
 
 router.post("/find", findUsers);
-router.get("/my/account", getMyAccount);
-router.post("/my/account", updateMyAccount);
-router.post("/my/account/image", updateMyAccountImage);
+router.get("/my/account", verify, getMyAccount);
+router.put("/my/account", verify, updateMyAccount);
+router.put("/my/account/image", verify, updateMyAccountImage);
 router.get("/:id", getOne);
 
 module.exports = router;
