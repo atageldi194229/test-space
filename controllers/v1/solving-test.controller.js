@@ -15,7 +15,7 @@ const { ErrorResponse, randomizeArray } = require("../../utils");
 const obj = {};
 
 const Tools = {
-  filter = (s) => {
+  filter: (s) => {
     let where = {};
     if (s === "public") {
       where.isPublic = true;
@@ -40,7 +40,7 @@ const Tools = {
     } catch (err) {}
     return ["createdAt", "desc"];
   },
-}
+};
 
 /**
  * Get all invitation of user
