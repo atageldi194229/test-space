@@ -12,6 +12,10 @@ const model = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         comment: "time when user finished to solve test",
       },
+      endTime: {
+        type: DataTypes.DATE,
+        comment: "time when user can not solve test",
+      },
       correctAnswerCount: {
         type: DataTypes.INTEGER,
         defaultValue: 0,

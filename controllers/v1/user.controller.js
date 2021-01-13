@@ -72,7 +72,7 @@ obj.updateMyAccount = async (req, res, next) => {
   let data = {};
   for (let key in keys) {
     data[key] = req.body[key];
-    data[key] = req.body[key + "A"];
+    data[key + "A"] = req.body[key + "A"];
   }
 
   // request db
@@ -126,7 +126,7 @@ obj.findUsers = async (req, res) => {
   let { text } = req.body;
 
   // validate data
-  text = text && "";
+  text = text || "";
   text = text.toLowerCase();
 
   // request db

@@ -3,6 +3,10 @@
 const {
   User,
   Test,
+  Payment,
+  PinnedTests,
+  UserResults,
+  SolvingTests,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
@@ -10,6 +14,54 @@ const asyncHandler = require("../../middleware/async");
 const { ErrorResponse } = require("../../utils");
 const { deleteFile, saveFile } = require("../../utils/fileUpload");
 const obj = {};
+
+// custom tools as functions
+
+/**
+ * Filter tests
+ * @param {string} s - filter by what
+ */
+function filterTests(s) {
+  let where = {};
+  if (s === "public") {
+    where.isPublic = true;
+    where.allowedAt = {
+      [Op.ne]: null,
+    };
+  } else if (s === "private") {
+    where.isPublic = false;
+  } else if (s === "waiting") {
+    where.isPublic = true;
+    where.allowedAt = null;
+  } else if (s === "editable") {
+    where.editable = true;
+  } else if (s === "non-editable") {
+    where.editable = false;
+  }
+
+  return where;
+}
+
+/**
+ * Sort by given data
+ * @param {string} s - name-asc
+ */
+function sortTests(s) {
+  try {
+    // validate data
+    let a = s.split("-");
+    a[1] = a[1].toLowerCase();
+
+    let k = ["name", "likeCount", "solveCount", "createdAt"];
+
+    if (k.includes(a[0]) && ["asc", "desc"].includes(a[1])) {
+      return [a[0], a[1]];
+    }
+  } catch (err) {}
+  return ["createdAt", "desc"];
+}
+
+// end of custom tools as functions
 
 /**
  * create test
@@ -21,15 +73,7 @@ obj.create = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   // get from client
-  let {
-    name,
-    description,
-    isRandom,
-    isPublic,
-    isAllowed,
-    language,
-    keywords,
-  } = req.body;
+  let { name, description, isRandom, isPublic, language, keywords } = req.body;
 
   // check if client can create test
   let data = await Payment.canCreateTest(req.user.id);
@@ -43,7 +87,6 @@ obj.create = async (req, res) => {
     description,
     isRandom,
     isPublic,
-    isAllowed,
     language,
     keywords,
     userId: req.user.id,
@@ -75,12 +118,16 @@ obj.update = async (req, res, next) => {
       description,
       isRandom,
       isPublic,
-      isAllowed,
       language,
       keywords,
+      archive,
     } = req.body,
+    archivedAt,
     userId = req.user.id,
     id = req.params.id;
+
+  // validate data
+  if (typeof archive !== "undefined") archivedAt = archive ? new Date() : null;
 
   // save to db
   let updatedRows = await Test.update(
@@ -89,9 +136,9 @@ obj.update = async (req, res, next) => {
       description,
       isRandom,
       isPublic,
-      isAllowed,
       language,
       keywords,
+      archivedAt,
     },
     { where: { userId, id } }
   );
@@ -139,70 +186,6 @@ obj.updateImage = async (req, res, next) => {
 };
 
 /**
- * get all tests by userId
- * action - /v1/tests
- * method - get
- * token
- */
-obj.getAll = async (req, res) => {
-  // client data
-  const userId = req.user.id,
-    limit = parseInt(req.params.limit) || 20,
-    offset = parseInt(req.params.offset) || 0;
-
-  // get data from db
-  let tests = await Test.findAll({
-    limit,
-    offset,
-    order: [["createdAt", "desc"]],
-    where: { userId },
-    attributes: [
-      "id",
-      "name",
-      "description",
-      "isRandom",
-      "isPublic",
-      "isAllowed",
-      "image",
-      "language",
-      "keywords",
-    ],
-  });
-
-  res.status(200).json({
-    success: true,
-    tests,
-  });
-};
-
-/**
- * get all public tests
- * action - /v1/tests/public
- * method - get
- * token
- */
-obj.getPublic = async (req, res) => {
-  // client data
-  const limit = parseInt(req.params.limit) || 20,
-    offset = parseInt(req.params.offset) || 0;
-
-  // request db
-  let tests = await Test.findAll({
-    limit,
-    offset,
-    order: [["createdAt", "desc"]],
-    where: { isPublic: true },
-    attributes: ["id", "name", "description", "image", "language", "keywords"],
-  });
-
-  // client data
-  res.status(200).json({
-    success: true,
-    tests,
-  });
-};
-
-/**
  * Get one test with their questions
  * action - /v1/tests/:id
  * method - get
@@ -242,6 +225,332 @@ obj.getOne = async (req, res) => {
   });
 };
 
+/**
+ * get all tests by userId
+ * action - /v1/tests
+ * method - get
+ * token
+ */
+obj.getAll = async (req, res) => {
+  // client data
+  const userId = req.user.id,
+    limit = parseInt(req.query.limit) || 20,
+    offset = parseInt(req.query.offset) || 0,
+    sort = req.query.sort,
+    filter = req.query.filter;
+
+  // get data from db
+  // prepare options
+  let options = {
+    limit,
+    offset,
+    order: [sortTests(sort)],
+    where: { userId, archivedAt: null, ...filterTests(filter) },
+    attributes: [
+      "id",
+      "name",
+      "description",
+      "isRandom",
+      "isPublic",
+      "image",
+      "language",
+      "keywords",
+      "allowedAt",
+    ],
+  };
+  // request db
+  let tests = await Test.findAll(options);
+
+  res.status(200).json({
+    success: true,
+    tests,
+  });
+};
+
+/**
+ * get all public tests
+ * action - /v1/tests/public
+ * method - get
+ * token
+ */
+obj.getPublic = async (req, res) => {
+  // client data
+  const limit = parseInt(req.query.limit) || 20,
+    offset = parseInt(req.query.offset) || 0,
+    sort = req.query.sort;
+
+  // request db
+  let tests = await Test.findAll({
+    limit,
+    offset,
+    order: [sortTests(sort)],
+    where: {
+      isPublic: true,
+      allowedAt: {
+        [Op.ne]: null,
+      },
+      archivedAt: null,
+    },
+    attributes: ["id", "name", "description", "image", "language", "keywords"],
+  });
+
+  // client data
+  res.status(200).json({
+    success: true,
+    tests,
+  });
+};
+
+/**
+ * get all latest allowed public tests
+ * action - /v1/tests/latest
+ * method - get
+ * token
+ */
+obj.getLatest = async (req, res) => {
+  // client data
+  const limit = parseInt(req.query.limit) || 20,
+    offset = parseInt(req.query.offset) || 0;
+
+  // request db
+  let tests = await Test.findAll({
+    limit,
+    offset,
+    order: [["allowedAt", "desc"]],
+    where: {
+      isPublic: true,
+      allowedAt: {
+        [Op.ne]: null,
+      },
+      archivedAt: null,
+    },
+    attributes: ["id", "name", "description", "image", "language", "keywords"],
+  });
+
+  // client data
+  res.status(200).json({
+    success: true,
+    tests,
+  });
+};
+
+/**
+ * get all best tests
+ * action - /v1/tests/best
+ * method - get
+ * token
+ */
+obj.getBest = async (req, res) => {
+  // client data
+  const limit = parseInt(req.query.limit) || 20,
+    offset = parseInt(req.query.offset) || 0;
+
+  // request db
+  let threeMonths = 3 * 30 * 24 * 60 * 60 * 1000;
+
+  let tests = await Test.findAll({
+    limit,
+    offset,
+    order: sequelize.literal("(solve_count * 2 + like_count) desc"),
+    where: {
+      isPublic: true,
+      allowedAt: {
+        [Op.gte]: new Date(new Date() - threeMonths),
+      },
+      archivedAt: null,
+    },
+    attributes: ["id", "name", "description", "image", "language", "keywords"],
+  });
+
+  // client data
+  res.status(200).json({
+    success: true,
+    tests,
+  });
+};
+
+/**
+ * get all archived tests
+ * action - /v1/tests/archived
+ * method - get
+ * token
+ */
+obj.getArchived = async (req, res) => {
+  // client data
+  const userId = req.user.id,
+    limit = parseInt(req.query.limit) || 20,
+    offset = parseInt(req.query.offset) || 0,
+    sort = req.query.sort,
+    filter = req.query.filter;
+
+  // request db
+  let tests = await Test.findAll({
+    limit,
+    offset,
+    order: [sortTests(sort)],
+    where: {
+      userId,
+      archivedAt: { [Op.ne]: null },
+      ...filterTests(filter),
+    },
+    attributes: [
+      "id",
+      "name",
+      "description",
+      "isRandom",
+      "isPublic",
+      "image",
+      "language",
+      "keywords",
+      "allowedAt",
+    ],
+  });
+
+  // client data
+  res.status(200).json({
+    success: true,
+    tests,
+  });
+};
+
+/**
+ * get all solved tests
+ * action - /v1/tests/solved
+ * method - get
+ * token
+ */
+obj.getSolved = async (req, res) => {
+  // client data
+  const userId = req.user.id,
+    limit = parseInt(req.query.limit) || 20,
+    offset = parseInt(req.query.offset) || 0,
+    sort = req.query.sort;
+
+  // request db
+  let userResults = await UserResults.findAll({
+    where: {
+      userId,
+      [Op.or]: [
+        {
+          finishedAt: { [Op.ne]: null },
+        },
+        {
+          endTime: { [Op.lt]: new Date() },
+        },
+      ],
+    },
+    attributes: ["solvingTestId"],
+  });
+
+  let solvingTests = await SolvingTests.findAll({
+    where: { id: userResults.map((e) => e.solvingTestId) },
+    attributes: ["testId"],
+  });
+
+  // prepare options
+  let options = {
+    limit,
+    offset,
+    order: [sortTests(sort)],
+    where: {
+      id: solvingTests.map((e) => e.testId),
+      isPublic: true,
+      allowedAt: {
+        [Op.ne]: null,
+      },
+      archivedAt: null,
+    },
+    attributes: ["id", "name", "description", "image", "language", "keywords"],
+  };
+
+  // request db
+  let tests = await Test.findAll(options);
+
+  // client data
+  res.status(200).json({
+    success: true,
+    tests,
+  });
+};
+
+/**
+ * get all pinned tests
+ * action - /v1/tests/pinned
+ * method - get
+ * token
+ */
+obj.getPinned = async (req, res) => {
+  // client data
+  const limit = parseInt(req.query.limit) || 20,
+    offset = parseInt(req.query.offset) || 0,
+    sort = req.query.sort,
+    userId = req.user.id;
+
+  // request db
+  let testIds = await PinnedTests.findAll({
+    where: { userId },
+    attributes: ["testId"],
+  });
+
+  // prepare options
+  let options = {
+    limit,
+    offset,
+    order: [sortTests(sort)],
+    where: {
+      id: testIds.map((e) => e.id),
+      isPublic: true,
+      allowedAt: {
+        [Op.ne]: null,
+      },
+      archivedAt: null,
+    },
+    attributes: ["id", "name", "description", "image", "language", "keywords"],
+  };
+
+  // request db
+  let tests = await Test.findAll(options);
+
+  // client data
+  res.status(200).json({
+    success: true,
+    tests,
+  });
+};
+
+// duo controller
+const pinningTest = (action) => async (req, res) => {
+  // client data
+  const testId = req.params.id,
+    userId = req.user.id;
+
+  // request db
+  let updatedRows;
+  if (action === "create")
+    updatedRows = await PinnedTests.create({ testId, userId });
+  else updatedRows = await PinnedTests.destroy({ where: { testId, userId } });
+
+  res.status.json({
+    success: true,
+  });
+};
+
+/**
+ * pin one test
+ * action - /v1/tests/:id/pin
+ * method - post
+ * token
+ */
+obj.pin = pinningTest("create");
+
+/**
+ * un pin one test
+ * action - /v1/tests/:id/unpin
+ * method - post
+ * token
+ */
+obj.unpin = pinningTest("destroy");
+
 // When exporting all collected data
 let keys = Object.keys(obj);
 // exclude some functions
@@ -251,3 +560,9 @@ for (let i = 0; i < keys.length; i++)
     obj[keys[i]] = asyncHandler(obj[keys[i]]);
 // exporting all functions
 module.exports = obj;
+
+/*
+where = {
+  description: sequelize.where(sequelize.fn('LOWER', sequelize.col('Album.description')), 'LIKE', '%' + text + '%'),
+}
+*/

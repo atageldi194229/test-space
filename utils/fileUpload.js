@@ -32,7 +32,11 @@ function saveFile(file, dest) {
  */
 function deleteFile(dest) {
   try {
-    let destination = path.join(uploadsDirPath, dest.split("uploads/")[1]);
+    dest = dest.split("uploads/");
+    let destination = path.join(
+      uploadsDirPath,
+      dest.length === 1 ? dest[0] : dest[1]
+    ); // strange [0]->[1]
 
     if (fs.existsSync(destination)) fs.unlinkSync(destination);
 

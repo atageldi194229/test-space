@@ -54,7 +54,7 @@ obj.register = async (req, res) => {
   });
 
   // create token
-  let payload = { id: user.id };
+  let payload = { id: user.id, active: false };
   console.log(payload);
   let token = JwtService.sign(payload);
 
@@ -62,6 +62,14 @@ obj.register = async (req, res) => {
   res.status(200).json({
     success: true,
     token,
+    user: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      image: user.image,
+      birthDate: user.birthDate,
+      active: user.active,
+    },
   });
 
   // let's send verification code to the mail of user
@@ -84,6 +92,7 @@ obj.login = async (req, res, next) => {
       "firstName",
       "lastName",
       "username",
+      "image",
       "birthDate",
       "password",
       "active",
@@ -97,7 +106,7 @@ obj.login = async (req, res, next) => {
 
   if (resCompare) {
     // create token
-    let payload = { id: user.id };
+    let payload = { id: user.id, active: user.active };
     console.log(payload);
     let token = JwtService.sign(payload);
 
@@ -108,6 +117,7 @@ obj.login = async (req, res, next) => {
         firstName: user.firstName,
         lastName: user.lastName,
         username: user.username,
+        image: user.image,
         birthDate: user.birthDate,
         active: user.active,
       },
@@ -161,10 +171,11 @@ obj.resendVerificationCode = async (req, res) => {
 };
 
 obj.userChecker = async (req, res) => {
-  const { username, email } = req.body;
+  const { username, email, phoneNumber } = req.body;
 
   let usernameCount = 0,
-    emailCount = 0;
+    emailCount = 0,
+    phoneNumberCount = 0;
 
   if (username)
     usernameCount = await User.count({
@@ -176,9 +187,15 @@ obj.userChecker = async (req, res) => {
       where: { email },
     });
 
+  if (phoneNumber)
+    phoneNumberCount = await User.count({
+      where: { phoneNumber },
+    });
+
   res.status(200).json({
     username: !(usernameCount > 0),
     email: !(emailCount > 0),
+    phoneNumber: !(phoneNumberCount > 0),
   });
 };
 

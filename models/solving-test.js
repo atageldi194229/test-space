@@ -48,6 +48,13 @@ const model = (sequelize, DataTypes) => {
         allowNull: false,
         comment: "average of incorrect answers",
       },
+      isPublic: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+        comment:
+          "false - for private invited users, if true this test for everyone",
+      },
     },
     {
       charset: "utf8mb4",
@@ -68,11 +75,11 @@ const model = (sequelize, DataTypes) => {
 };
 
 const methods = ({ SolvingTest }) => {
-  SolvingTest.prototype.isTimeToSolve = async function (userResult) {
+  SolvingTest.prototype.isTimeToSolve = function (userResult) {
     return (
       !userResult.finishedAt &&
-      userResult.startAt + solvingTest.solveTime > new Date() &&
-      solvingTest.endTime > new Date()
+      userResult.startedAt.getTime() + this.solveTime > new Date() &&
+      this.endTime.getTime() > new Date()
     );
   };
 };

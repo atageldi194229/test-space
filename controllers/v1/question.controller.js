@@ -3,6 +3,7 @@
 const {
   User,
   Question,
+  Test,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
@@ -16,11 +17,12 @@ function getRndInteger(min, max) {
 }
 
 function saveFilesOfQuestion(type, data, files, edit = false) {
+  type = parseInt(type);
   if (type < 0 || type > 5) return -1;
 
-  if ((edit && data.question.newAudio) || data.question.audio)
+  if ((edit && data.question.newAudio) || (data.question.audio && !edit))
     data.question.audio = saveFile(files[data.question.audio], "question");
-  if ((edit && data.question.newImage) || data.question.image)
+  if ((edit && data.question.newImage) || (data.question.image && !edit))
     data.question.image = saveFile(files[data.question.image], "question");
 
   delete data.question.newAudio;
@@ -29,7 +31,10 @@ function saveFilesOfQuestion(type, data, files, edit = false) {
   if (type === 0 || type === 1) {
     // if singleChoice or multiChoice
     for (let i = 0; i < data.answers.length; i++) {
-      if ((edit && data.answers[i].new) || data.answers[i].type === "image")
+      if (
+        (edit && data.answers[i].new) ||
+        (data.answers[i].type === "image" && !edit)
+      )
         data.answers[i].value = saveFile(
           files[data.answers[i].value],
           "question"
@@ -105,7 +110,7 @@ obj.create = async (req, res, next) => {
 obj.update = async (req, res, next) => {
   // client data
   let id = req.params.id;
-  let { data, isRandom, testId, deletedFiles } = req.body;
+  let { data, isRandom, testId, deletedFiles, type } = req.body;
   let newData = { isRandom, testId };
 
   // request db
@@ -123,17 +128,17 @@ obj.update = async (req, res, next) => {
   // save files of data if exists and delete trashed files
   if (data) {
     data = saveFilesOfQuestion(type, JSON.parse(data), req.files, true);
-    deleteFiles(JSON.parse(deletedFiles));
+    if (deletedFiles) deleteFiles(JSON.parse(deletedFiles));
 
     // if question type is 'matching' let's randomize it's answers
-    if (qusetion.type === 4) randomizeMatchingQuestion(data);
+    if (question.type === 4) randomizeMatchingQuestion(data);
 
     // add to the new data
     newData.data = JSON.stringify(data);
   }
 
   // update request db
-  await qusetion.update(newData, { where: { id } });
+  await question.update(newData, { where: { id } });
 
   // client response
   res.status(200).json({
