@@ -39,7 +39,7 @@ obj.getAll = async (req, res) => {
  * method - get,
  * token,
  */
-obj.getAll = async (req, res) => {
+obj.getAllContacts = async (req, res) => {
   // client data
   let userId = req.user.id;
 
