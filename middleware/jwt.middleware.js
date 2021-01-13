@@ -11,11 +11,17 @@ class JwtMiddleware {
       const decoded = JwtService.decode(token);
       req.user = {
         id: decoded.payload.id,
+        active: decoded.payload.active,
       };
       return next();
     } catch (e) {
       return next();
     }
+  }
+
+  isUserActive(req, res, next) {
+    if (req.user && req.user.active) return next();
+    return next(new ErrorResponse("User is not verified", 3, 402));
   }
 
   verify(req, res, next) {

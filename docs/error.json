@@ -13,5 +13,10 @@
     "error": "Access Denied",
     "errorCode": 2,
     "statusCode": 403
+  },
+  {
+    "error": "User is not verified",
+    "errorCode": 3,
+    "statusCode": 402
   }
 ]

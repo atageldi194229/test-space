@@ -12,21 +12,34 @@ const model = (sequelize, DataTypes) => {
         defaultValue: false,
         allowNull: false,
       },
+      image: { type: DataTypes.STRING },
+      likeCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "like count",
+      },
+      solveCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "like count",
+      },
+      language: { type: DataTypes.STRING(30) },
+      keywords: {
+        type: DataTypes.TEXT,
+        comment: "Gozleg maksatly",
+      },
       isPublic: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
         allowNull: false,
       },
-      isAllowed: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
+      allowedAt: {
+        type: DataTypes.DATE,
       },
-      image: { type: DataTypes.STRING },
-      language: { type: DataTypes.STRING(30) },
-      keywords: {
-        type: DataTypes.TEXT,
-        comment: "Gozleg maksatly",
+      archivedAt: {
+        type: DataTypes.DATE,
       },
     },
     {
