@@ -225,7 +225,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"\",\r\n    \"description\": \"\",\r\n    \"isRandom\": false,\r\n    \"isPublic\": true,\r\n    \"isAllowed\": true,\r\n    \"language\": \"\",\r\n    \"keywords\": \"sport nahar top\"\r\n}",
+									"raw": "{\r\n    \"name\": \"\",\r\n    \"description\": \"\",\r\n    \"isRandom\": false,\r\n    \"isPublic\": true,\r\n    \"language\": \"\",\r\n    \"keywords\": \"sport nahar top\",\r\n    \"archive\": false\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -242,25 +242,8 @@
 										"tests",
 										"1"
 									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "get all",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL}}/v1/tests",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"v1",
-										"tests"
-									]
-								}
+								},
+								"description": "archive - boolean | true, false | send to archive or not"
 							},
 							"response": []
 						},
@@ -346,8 +329,46 @@
 							"response": []
 						},
 						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/tests",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "get public",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -359,6 +380,211 @@
 										"v1",
 										"tests",
 										"public"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get latest",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/tests/latest",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"latest"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get best",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/tests/best",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"best"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get archived",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/tests/archived",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"archived"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get solved",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/tests/solved",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"solved"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get pinned",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/tests/pinned",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"pinned"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pin",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/tests/1/pin",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"1",
+										"pin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "unpin",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/tests/1/unpin",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"1",
+										"unpin"
 									]
 								}
 							},
@@ -1409,6 +1635,15 @@
 								},
 								"method": "POST",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"like\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{URL}}/v1/solving-tests/1/finish-solve",
 									"host": [
@@ -1420,7 +1655,109 @@
 										"1",
 										"finish-solve"
 									]
+								},
+								"description": "like - integer | (0, 1) | test halandymy user tarapyndan"
+							},
+							"response": []
+						},
+						{
+							"name": "check status",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/solving-tests/1/check-status",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"solving-tests",
+										"1",
+										"check-status"
+									]
+								},
+								"description": "can user solve given test or user already is solving"
+							},
+							"response": []
+						},
+						{
+							"name": "start solve public test",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/solving-tests/1/start-solve-public",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"solving-tests",
+										"1",
+										"start-solve-public"
+									]
 								}
+							},
+							"response": []
+						},
+						{
+							"name": "finish solve public test",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"like\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/solving-tests/1/finish-solve-public",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"solving-tests",
+										"1",
+										"finish-solve-public"
+									]
+								},
+								"description": "like - integer | (0, 1) | test halandymy user tarapyndan"
 							},
 							"response": []
 						}

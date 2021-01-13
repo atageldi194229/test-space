@@ -8,6 +8,7 @@ const {
   addUser,
   removeUser,
   getAll,
+  getAllContacts,
   getOne,
   findGroups,
 } = require("../../controllers").V1.GroupController;
@@ -15,6 +16,7 @@ const {
 const { verify } = require("../../middleware").JwtMiddleware;
 
 router.get("/", verify, getAll);
+router.get("/contacts", verify, getAllContacts);
 router.post("/find", verify, findGroups);
 router.get("/:id", verify, getOne);
 router.post("/", verify, create);
