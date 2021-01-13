@@ -34,6 +34,55 @@ obj.getAll = async (req, res) => {
 };
 
 /**
+ * get all contacts,
+ * action - /v1/groups/contacts,
+ * method - get,
+ * token,
+ */
+obj.getAll = async (req, res) => {
+  // client data
+  let userId = req.user.id;
+
+  // request db
+  let groups = await Group.findAll({
+    where: { userId },
+    attributes: ["id", "name", "description"],
+    include: [
+      {
+        association: "Users",
+        attributes: ["id", "username", "image"],
+      },
+    ],
+  });
+  /*
+  let groupsMap = {};
+
+  for (let i in groups) {
+    groupsMap[groups[i].id] = groups[i];
+  }
+
+  let groupUsers = await GroupUser.findAll({
+    where: { groupId: groups.map((e) => e.id) },
+  });
+  */
+
+  // client response
+  res.status(200).json({
+    success: true,
+    groups: groups.map((e) => ({
+      id: e.id,
+      name: e.name,
+      description: e.description,
+      users: e.Users.map((ee) => ({
+        id: ee.id,
+        username: ee.username,
+        image: ee.image,
+      })),
+    })),
+  });
+};
+
+/**
  * get one by id group,
  * action - /v1/groups/:id,
  * method - get,
