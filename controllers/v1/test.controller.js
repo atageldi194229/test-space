@@ -61,6 +61,163 @@ function sortTests(s) {
   return ["createdAt", "desc"];
 }
 
+async function prepareOptions(action, { userId, limit, offset, sort, filter }) {
+  let ch = {
+    actions: [
+      "all",
+      "public",
+      "latest",
+      "best",
+      "archived",
+      "solved",
+      "pinned",
+    ],
+    sorts: ["all", "public", "archived", "solved", "pinned"],
+    filters: ["all", "archived"],
+  };
+
+  let publicAttributes = [
+      "id",
+      "name",
+      "description",
+      "image",
+      "language",
+      "keywords",
+    ],
+    privateAttributes = ["isRandom", "isPublic", "allowedAt"]; //isRandom, isPublic, allowedAt
+
+  let options = { limit, offset, where: { attributes: publicAttributes } };
+
+  if (ch.sorts.includes(action)) options.sort = [sortTests(sort)];
+  if (ch.filters.includes(filter)) {
+    options.where = { ...options.where, ...filterTests(filter) };
+    options.where.attributes = [
+      ...options.where.attributes,
+      ...privateAttributes,
+    ];
+  }
+
+  switch (action) {
+    case "all":
+      options.where = { ...options.where, ...{ userId, archivedAt: null } };
+      break;
+
+    case "public":
+      options.where = {
+        ...options.where,
+        ...{
+          isPublic: true,
+          allowedAt: {
+            [Op.ne]: null,
+          },
+          archivedAt: null,
+        },
+      };
+      break;
+
+    case "latest":
+      options.order = [["allowedAt", "desc"]];
+      options.where = {
+        ...options.where,
+        ...{
+          isPublic: true,
+          allowedAt: {
+            [Op.ne]: null,
+          },
+          archivedAt: null,
+        },
+      };
+      break;
+
+    case "best":
+      let threeMonths = 3 * 30 * 24 * 60 * 60 * 1000;
+
+      options.order = sequelize.literal("(solve_count * 2 + like_count) desc");
+      options.where = {
+        ...options.where,
+        ...{
+          isPublic: true,
+          allowedAt: {
+            [Op.gte]: new Date(new Date() - threeMonths),
+          },
+          archivedAt: null,
+        },
+      };
+      break;
+
+    case "archived":
+      options.where = {
+        ...options.where,
+        ...{
+          userId,
+          archivedAt: {
+            [Op.ne]: null,
+          },
+        },
+      };
+      break;
+
+    case "solved":
+      let userResults = await UserResults.findAll({
+        where: {
+          userId,
+          [Op.or]: [
+            {
+              finishedAt: { [Op.ne]: null },
+            },
+            {
+              endTime: { [Op.lt]: new Date() },
+            },
+          ],
+        },
+        attributes: ["solvingTestId"],
+      });
+
+      let solvingTests = await SolvingTests.findAll({
+        where: { id: userResults.map((e) => e.solvingTestId) },
+        attributes: ["testId"],
+      });
+
+      options.where = {
+        ...options.where,
+        ...{
+          id: solvingTests.map((e) => e.testId),
+          isPublic: true,
+          allowedAt: {
+            [Op.ne]: null,
+          },
+          archivedAt: null,
+        },
+      };
+      break;
+
+    case "pinned":
+      let testIds = await PinnedTests.findAll({
+        where: { userId },
+        attributes: ["testId"],
+      });
+
+      options.where = {
+        ...options.where,
+        ...{
+          id: testIds.map((e) => e.testId),
+          isPublic: true,
+          allowedAt: {
+            [Op.ne]: null,
+          },
+          archivedAt: null,
+        },
+      };
+
+      break;
+
+    default:
+    // default
+  }
+
+  return options;
+}
+
 // end of custom tools as functions
 
 /**
@@ -73,7 +230,15 @@ obj.create = async (req, res) => {
   console.log(JSON.stringify(req.body, null, 2));
 
   // get from client
-  let { name, description, isRandom, isPublic, language, keywords } = req.body;
+  let {
+    name,
+    description,
+    isRandom,
+    isPublic,
+    defaultSolveTime,
+    language,
+    keywords,
+  } = req.body;
 
   // check if client can create test
   let data = await Payment.canCreateTest(req.user.id);
@@ -87,6 +252,7 @@ obj.create = async (req, res) => {
     description,
     isRandom,
     isPublic,
+    defaultSolveTime,
     language,
     keywords,
     userId: req.user.id,
@@ -118,6 +284,7 @@ obj.update = async (req, res, next) => {
       description,
       isRandom,
       isPublic,
+      defaultSolveTime,
       language,
       keywords,
       archive,
@@ -136,6 +303,7 @@ obj.update = async (req, res, next) => {
       description,
       isRandom,
       isPublic,
+      defaultSolveTime,
       language,
       keywords,
       archivedAt,
@@ -222,6 +390,65 @@ obj.getOne = async (req, res) => {
   res.status(200).json({
     success: true,
     test: data,
+  });
+};
+
+/**
+ * search tests
+ * action - /v1/tests/search
+ * method - post
+ * token
+ */
+obj.search = async (req, res) => {
+  // client data
+  const userId = req.user.id,
+    limit = parseInt(req.query.limit) || 20,
+    offset = parseInt(req.query.offset) || 0,
+    sort = req.query.sort,
+    filter = req.query.filter,
+    text = req.body.text || "",
+    action = req.body.action || "public";
+
+  // validate
+  text = text.toLowerCase();
+
+  // prepare options
+  let options = await prepareOptions(action, {
+    userId,
+    limit,
+    offset,
+    sort,
+    filter,
+  });
+  // search options
+  options.where = {
+    ...options.where,
+    ...{
+      [Op.or]: [
+        {
+          name: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("Test.name")),
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+        {
+          keywords: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("Test.keywords")),
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+      ],
+    },
+  };
+
+  // request db
+  let tests = await Test.findAll(options);
+
+  res.status(200).json({
+    success: true,
+    tests,
   });
 };
 
@@ -498,7 +725,7 @@ obj.getPinned = async (req, res) => {
     offset,
     order: [sortTests(sort)],
     where: {
-      id: testIds.map((e) => e.id),
+      id: testIds.map((e) => e.testId),
       isPublic: true,
       allowedAt: {
         [Op.ne]: null,
