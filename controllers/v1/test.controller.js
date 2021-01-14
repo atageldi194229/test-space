@@ -80,6 +80,7 @@ async function prepareOptions(action, { userId, limit, offset, sort, filter }) {
       "id",
       "name",
       "description",
+      "defaultSolveTime",
       "image",
       "language",
       "keywords",
@@ -479,6 +480,7 @@ obj.getAll = async (req, res) => {
       "description",
       "isRandom",
       "isPublic",
+      "defaultSolveTime",
       "image",
       "language",
       "keywords",
@@ -518,7 +520,15 @@ obj.getPublic = async (req, res) => {
       },
       archivedAt: null,
     },
-    attributes: ["id", "name", "description", "image", "language", "keywords"],
+    attributes: [
+      "id",
+      "name",
+      "description",
+      "image",
+      "defaultSolveTime",
+      "language",
+      "keywords",
+    ],
   });
 
   // client data
@@ -551,7 +561,15 @@ obj.getLatest = async (req, res) => {
       },
       archivedAt: null,
     },
-    attributes: ["id", "name", "description", "image", "language", "keywords"],
+    attributes: [
+      "id",
+      "name",
+      "description",
+      "image",
+      "defaultSolveTime",
+      "language",
+      "keywords",
+    ],
   });
 
   // client data
@@ -586,7 +604,15 @@ obj.getBest = async (req, res) => {
       },
       archivedAt: null,
     },
-    attributes: ["id", "name", "description", "image", "language", "keywords"],
+    attributes: [
+      "id",
+      "name",
+      "description",
+      "image",
+      "defaultSolveTime",
+      "language",
+      "keywords",
+    ],
   });
 
   // client data
@@ -626,6 +652,7 @@ obj.getArchived = async (req, res) => {
       "description",
       "isRandom",
       "isPublic",
+      "defaultSolveTime",
       "image",
       "language",
       "keywords",
@@ -687,7 +714,15 @@ obj.getSolved = async (req, res) => {
       },
       archivedAt: null,
     },
-    attributes: ["id", "name", "description", "image", "language", "keywords"],
+    attributes: [
+      "id",
+      "name",
+      "description",
+      "image",
+      "defaultSolveTime",
+      "language",
+      "keywords",
+    ],
   };
 
   // request db
@@ -732,7 +767,15 @@ obj.getPinned = async (req, res) => {
       },
       archivedAt: null,
     },
-    attributes: ["id", "name", "description", "image", "language", "keywords"],
+    attributes: [
+      "id",
+      "name",
+      "description",
+      "image",
+      "defaultSolveTime",
+      "language",
+      "keywords",
+    ],
   };
 
   // request db
@@ -787,9 +830,3 @@ for (let i = 0; i < keys.length; i++)
     obj[keys[i]] = asyncHandler(obj[keys[i]]);
 // exporting all functions
 module.exports = obj;
-
-/*
-where = {
-  description: sequelize.where(sequelize.fn('LOWER', sequelize.col('Album.description')), 'LIKE', '%' + text + '%'),
-}
-*/
