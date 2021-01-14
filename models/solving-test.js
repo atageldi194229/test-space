@@ -27,6 +27,7 @@ const model = (sequelize, DataTypes) => {
       },
       invitedUsers: {
         type: DataTypes.TEXT,
+        defaultValue: JSON.stringify([]),
         allowNull: false,
         comment: "json array, includes ids of invited users",
       },
