@@ -589,6 +589,45 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "search",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"text\": \"\",\r\n    \"action\": \"all\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/tests/search",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"search"
+									]
+								},
+								"description": "### body\r\n- **text** | `string` |search text\r\n- **action** | `string`| search from where ex:\r\n    1. `\"all\"` | from all users tests\r\n    2. `\"public\"` | from all public tests\r\n    3. `\"latest\"` | from all latest tests\r\n    4. `\"best\"` | from all best tests\r\n    5. `\"archived\"` | from all archived tests\r\n    6. `\"solved\"` | from all users solved tests\r\n    7. `\"pinned\"` | from all users pinned tests\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"public\"`\r\n    2. `\"private\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
 						}
 					]
 				},
