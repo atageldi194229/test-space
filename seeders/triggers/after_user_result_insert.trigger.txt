@@ -9,5 +9,8 @@ CREATE TRIGGER after_user_result_insert AFTER INSERT ON user_results FOR EACH RO
 	SELECT test_id INTO test_id__ FROM solving_tests WHERE solving_tests.id = NEW.solving_test_id;
 	
 	UPDATE questions SET 
-		questions.solve_count = questions.solve_count + 1 WHERE solving_tests.id = test_id__;
+		questions.solve_count = questions.solve_count + 1 WHERE questions.test_id = test_id__;
+	
+	UPDATE tests SET 
+		tests.solve_count = tests.solve_count + 1 WHERE tests.id = test_id__;
 END;
