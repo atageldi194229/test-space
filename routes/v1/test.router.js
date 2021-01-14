@@ -17,6 +17,8 @@ const {
 
   pin,
   unpin,
+
+  search,
 } = require("../../controllers").V1.TestController;
 
 const { verify, isUserActive } = require("../../middleware").JwtMiddleware;
@@ -28,6 +30,8 @@ router.get("/best", verify, getBest);
 router.get("/archived", verify, getArchived);
 router.get("/solved", verify, getSolved);
 router.get("/pinned", verify, getPinned);
+
+router.post("/search", verify, search);
 
 router.post("/", verify, isUserActive, create);
 router.get("/:id", verify, getOne);
