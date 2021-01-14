@@ -1,0 +1,5 @@
+CREATE TRIGGER after_test_insert AFTER INSERT ON tests FOR EACH ROW BEGIN
+	/* insert public solving test */
+	INSERT INTO `solving_tests` (`start_time`,`end_time`,`solve_time`,`is_public`,`created_at`,`updated_at`, `test_id`, `user_id`) 
+		VALUES (NOW(), NOW(), NEW.default_solve_time, TRUE, NOW(), NOW(), NEW.id, NEW.user_id);
+END;
