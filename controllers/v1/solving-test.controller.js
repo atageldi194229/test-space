@@ -65,7 +65,19 @@ obj.getAll = async (req, res) => {
     include: [
       {
         association: "Test",
-        attributes: ["id", "name", "description", "image"],
+        where: {
+          allowedAt: sequelize.literal(
+            "(`SolvingTest`.`is_public` = FALSE OR `Test`.`allowed_at` IS NOT NULL AND `Test`.`is_public` = TRUE)"
+          ),
+        },
+        attributes: [
+          "id",
+          "name",
+          "description",
+          "image",
+          "language",
+          "keywords",
+        ],
       },
     ],
   });

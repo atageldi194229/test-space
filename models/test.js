@@ -7,12 +7,18 @@ const model = (sequelize, DataTypes) => {
       name: { type: DataTypes.STRING(200) },
       description: { type: DataTypes.TEXT },
       // createdBy: { type: DataTypes.INTEGER},
+      image: { type: DataTypes.STRING },
       isRandom: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
         allowNull: false,
       },
-      image: { type: DataTypes.STRING },
+      defaultSolveTime: {
+        type: DataTypes.INTEGER,
+        defaultValue: 60 * 60 * 1000,
+        allowNull: false,
+        comment: "default solve time for public tests",
+      },
       likeCount: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
