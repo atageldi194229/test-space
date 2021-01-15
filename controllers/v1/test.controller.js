@@ -461,8 +461,9 @@ obj.getOnePublic = async (req, res, next) => {
     solveCount: test.solveCount,
     language: test.language,
     keywords: test.keywords,
+    createdAt: test.createdAt,
     isPinned: test.isPinned,
-    user: test.User,
+    user: test.user,
     solvingTest,
   };
 
