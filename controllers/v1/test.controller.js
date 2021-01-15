@@ -87,10 +87,22 @@ async function prepareOptions(action, { userId, limit, offset, sort, filter }) {
       "image",
       "language",
       "keywords",
+      "createdAt",
     ],
     privateAttributes = ["isRandom", "isPublic", "allowedAt"]; //isRandom, isPublic, allowedAt
 
-  let options = { limit, offset, where: {}, attributes: publicAttributes };
+  let options = {
+    limit,
+    offset,
+    where: {},
+    attributes: publicAttributes,
+    include: [
+      {
+        association: "user",
+        attributes: ["id", "username", "image"],
+      },
+    ],
+  };
 
   if (ch.sorts.includes(action)) options.order = [sortTests(sort)];
   if (ch.filters.includes(filter)) {
@@ -417,7 +429,7 @@ obj.getOnePublic = async (req, res, next) => {
     },
     include: [
       {
-        association: "User",
+        association: "user",
         attributes: ["id", "username", "image"],
       },
     ],
