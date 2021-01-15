@@ -66,6 +66,7 @@ const model = (sequelize, DataTypes) => {
 
     Test.belongsToMany(models.User, {
       through: { model: "PinnedTest" },
+      // as: "PinnedTests",
       foreignKey: "testId",
     });
   };
@@ -73,4 +74,37 @@ const model = (sequelize, DataTypes) => {
   return Test;
 };
 
-module.exports = { model };
+const methods = ({ Test, PinnedTest }) => {
+  Test.prototype.isPinned = async function (userId) {
+    let pinnedTest = await PinnedTest.findOne({
+      where: { userId, testId: this.id },
+    });
+
+    this.isPinned = (pinnedTest && true) || false;
+    this.dataValues.isPinned = (pinnedTest && true) || false;
+    // this._previousDataValues.isPinned = (pinnedTest && true) || false;
+  };
+
+  Test.arePinned = async function (tests, userId) {
+    // init
+    let isPinnedMap = {};
+    // request db
+    let pinnedTests = await PinnedTest.findAll({
+      where: { userId, testId: tests.map((e) => e.id) },
+    });
+    // prepare data
+    for (let i in pinnedTests) {
+      // await tests[i].isPinned(userId);
+      isPinnedMap[pinnedTests.testId] = true;
+    }
+    // finishing
+    for (let i in tests) {
+      tests[i].isPinned = Boolean(isPinnedMap[tests[i].id]);
+      tests[i].dataValues.isPinned = Boolean(isPinnedMap[tests[i].id]);
+    }
+
+    return tests;
+  };
+};
+
+module.exports = { model, methods };
