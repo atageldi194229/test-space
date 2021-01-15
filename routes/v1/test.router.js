@@ -4,13 +4,14 @@ const router = express.Router();
 const {
   create,
   getOne,
+  getOnePublic,
   update,
   updateImage,
 
   getAll,
   getPublic,
   getLatest,
-  getBest,
+  getPopular,
   getArchived,
   getSolved,
   getPinned,
@@ -26,7 +27,7 @@ const { verify, isUserActive } = require("../../middleware").JwtMiddleware;
 router.get("/", verify, getAll);
 router.get("/public", verify, getPublic);
 router.get("/latest", verify, getLatest);
-router.get("/best", verify, getBest);
+router.get("/popular", verify, getPopular);
 router.get("/archived", verify, getArchived);
 router.get("/solved", verify, getSolved);
 router.get("/pinned", verify, getPinned);
@@ -35,6 +36,7 @@ router.post("/search", verify, search);
 
 router.post("/", verify, isUserActive, create);
 router.get("/:id", verify, getOne);
+router.get("/:id/public", verify, getOnePublic);
 router.put("/:id", verify, update);
 router.put("/:id/image", verify, updateImage);
 

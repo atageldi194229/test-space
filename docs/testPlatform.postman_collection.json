@@ -289,6 +289,48 @@
 							"response": []
 						},
 						{
+							"name": "get one public",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/tests/1/public",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"1",
+										"public"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "update image",
 							"request": {
 								"auth": {
@@ -352,7 +394,8 @@
 										"v1",
 										"tests"
 									]
-								}
+								},
+								"description": "### auth\r\n- token\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"public\"`\r\n    2. `\"private\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
 							},
 							"response": []
 						},
@@ -381,7 +424,8 @@
 										"tests",
 										"public"
 									]
-								}
+								},
+								"description": "### auth\r\n- token\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
 							},
 							"response": []
 						},
@@ -410,12 +454,13 @@
 										"tests",
 										"latest"
 									]
-								}
+								},
+								"description": "### auth\r\n- token\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
 							},
 							"response": []
 						},
 						{
-							"name": "get best",
+							"name": "get popular",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -430,16 +475,17 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{URL}}/v1/tests/best",
+									"raw": "{{URL}}/v1/tests/popular",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"v1",
 										"tests",
-										"best"
+										"popular"
 									]
-								}
+								},
+								"description": "### auth\r\n- token\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
 							},
 							"response": []
 						},
@@ -468,7 +514,8 @@
 										"tests",
 										"archived"
 									]
-								}
+								},
+								"description": "### auth\r\n- token\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"public\"`\r\n    2. `\"private\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
 							},
 							"response": []
 						},
@@ -497,7 +544,8 @@
 										"tests",
 										"solved"
 									]
-								}
+								},
+								"description": "### auth\r\n- token\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
 							},
 							"response": []
 						},
@@ -526,7 +574,8 @@
 										"tests",
 										"pinned"
 									]
-								}
+								},
+								"description": "### auth\r\n- token\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
 							},
 							"response": []
 						},
@@ -546,14 +595,14 @@
 								"method": "POST",
 								"header": [],
 								"url": {
-									"raw": "{{URL}}/v1/tests/1/pin",
+									"raw": "{{URL}}/v1/tests/2/pin",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"v1",
 										"tests",
-										"1",
+										"2",
 										"pin"
 									]
 								}
@@ -576,14 +625,14 @@
 								"method": "POST",
 								"header": [],
 								"url": {
-									"raw": "{{URL}}/v1/tests/1/unpin",
+									"raw": "{{URL}}/v1/tests/2/unpin",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"v1",
 										"tests",
-										"1",
+										"2",
 										"unpin"
 									]
 								}
@@ -607,7 +656,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"text\": \"\",\r\n    \"action\": \"all\"\r\n}",
+									"raw": "{\r\n    \"text\": \"asd\",\r\n    \"action\": \"public\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -625,7 +674,7 @@
 										"search"
 									]
 								},
-								"description": "### body\r\n- **text** | `string` |search text\r\n- **action** | `string`| search from where ex:\r\n    1. `\"all\"` | from all users tests\r\n    2. `\"public\"` | from all public tests\r\n    3. `\"latest\"` | from all latest tests\r\n    4. `\"best\"` | from all best tests\r\n    5. `\"archived\"` | from all archived tests\r\n    6. `\"solved\"` | from all users solved tests\r\n    7. `\"pinned\"` | from all users pinned tests\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"public\"`\r\n    2. `\"private\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+								"description": "### body\r\n- **text** | `string` |search text\r\n- **action** | `string`| search from where ex:\r\n    1. `\"all\"` | from all users tests\r\n    2. `\"public\"` | from all public tests\r\n    3. `\"latest\"` | from all latest tests\r\n    4. `\"popular\"` | from all best tests\r\n    5. `\"archived\"` | from all archived tests\r\n    6. `\"solved\"` | from all users solved tests\r\n    7. `\"pinned\"` | from all users pinned tests\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"public\"`\r\n    2. `\"private\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
 							},
 							"response": []
 						}
@@ -861,7 +910,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"firstName\": \"\",\r\n    \"lastName\": \"\",\r\n    \"birthDate\": \"\",\r\n    \"country\": \"\",\r\n    \"city\": \"\",\r\n    \"gender\": true,\r\n    \"job\": \"\",\r\n    \"bio\": \"\",\r\n\r\n    \"firstNameA\": \"\",\r\n    \"lastNameA\": \"\",\r\n    \"birthDateA\": \"\",\r\n    \"countryA\": \"\",\r\n    \"cityA\": \"\",\r\n    \"genderA\": \"\",\r\n    \"jobA\": \"\",\r\n    \"bioA\": \"\"\r\n}",
+									"raw": "{\r\n    \"firstName\": \"qw\",\r\n    \"lastName\": \"eqw\",\r\n    \"country\": \"sad\",\r\n    \"city\": \"xzasdfzcz\",\r\n    \"gender\": true,\r\n    \"job\": \"\",\r\n    \"bio\": \"\",\r\n\r\n    \"firstNameA\": true,\r\n    \"lastNameA\": true,\r\n    \"birthDateA\": true,\r\n    \"countryA\": true,\r\n    \"cityA\": true,\r\n    \"genderA\": true,\r\n    \"jobA\": true,\r\n    \"bioA\": true\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -953,18 +1002,39 @@
 						{
 							"name": "buy TSC&TCC",
 							"request": {
-								"method": "GET",
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"tsc\": \"unlimited\",\r\n    \"tcc\": \"unlimited\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
-									"raw": "{{URL}}/v1/payments",
+									"raw": "{{URL}}/v1/payments/buy",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"v1",
-										"payments"
+										"payments",
+										"buy"
 									]
-								}
+								},
+								"description": "### body\r\n- **tcc** | integer or string | test create count | ex:\r\n    1. `\"unlimited\"`\r\n    2. `15`\r\n- **tsc** | integer or string | test solve count | ex:\r\n    1. `\"unlimited\"`\r\n    2. `15`"
 							},
 							"response": []
 						},

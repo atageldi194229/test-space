@@ -70,13 +70,14 @@ obj.updateMyAccount = async (req, res, next) => {
 
   // prepare data to update
   let data = {};
-  for (let key in keys) {
-    data[key] = req.body[key];
-    data[key + "A"] = req.body[key + "A"];
+  for (let i in keys) {
+    data[keys[i]] = req.body[keys[i]];
+    data[keys[i] + "A"] = req.body[keys[i] + "A"];
   }
 
+  console.log(data);
   // request db
-  let user = await User.update(data, { where: { id } });
+  let updatedRows = await User.update(data, { where: { id } });
 
   // client response
   res.status(200).json({

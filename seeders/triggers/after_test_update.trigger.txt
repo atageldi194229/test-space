@@ -1,4 +1,4 @@
-CREATE TRIGGER after_test_insert AFTER UPDATE ON tests FOR EACH ROW BEGIN
+CREATE TRIGGER after_test_update AFTER UPDATE ON tests FOR EACH ROW BEGIN
 	/* update public solving test */
 	IF OLD.default_solve_time != NEW.default_solve_time THEN
 		UPDATE solving_tests SET
