@@ -59,7 +59,7 @@ const model = (sequelize, DataTypes) => {
   Test.associate = function (models) {
     // associations there
 
-    Test.belongsTo(models.User, { foreignKey: "userId" });
+    Test.belongsTo(models.User, { as: "user", foreignKey: "userId" });
 
     Test.hasMany(models.Question, { foreignKey: "testId" });
     Test.hasMany(models.SolvingTest, { foreignKey: "testId" });
