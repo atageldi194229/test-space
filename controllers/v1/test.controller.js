@@ -74,6 +74,7 @@ async function prepareOptions(action, { userId, limit, offset, sort, filter }) {
     ],
     sorts: ["all", "public", "archived", "solved", "pinned"],
     filters: ["all", "archived"],
+    // publicSolvingTest: ["public", "latest", "popular", "solved", "pinned"],
   };
 
   let publicAttributes = [
@@ -401,7 +402,8 @@ obj.getOne = async (req, res, next) => {
  */
 obj.getOnePublic = async (req, res, next) => {
   // client data
-  let { id } = req.params;
+  let id = req.params.id,
+    userId = req.user.id;
 
   // prepare query options
   let options = {
@@ -421,11 +423,20 @@ obj.getOnePublic = async (req, res, next) => {
     ],
   };
 
+  let solvingTest = await SolvingTest.findOne({
+    order: [["createdAt", "desc"]],
+    where: { testId: id, isPublic: true },
+    attributes: ["id"],
+  });
+
   // request db
   let test = await Test.findOne(options);
 
   // error test
   if (!test) return next(new ErrorResponse("Could not find test"));
+
+  // is pinned
+  await test.isPinned(userId);
 
   // prepare response data
   let data = {
@@ -438,7 +449,9 @@ obj.getOnePublic = async (req, res, next) => {
     solveCount: test.solveCount,
     language: test.language,
     keywords: test.keywords,
+    isPinned: test.isPinned,
     user: test.User,
+    solvingTest,
   };
 
   // client response
@@ -502,6 +515,9 @@ obj.search = async (req, res, next) => {
   // request db
   let tests = await Test.findAll(options);
 
+  // are pinned
+  await Test.arePinned(tests, userId);
+
   res.status(200).json({
     success: true,
     tests,
@@ -528,6 +544,9 @@ const get = (action) => async (req, res) => {
 
   // request db
   let tests = await Test.findAll(options);
+
+  // are pinned
+  await Test.arePinned(tests, userId);
 
   // client data
   res.status(200).json({
