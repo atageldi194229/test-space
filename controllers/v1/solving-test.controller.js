@@ -102,6 +102,8 @@ obj.getAll = async (req, res) => {
         name: e.Test.name,
         description: e.Test.description,
         image: e.image,
+        language: e.language,
+        keywords: e.keywords,
       },
     })),
   });

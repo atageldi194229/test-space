@@ -47,7 +47,7 @@ obj.buyTscAndTcc = async (req, res, next) => {
     { body } = req; // body: { tsc, tcc }
 
   // tsc
-  if (tsc === "unlimited") {
+  if (body.tsc === "unlimited") {
     data.isTscUnlimited = true;
     data.tscPriceId = tscUnlimitedPrice.id;
   } else {
@@ -68,7 +68,7 @@ obj.buyTscAndTcc = async (req, res, next) => {
   }
 
   // tcc
-  if (tcc === "unlimited") {
+  if (body.tcc === "unlimited") {
     data.isTccUnlimited = true;
     data.tccPriceId = tccUnlimitedPrice.id;
   } else {

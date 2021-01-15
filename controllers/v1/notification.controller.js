@@ -24,9 +24,16 @@ const obj = {};
  * token
  */
 obj.sendInvitation = async (req, res, next) => {
-  _;
   // get from client
-  let { userIds, groupIds, testId, startTime, endTime, solveTime } = req.body,
+  let {
+      userIds,
+      groupIds,
+      testId,
+      startTime,
+      endTime,
+      solveTime,
+      link,
+    } = req.body,
     userId = req.user.id;
 
   // validate data
@@ -63,7 +70,6 @@ obj.sendInvitation = async (req, res, next) => {
     endTime,
     solveTime,
     invitedUsers: JSON.stringify(data.userIds.map((e) => parseInt(e))),
-    link,
   });
 
   // send invitation start
@@ -98,7 +104,7 @@ obj.sendInvitation = async (req, res, next) => {
   // res to the client with token
   res.status(200).json({
     success: true,
-    link: "www.testSpace.com.tm/solve-test/" + SolvingTest.id,
+    link: link.replace(":id", solvingTest.id),
     solvingTestId: solvingTest.id,
   });
 };
