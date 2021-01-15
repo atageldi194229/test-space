@@ -421,6 +421,7 @@ obj.startSolvingPublicTest = async (req, res, next) => {
   });
 
   if (!userResult) {
+    let NOW = new Date();
     userResult = await UserResult.create({
       startedAt: NOW,
       solvingTestId,
@@ -431,11 +432,7 @@ obj.startSolvingPublicTest = async (req, res, next) => {
     data.status = "solving";
   }
 
-  if (
-    userResult &&
-    !userResult.finishedAt &&
-    userResult.startedAt.getTime() + solvingTest.solveTime > new Date()
-  ) {
+  if (userResult && solvingTest.isTimeToSolve(userResult)) {
     data.status = "solving";
   } else {
     data.status = "active";

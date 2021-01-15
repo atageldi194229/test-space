@@ -37,7 +37,7 @@ obj.solveQuestion = async (req, res, next) => {
   let solvingTest = userResult.SolvingTest;
 
   // permission test
-  if (JSON.parse(solvingTest.invitedUsers).indexOf(parseInt(userId)) === -1)
+  if (solvingTest.isUserInvited(userId))
     return next(new ErrorResponse("Permission denied"));
 
   // time test
@@ -89,13 +89,7 @@ obj.removeSolvedQuestion = async (req, res, next) => {
     return next(new ErrorResponse("Permission denied"));
 
   // time test
-  if (
-    !(
-      !userResult.finishedAt &&
-      userResult.startAt + solvingTest.solveTime > new Date() &&
-      solvingTest.endTime > new Date()
-    )
-  )
+  if (!solvingTest.isTimeToSolve(userResult))
     return next(new ErrorResponse("It is not time to solve"));
 
   // request db

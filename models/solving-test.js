@@ -77,11 +77,16 @@ const model = (sequelize, DataTypes) => {
 
 const methods = ({ SolvingTest }) => {
   SolvingTest.prototype.isTimeToSolve = function (userResult) {
-    return (
-      !userResult.finishedAt &&
-      userResult.startedAt.getTime() + this.solveTime > new Date() &&
-      this.endTime.getTime() > new Date()
-    );
+    let NOW = new Date(),
+      res =
+        !userResult.finishedAt &&
+        userResult.startedAt.getTime() + this.solveTime > NOW;
+    if (this.isPublic) return res;
+    return res && this.endTime.getTime() > NOW;
+  };
+  SolvingTest.prototype.isUserInvited = function (userId) {
+    if (this.isPublic) return true;
+    return JSON.parse(this.invitedUsers).includes(parseInt(userId));
   };
 };
 
