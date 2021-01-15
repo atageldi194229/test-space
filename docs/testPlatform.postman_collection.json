@@ -1453,7 +1453,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"userIds\": [1],\r\n    \"groupIds\": [2, 3],\r\n    \"testId\": 1\r\n}",
+									"raw": "{\r\n    \"userIds\": [1],\r\n    \"testId\": 2,\r\n    \"link\": \"api/link/:id\",\r\n\r\n    \"startTime\": \"2021-01-15 00:53:20\",\r\n    \"endTime\": \"2021-01-15 00:53:20\",\r\n    \"solveTime\": 3600000\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
