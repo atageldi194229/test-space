@@ -1,11 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-const { getAll, set } = require("../../controllers").Admin.PriceController;
+const {
+  getAll,
+  search,
+  update,
+} = require("../../controllers").Admin.TestController;
 
 const { verify } = require("../../middleware").JwtMiddleware;
 
 router.get("/", verify, getAll);
-router.post("/", verify, set);
+router.post("/search", verify, search);
+router.put("/:id", verify, update);
 
 module.exports = router;

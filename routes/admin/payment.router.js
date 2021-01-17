@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
-const { getAll, set } = require("../../controllers").Admin.PriceController;
+const { getAll, update } = require("../../controllers").Admin.PaymentController;
 
 const { verify } = require("../../middleware").JwtMiddleware;
 
 router.get("/", verify, getAll);
-router.post("/", verify, set);
+router.put("/:id", verify, update);
 
 module.exports = router;

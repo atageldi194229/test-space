@@ -37,7 +37,7 @@ obj.solveQuestion = async (req, res, next) => {
   let solvingTest = userResult.SolvingTest;
 
   // permission test
-  if (solvingTest.isUserInvited(userId))
+  if (!solvingTest.isUserInvited(userId))
     return next(new ErrorResponse("Permission denied"));
 
   // time test
@@ -85,7 +85,7 @@ obj.removeSolvedQuestion = async (req, res, next) => {
   let solvingTest = userResult.SolvingTest;
 
   // permission test
-  if (JSON.parse(solvingTest.invitedUsers).indexOf(parseInt(userId)) === -1)
+  if (!solvingTest.isUserInvited(userId))
     return next(new ErrorResponse("Permission denied"));
 
   // time test

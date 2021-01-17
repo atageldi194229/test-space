@@ -154,17 +154,6 @@
 								}
 							},
 							"response": []
-						},
-						{
-							"name": "login",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": ""
-								}
-							},
-							"response": []
 						}
 					]
 				},
@@ -1907,8 +1896,111 @@
 			"name": "admin",
 			"item": [
 				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"atasan\",\r\n    \"password\": \"atasan\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/register",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"register"
+									]
+								},
+								"description": "### body\r\n- **username** | `string`\r\n- **password** | `string`"
+							},
+							"response": []
+						},
+						{
+							"name": "login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let resData = JSON.parse(responseBody);\r",
+											"\r",
+											"pm.globals.set(\"ADMIN_TOKEN\", resData.token);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"atasan\",\r\n    \"password\": \"sakura\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/login",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"login"
+									]
+								},
+								"description": "### body\r\n- **username** | `string`\r\n- **password** | `string`"
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "prices",
 					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/prices",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"prices"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"active\"`\r\n    2. `\"inactive\"`\r\n    3. `\"tsc\"`\r\n    4. `\"tsc-unlimited\"`\r\n    5. `\"tcc-unlimited\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
 						{
 							"name": "set price",
 							"request": {
@@ -1924,16 +2016,390 @@
 									}
 								},
 								"url": {
-									"raw": "{{URL}}/admin/price",
+									"raw": "{{URL}}/admin/prices",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"admin",
-										"price"
+										"prices"
 									]
 								},
-								"description": "removes old price, then adds new one, but old one will not dissapear, \\n\r\nclient should send TOKEN with request"
+								"description": "removes old price, then adds new one, but old one will not dissapear, \\n\r\n\r\n### auth\r\n- **token**\r\n\r\n### body\r\n- `\"type\"` | integer | 0-tsc, 1-tsc, 2-tscUnlimited, 3-tccUnlimited\r\n- `\"data\"` | string (json-data)"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "moderators",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/moderators",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"moderators"
+									]
+								},
+								"description": "it gives all moderators <br />\r\nit can use only **administrator**\r\n\r\n### auth\r\n- **token**"
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"bla-bla\",\r\n    \"password\": \"bla-bla\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/moderators/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"moderators",
+										"1"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **username** | `string` | optional\r\n- **password** | `string`| optional"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "payments",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/payments",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"payments"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"allowedAt-asc\" or \"allowedAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"allowed\"`\r\n    2. `\"cancelled\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"bla-bla\",\r\n    \"password\": \"bla-bla\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/payments/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"payments",
+										"1"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **status** | `integer` | 0-waiting, 1-active, 2-cancelled | optional\r\n- **note** | `string`| optional"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "tests",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/tests",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"tests"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"allowedAt-asc\" or \"allowedAt-desc\"`\r\n    3. `\"name-asc\" or \"name-desc\"`\r\n    4. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    5. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"public\"`\r\n    2. `\"private\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "search",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"text\": \"asd\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/tests/search",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"tests",
+										"search"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **text** | `string` | search text | optional\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"allowedAt-asc\" or \"allowedAt-desc\"`\r\n    3. `\"name-asc\" or \"name-desc\"`\r\n    4. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    5. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"public\"`\r\n    2. `\"private\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"allow\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/tests/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"tests",
+										"1"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **allow** | `boolean`"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/users",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"users"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"username-asc\" or \"username-desc\"`\r\n    3. `\"gender-asc\" or \"gender-desc\"`\r\n    4. `\"birthDate-asc\" or \"birthDate-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"active\"`\r\n    2. `\"inactive\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "search",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"text\": \"asd\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/tests/users",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"tests",
+										"users"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **text** | `string` | search text | optional\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"username-asc\" or \"username-desc\"`\r\n    3. `\"gender-asc\" or \"gender-desc\"`\r\n    4. `\"birthDate-asc\" or \"birthDate-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"active\"`\r\n    2. `\"inactive\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "notifications",
+					"item": [
+						{
+							"name": "send",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userIds\": [1,2],\r\n    \"type\": \"info\",\r\n    \"title\": \"Title\",\r\n    \"content\": \"Lorem ipsum doler sit\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/notifications",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"notifications"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **userIds** | `array<integer>` | array of user ids\r\n- **type** | `string`| enum: [\"info\", \"warning\", \"success\", \"danger\"] | notification type | optional\r\n- **title** | `string`| notification type | optional\r\n- **content** | `string`| notification content | optional"
 							},
 							"response": []
 						}

@@ -61,7 +61,7 @@ const model = (sequelize, DataTypes) => {
 
     Test.belongsTo(models.User, { as: "user", foreignKey: "userId" });
 
-    Test.hasMany(models.Question, { foreignKey: "testId" });
+    Test.hasMany(models.Question, { as: "questions", foreignKey: "testId" });
     Test.hasMany(models.SolvingTest, { foreignKey: "testId" });
 
     Test.belongsToMany(models.User, {

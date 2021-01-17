@@ -1,28 +1,21 @@
 "use strict";
 
 const {
-  Price,
+  User,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
+const ErrorResponse = require("../../utils/errorResponse");
 const obj = {};
 
 const tools = {
   filter: (s) => {
     let where = {};
     if (s === "active") {
-      where.status = true;
+      where.active = true;
     } else if (s === "inactive") {
-      where.status = false;
-    } else if (s === "tsc") {
-      where.type = 0;
-    } else if (s === "tcc") {
-      where.type = 1;
-    } else if (s === "tsc-unlimited") {
-      where.type = 2;
-    } else if (s === "tcc-unlimited") {
-      where.type = 3;
+      where.active = false;
     }
 
     return where;
@@ -33,7 +26,7 @@ const tools = {
       let a = s.split("-");
       a[1] = a[1].toLowerCase();
 
-      let k = ["createdAt"];
+      let k = ["username", "gender", "birthDate", "createdAt"];
 
       if (k.includes(a[0]) && ["asc", "desc"].includes(a[1])) {
         return [a[0], a[1]];
@@ -44,7 +37,7 @@ const tools = {
 };
 
 /**
- * prepare options for getting prices from db using sequelize
+ * prepare options for getting users from db using sequelize
  */
 function prepareOptions({ limit, offset, sort, filter }) {
   let options = {
@@ -60,10 +53,11 @@ function prepareOptions({ limit, offset, sort, filter }) {
 }
 
 /**
- * get all prices
- * action - /admin/prices
+ * get all users
+ * action - /admin/users
  * method - get
  * token
+ * role - a
  */
 obj.getAll = async (req, res) => {
   // client data
@@ -76,40 +70,70 @@ obj.getAll = async (req, res) => {
   // prepare options
   let options = prepareOptions({ limit, offset, sort, filter });
   // request db
-  let prices = await Price.findAll(options);
+  let users = await User.findAll(options);
 
   // client response
   res.status(200).json({
     success: true,
-    prices,
+    users,
   });
 };
 
 /**
- * set new prices
- * action - /admin/prices
+ * search from users
+ * action - /admin/users/search
  * method - post
  * token
+ * role - a
  */
-obj.set = async (req, res) => {
+obj.search = async (req, res) => {
   // client data
-  let {
-    body: { type, data },
-    user: { id: createdBy },
-  } = req;
+  let { query, body } = req,
+    limit = parseInt(query.limit) || 20,
+    offset = parseInt(query.offset) || 0,
+    sort = query.sort,
+    filter = query.filter,
+    text = (body.text || "").toLowerCase();
 
-  // diactivate old prices with $type
-  await Price.update({ status: false }, { where: { type } });
+  // prepare options
+  let options = prepareOptions({ limit, offset, sort, filter });
+  // search options
+  options.where = {
+    ...options.where,
+    ...{
+      [Op.or]: [
+        {
+          username: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("User.username")),
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+        {
+          phoneNumber: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("User.phone_number")),
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+        {
+          email: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("User.email")),
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+      ],
+    },
+  };
 
-  // parsing the data if this tsc, tcc
-  if (type === 0 || type === 1) data = JSON.stringify(data, null, 2);
-
-  // add new price
-  await Price.create({ type, data, createdBy });
+  // request db
+  let users = await User.findAll(options);
 
   // client response
   res.status(200).json({
     success: true,
+    users,
   });
 };
 

@@ -1,7 +1,5 @@
 "use strict";
 
-const notificationUser = require("./notification-user");
-
 const model = (sequelize, DataTypes) => {
   let Notification = sequelize.define(
     "Notification",
@@ -13,6 +11,7 @@ const model = (sequelize, DataTypes) => {
         allowNull: false,
         comment: "Notification type (success, info, warning, danger)",
       },
+      title: { type: DataTypes.STRING },
       content: { type: DataTypes.TEXT },
     },
     {

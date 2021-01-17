@@ -379,30 +379,22 @@ obj.getOne = async (req, res, next) => {
   // prepare query options
   let options = {
     where: { id, userId: req.user.id },
-    include: [{ association: "Questions" }],
+    attributes: ["id", "name", "description"],
+    include: [
+      {
+        association: "questions",
+        attributes: ["id", "type", "data", "isRandom", "editable"],
+      },
+    ],
   };
 
   // request db
   let test = await Test.findOne(options);
 
-  // prepare response data
-  let data = {
-    id: test.id,
-    name: test.name,
-    description: test.description,
-    questions: test.Questions.map((e) => ({
-      id: e.id,
-      type: e.type,
-      data: e.data,
-      isRandom: e.isRandom,
-      editable: e.editable,
-    })),
-  };
-
   // client response
   res.status(200).json({
     success: true,
-    test: data,
+    test,
   });
 };
 
@@ -482,16 +474,14 @@ obj.getOnePublic = async (req, res, next) => {
  */
 obj.search = async (req, res, next) => {
   // client data
-  let userId = req.user.id,
-    limit = parseInt(req.query.limit) || 20,
-    offset = parseInt(req.query.offset) || 0,
-    sort = req.query.sort,
-    filter = req.query.filter,
-    text = req.body.text || "",
-    action = req.body.action || "public";
-
-  // validate
-  text = text.toLowerCase();
+  let { query, body, user } = req,
+    userId = user.id,
+    limit = parseInt(query.limit) || 20,
+    offset = parseInt(query.offset) || 0,
+    sort = query.sort,
+    filter = query.filter,
+    text = (body.text || "").toLowerCase(),
+    action = body.action || "public";
 
   // prepare options
   let options = await prepareOptions(action, {
@@ -540,11 +530,12 @@ obj.search = async (req, res, next) => {
 // multi controller
 const get = (action) => async (req, res) => {
   // client data
-  const userId = req.user.id,
-    limit = parseInt(req.query.limit) || 20,
-    offset = parseInt(req.query.offset) || 0,
-    sort = req.query.sort,
-    filter = req.query.filter;
+  const { query, user } = req,
+    userId = user.id,
+    limit = parseInt(query.limit) || 20,
+    offset = parseInt(query.offset) || 0,
+    sort = query.sort,
+    filter = query.filter;
 
   // prepare options
   let options = await prepareOptions(action, {

@@ -6,6 +6,7 @@ const V1Router = require("./v1");
 const AdminRouter = require("./admin");
 
 router.use("/v1", V1Router);
+router.use("/admin", AdminRouter);
 
 module.exports = router;
 

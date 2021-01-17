@@ -1,4 +1,4 @@
-const { User, Price } = require("../models");
+const { User, Price, PrivilegedUser } = require("../models");
 
 (async () => {
   await User.create({
@@ -10,6 +10,12 @@ const { User, Price } = require("../models");
     phoneNumber: "+99368597458",
     email: "qwerty@gmail.com",
     active: true,
+  });
+
+  await PrivilegedUser.create({
+    username: "atasan",
+    password: PrivilegedUser.hashPassword("sakura"),
+    role: "a",
   });
 
   await Price.create({

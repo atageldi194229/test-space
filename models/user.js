@@ -69,9 +69,12 @@ const model = (sequelize, DataTypes) => {
     });
   };
 
-  // Custom methods, recommended by sequelize
+  return User;
+};
+
+const methods = ({ User }) => {
   // Comparing user password with given password
-  User.prototype.comparePassword = function (pass) {
+  User.prototype.comparePassword = function (password) {
     return bcrypt.compareSync(password, this.password);
   };
   // hashing password
@@ -81,8 +84,6 @@ const model = (sequelize, DataTypes) => {
     const hash = bcrypt.hashSync(pass, salt);
     return hash;
   };
-
-  return User;
 };
 
-module.exports = { model };
+module.exports = { model, methods };
