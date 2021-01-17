@@ -39,7 +39,7 @@ class Mailer {
 
     let payload = {
       from: `"Test Space 👻" <${mailer.user}>`,
-      to,
+      to: to.join(),
       subject,
       text,
     };
@@ -68,13 +68,8 @@ class Mailer {
   }
 
   async sendTestInvitation({ to, link, userId }) {
-    let str = to.join();
-
-    // if (to.length > 0) str += to[0];
-    // for (let i = 1; i < to.length; i++) str += `,${to[i]}`;
-
     await this.sendMail({
-      to: str,
+      to,
       subject: `Invitation`,
       text: `You invited to solve test. Link: ${link}`,
     });

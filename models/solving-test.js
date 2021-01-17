@@ -77,7 +77,7 @@ const model = (sequelize, DataTypes) => {
 
 const methods = ({ SolvingTest }) => {
   SolvingTest.prototype.isTimeToSolve = function (userResult) {
-    let NOW = new Date(),
+    let NOW = new Date().getTime(),
       res =
         !userResult.finishedAt &&
         userResult.startedAt.getTime() + this.solveTime > NOW;

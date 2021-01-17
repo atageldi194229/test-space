@@ -5,6 +5,7 @@ class JwtMiddleware {
   constructor() {}
 
   getUser(req, res, next) {
+    // you find invalid token here
     try {
       const bearer = req.header("Authorization") || "";
       const token = bearer.split(" ")[1];
@@ -12,6 +13,7 @@ class JwtMiddleware {
       req.user = {
         id: decoded.payload.id,
         active: decoded.payload.active,
+        role: decoded.payload.role,
       };
       return next();
     } catch (e) {

@@ -71,7 +71,7 @@ const model = (sequelize, DataTypes) => {
 
     // whom belongs to this payment
     Payment.belongsTo(models.User, { foreignKey: "userId" });
-    Payment.belongsTo(models.User, { foreignKey: "modifiedBy" });
+    Payment.belongsTo(models.PrivilegedUser, { foreignKey: "modifiedBy" });
 
     // which prices uses this payment
     Payment.belongsTo(models.Price, { foreignKey: "tscPriceId" });

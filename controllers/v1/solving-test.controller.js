@@ -206,8 +206,8 @@ obj.startSolvingTest = async (req, res, next) => {
 
   // error test
   if (!solvingTest) return next(new ErrorResponse("Something went wrong"));
-  // permission test
-  if (JSON.parse(solvingTest.invitedUsers).indexOf(parseInt(userId)) === -1)
+  // permission test`
+  if (!JSON.parse(solvingTest.invitedUsers).includes(parseInt(userId)))
     return next(new ErrorResponse("Permission denied"));
 
   // prepare data
