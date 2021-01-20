@@ -883,6 +883,37 @@
 							"response": []
 						},
 						{
+							"name": "get my balance",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/users/my/balance",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"my",
+										"balance"
+									]
+								},
+								"description": "### auth\r\n- **token**"
+							},
+							"response": []
+						},
+						{
 							"name": "update my account",
 							"request": {
 								"auth": {
@@ -988,6 +1019,35 @@
 				{
 					"name": "payments",
 					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/payments",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"payments"
+									]
+								},
+								"description": "payment is inactive if 30 days left after allowed time \r\n\r\n### auth\r\n- **token**"
+							},
+							"response": []
+						},
 						{
 							"name": "buy TSC&TCC",
 							"request": {
@@ -1574,6 +1634,36 @@
 				{
 					"name": "user results",
 					"item": [
+						{
+							"name": "get all answers",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/user-results/1/questions",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"user-results",
+										"1",
+										"questions"
+									]
+								}
+							},
+							"response": []
+						},
 						{
 							"name": "solve question",
 							"request": {

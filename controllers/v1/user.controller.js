@@ -2,6 +2,7 @@
 
 const {
   User,
+  Payment,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
@@ -44,6 +45,29 @@ obj.getMyAccount = async (req, res, next) => {
   res.status(200).json({
     success: true,
     user,
+  });
+};
+
+/**
+ * get my balance
+ * action - /v1/users/my/balance
+ * method - get
+ * token
+ */
+obj.getMyBalance = async (req, res, next) => {
+  // client data
+  let id = req.user.id;
+
+  // request db
+  let { tsc, tcc } = await Payment.getBalance(id);
+
+  // client response
+  res.status(200).json({
+    success: true,
+    balance: {
+      tsc,
+      tcc,
+    },
   });
 };
 

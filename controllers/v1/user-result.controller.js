@@ -4,6 +4,7 @@ const {
   User,
   UserResult,
   Question,
+  SolvingTest,
   SolvingQuestion,
   sequelize,
   Sequelize: { Op },
@@ -100,6 +101,79 @@ obj.removeSolvedQuestion = async (req, res, next) => {
   // client response
   res.status(200).json({
     success: true,
+  });
+};
+
+/**
+ * get solved questions of one test
+ * action - /v1/user-results/:id/questions
+ * method - get
+ * token
+ */
+obj.getSolvedQuestions = async (req, res, next) => {
+  // client data
+  let userResultId = req.params.id,
+    userId = req.user.id;
+
+  // request db
+  let userResult = await UserResult.findOne({
+    where: {
+      id: userResultId,
+      [Op.or]: [
+        {
+          finishedAt: { [Op.ne]: null },
+        },
+        {
+          endTime: { [Op.lt]: new Date() },
+        },
+      ],
+    },
+  });
+
+  // error test
+  if (!userResult) return next(new ErrorResponse("Could not find userResult"));
+
+  let solvingTest = await SolvingTest.findOne({
+    where: { id: userResult.solvingTestId },
+    attributes: ["id", "testId", "userId"],
+  });
+
+  // error test
+  if (!(userResult.userId === userId || solvingTest.userId === userId))
+    return next(new ErrorResponse("Could not find userResult"));
+
+  let questions = await Question.findAll({
+    where: { testId: solvingTest.testId },
+    attributes: ["id", "type", "data"],
+    include: {
+      association: "solvingQuestions",
+      where: { userResultId },
+      attributes: ["answer", "isCorrect", "createdAt", "updatedAt"],
+      required: false,
+    },
+  });
+  // let solvingQuestions = await SolvingQuestion.findAll({
+  //   where: { userResultId },
+  // });
+
+  // prepare data
+  for (let i in questions) {
+    questions[i] = {
+      id: questions[i].id,
+      type: questions[i].type,
+      data: questions[i].data,
+      userAnswer:
+        (questions[i].solvingQuestions.length &&
+          questions[i].solvingQuestions[1]) ||
+        null,
+    };
+  }
+
+  // client response
+  res.status(200).json({
+    success: true,
+    userResult,
+    questions,
   });
 };
 

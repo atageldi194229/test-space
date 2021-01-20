@@ -95,7 +95,40 @@ const model = (sequelize, DataTypes) => {
 };
 
 const methods = ({ Payment, GroupUser, Sequelize: { Op } }) => {
-  Payment.canSendInvitation = async (userId, { userIds, groupIds }) => {
+  // get balance of one user
+  Payment.getBalance = async function (userId) {
+    let days30 = 30 * 24 * 60 * 60 * 1000;
+    let payments = await Payment.findAll({
+      where: {
+        allowedAt: {
+          [Op.gte]: new Date(new Date() - days30),
+        },
+        status: 1,
+        userId,
+      },
+      // order: [["createdAt", "asc"]],
+    });
+
+    let tsc = 0,
+      tcc = 0;
+
+    for (let i in payments) {
+      // tsc
+      if (tsc !== "unlimited") {
+        if (payments[i].isTscUnlimited) tsc = "unlimited";
+        else tsc += payments[i].tsc - payments[i].tscUsed;
+      }
+      // tcc
+      if (tcc !== "unlimited") {
+        if (payments[i].isTccUnlimited) tcc = "unlimited";
+        else tcc += payments[i].tcc - payments[i].tccUsed;
+      }
+    }
+
+    return { tsc, tcc, payments };
+  };
+
+  Payment.canSendInvitation = async function (userId, { userIds, groupIds }) {
     // validate data
     userIds = userIds || [];
     groupIds = groupIds || [];
@@ -126,17 +159,7 @@ const methods = ({ Payment, GroupUser, Sequelize: { Op } }) => {
       tsc = {};
 
     // calculation request db
-    let days30 = 30 * 24 * 60 * 60 * 1000;
-    let payments = await Payment.findAll({
-      where: {
-        allowedAt: {
-          [Op.gte]: new Date(new Date() - days30),
-        },
-        status: 1,
-        userId,
-      },
-      // order: [["createdAt", "asc"]],
-    });
+    let { payments } = await Payment.getBalance(userId);
 
     for (let i = 0; i < payments.length; i++) {
       if (payments[i].isTscUnlimited === true) canSend = true;
@@ -162,7 +185,7 @@ const methods = ({ Payment, GroupUser, Sequelize: { Op } }) => {
     };
   };
 
-  Payment.useTsc = async (userId, { tscCount, payments }) => {
+  Payment.useTsc = async function (userId, { tscCount, payments }) {
     for (let i = 0; i < payments.length; i++) {
       let tsc = payments[i].tsc,
         tscUsed = payments[i].tscUsed,
@@ -185,24 +208,14 @@ const methods = ({ Payment, GroupUser, Sequelize: { Op } }) => {
     return false;
   };
 
-  Payment.canCreateTest = async (userId) => {
+  Payment.canCreateTest = async function (userId) {
     // calculation starts
     let testCount = 1,
       canSend = false,
       tcc = {};
 
     // calculation request db
-    let days30 = 30 * 24 * 60 * 60 * 1000;
-    let payments = await Payment.findAll({
-      where: {
-        allowedAt: {
-          [Op.gte]: new Date(new Date() - days30),
-        },
-        status: 1,
-        userId,
-      },
-      // order: [["createdAt", "asc"]],
-    });
+    let { payments } = await Payment.getBalance(userId);
 
     for (let i = 0; i < payments.length; i++) {
       if (payments[i].isTccUnlimited === true) canSend = true;
@@ -226,7 +239,7 @@ const methods = ({ Payment, GroupUser, Sequelize: { Op } }) => {
     };
   };
 
-  Payment.useTcc = async (userId, { tccCount, payments }) => {
+  Payment.useTcc = async function (userId, { tccCount, payments }) {
     for (let i = 0; i < payments.length; i++) {
       let tcc = payments[i].tcc,
         tccUsed = payments[i].tccUsed,

@@ -430,7 +430,34 @@ obj.getOnePublic = async (req, res, next) => {
   let solvingTest = await SolvingTest.findOne({
     order: [["createdAt", "desc"]],
     where: { testId: id, isPublic: true },
-    attributes: ["id"],
+    attributes: ["id", "questionCount"],
+  });
+
+  // error test
+  if (!solvingTest) return next(new ErrorResponse("Could not find test"));
+
+  let userResults = await UserResult.findAll({
+    order: [["createdAt", "desc"]],
+    where: {
+      userId,
+      solvingTestId: solvingTest.id,
+      [Op.or]: [
+        {
+          finishedAt: { [Op.ne]: null },
+        },
+        {
+          endTime: { [Op.lt]: new Date() },
+        },
+      ],
+    },
+    attributes: [
+      "id",
+      "startedAt",
+      "finishedAt",
+      "endTime",
+      "correctAnswerCount",
+      "incorrectAnswerCount",
+    ],
   });
 
   // request db
@@ -457,6 +484,7 @@ obj.getOnePublic = async (req, res, next) => {
     isPinned: test.isPinned,
     user: test.user,
     solvingTest,
+    userResults,
   };
 
   // client response
@@ -654,7 +682,7 @@ obj.unpin = pinningTest("destroy");
 // When exporting all collected data
 let keys = Object.keys(obj);
 // exclude some functions
-let excluded_keys = ["status"];
+let excluded_keys = [];
 for (let i = 0; i < keys.length; i++)
   if (!excluded_keys.includes(keys[i]))
     obj[keys[i]] = asyncHandler(obj[keys[i]]);
