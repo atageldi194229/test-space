@@ -61,7 +61,10 @@ const model = (sequelize, DataTypes) => {
     // associations there
 
     Question.belongsTo(models.Test, { foreignKey: "testId" });
-    Question.hasMany(models.SolvingQuestion, { foreignKey: "questionId" });
+    Question.hasMany(models.SolvingQuestion, {
+      as: "solvingQuestions",
+      foreignKey: "questionId",
+    });
   };
 
   return Question;
