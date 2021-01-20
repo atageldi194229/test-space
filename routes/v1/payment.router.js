@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const {
+  getAll,
   canSendInvitation,
   canCreateTest,
   buyTscAndTcc,
@@ -9,6 +10,7 @@ const {
 
 const { verify } = require("../../middleware").JwtMiddleware;
 
+router.get("/", verify, getAll);
 router.post("/tsc/check", verify, canSendInvitation);
 router.post("/tcc/check", verify, canCreateTest);
 router.post("/buy", verify, buyTscAndTcc);
