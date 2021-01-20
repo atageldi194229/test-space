@@ -16,7 +16,52 @@ const obj = {};
 
 /**
  * buy tsc and tcc
- * action - /v1/payment/buy
+ * action - /v1/payments
+ * method - get
+ * token
+ */
+obj.getAll = async (req, res, next) => {
+  let allowedAt = new Date(new Date() - 30 * 24 * 60 * 60 * 1000);
+  // client data
+  let userId = req.user.id;
+
+  // prepare options
+  let options = {
+    where: {
+      userId,
+    },
+    order: [["createdAt", "desc"]],
+    attributes: [
+      "id",
+      "tsc",
+      "tcc",
+      "isTscUnlimited",
+      "isTccUnlimited",
+      "tscMoney",
+      "tccMoney",
+      "tscUsed",
+      "tccUsed",
+      "status",
+      "allowedAt",
+      "createdAt",
+    ],
+  };
+  // request db
+  let payments = await Payment.findAll(options);
+
+  // res to the client with token
+  res.status(200).json({
+    success: true,
+    payments: payments.map((e) => ({
+      ...e.dataValues,
+      status: (e.allowedAt > allowedAt && 1) || 0,
+    })),
+  });
+};
+
+/**
+ * buy tsc and tcc
+ * action - /v1/payments/buy
  * method - post
  * token
  */
@@ -98,7 +143,7 @@ obj.buyTscAndTcc = async (req, res, next) => {
 
 /**
  * check if client can sent invitation
- * action - /v1/payment/tsc/check
+ * action - /v1/payments/tsc/check
  * method - post
  * token
  */
@@ -130,7 +175,7 @@ obj.canSendInvitation = async (req, res, next) => {
 
 /**
  * check if client can create test
- * action - /v1/payment/tcc/check
+ * action - /v1/payments/tcc/check
  * method - post
  * token
  */
