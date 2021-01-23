@@ -101,9 +101,154 @@ obj.getAll = async (req, res) => {
         id: e.Test.id,
         name: e.Test.name,
         description: e.Test.description,
-        image: e.image,
-        language: e.language,
-        keywords: e.keywords,
+        image: e.Test.image,
+        language: e.Test.language,
+        keywords: e.Test.keywords,
+      },
+    })),
+  });
+};
+
+/**
+ * Get one shared test
+ * action - /v1/solving-tests/:id
+ * method - get
+ * token
+ */
+obj.getOne = async (req, res) => {
+  // client data
+  let userId = req.user.id,
+    id = req.params.id;
+
+  let solvingTest = await SolvingTest.findOne({
+    where: { id, userId },
+    attributes: ["id", "questionCount", "testId"],
+  });
+
+  // error test
+  if (!solvingTest)
+    return next(new ErrorResponse("Could not find solving test"));
+
+  let userResults = await UserResult.findAll({
+    order: [["createdAt", "desc"]],
+    where: {
+      solvingTestId: solvingTest.id,
+      [Op.or]: [
+        {
+          finishedAt: { [Op.ne]: null },
+        },
+        {
+          endTime: { [Op.lt]: new Date() },
+        },
+      ],
+    },
+    attributes: {
+      exclude: ["updatedAt", "solvingTestId"],
+    },
+  });
+
+  // request db
+  let test = await Test.findOne({
+    where: { id: solvingTest.testId, userId },
+    attributes: {
+      exclude: ["updatedAt"],
+    },
+  });
+
+  // error test
+  if (!test) return next(new ErrorResponse("Could not find test"));
+
+  // client response
+  res.status(200).json({
+    success: true,
+    solvingTest,
+    test,
+    userResults,
+  });
+};
+
+/**
+ * Get all invitation of user
+ * action - /v1/solving-tests
+ * method - get
+ * token
+ */
+obj.search = async (req, res) => {
+  // client data
+  let userId = req.user.id,
+    limit = Number(req.query.limit) || 20,
+    offset = Number(req.query.offset) || 0,
+    sort = req.query.sort,
+    filter = req.query.filter,
+    text = (body.text || "").toLowerCase();
+
+  // request db
+  let solvingTests = await SolvingTest.findAll({
+    limit,
+    offset,
+    order: [Tools.sort(sort)],
+    where: {
+      userId,
+      ...Tools.filter(filter),
+      [Op.or]: [
+        {
+          name: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("Test.name")),
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+        {
+          keywords: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("Test.keywords")),
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+      ],
+    },
+    include: [
+      {
+        association: "Test",
+        where: {
+          allowedAt: sequelize.literal(
+            "(`SolvingTest`.`is_public` = FALSE OR `Test`.`allowed_at` IS NOT NULL AND `Test`.`is_public` = TRUE)"
+          ),
+        },
+        attributes: [
+          "id",
+          "name",
+          "description",
+          "image",
+          "language",
+          "keywords",
+        ],
+      },
+    ],
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    solvingTests: solvingTests.map((e) => ({
+      id: e.id,
+      startTime: e.startTime,
+      endTime: e.endTime,
+      solveTime: e.solveTime,
+      questionCount: e.questionCount,
+      invitedUsers: e.invitedUsers,
+      participantCount: e.participantCount,
+      correctAnswerAverage: e.correctAnswerAverage,
+      incorrectAnswerAverage: e.incorrectAnswerAverage,
+      isPublic: e.isPublic,
+      createdAt: e.createdAt,
+      test: {
+        id: e.Test.id,
+        name: e.Test.name,
+        description: e.Test.description,
+        image: e.Test.image,
+        language: e.Test.language,
+        keywords: e.Test.keywords,
       },
     })),
   });
