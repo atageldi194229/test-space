@@ -39,7 +39,7 @@ const model = (sequelize, DataTypes) => {
 
   UserResult.associate = function (models) {
     // associations there
-    UserResult.belongsTo(models.User, { foreignKey: "userId" });
+    UserResult.belongsTo(models.User, { as: "user", foreignKey: "userId" });
     UserResult.belongsTo(models.SolvingTest, { foreignKey: "solvingTestId" });
     UserResult.hasMany(models.SolvingQuestion, {
       foreignKey: "userResultId",
