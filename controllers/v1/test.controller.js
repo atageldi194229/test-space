@@ -450,14 +450,9 @@ obj.getOnePublic = async (req, res, next) => {
         },
       ],
     },
-    attributes: [
-      "id",
-      "startedAt",
-      "finishedAt",
-      "endTime",
-      "correctAnswerCount",
-      "incorrectAnswerCount",
-    ],
+    attributes: {
+      exclude: ["updatedAt", "userId"],
+    },
   });
 
   // request db
@@ -523,24 +518,22 @@ obj.search = async (req, res, next) => {
   // search options
   options.where = {
     ...options.where,
-    ...{
-      [Op.or]: [
-        {
-          name: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("Test.name")),
-            "LIKE",
-            "%" + text + "%"
-          ),
-        },
-        {
-          keywords: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("Test.keywords")),
-            "LIKE",
-            "%" + text + "%"
-          ),
-        },
-      ],
-    },
+    [Op.or]: [
+      {
+        name: sequelize.where(
+          sequelize.fn("LOWER", sequelize.col("Test.name")),
+          "LIKE",
+          "%" + text + "%"
+        ),
+      },
+      {
+        keywords: sequelize.where(
+          sequelize.fn("LOWER", sequelize.col("Test.keywords")),
+          "LIKE",
+          "%" + text + "%"
+        ),
+      },
+    ],
   };
 
   // request db
