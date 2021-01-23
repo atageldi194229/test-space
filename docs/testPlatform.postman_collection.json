@@ -1773,7 +1773,77 @@
 										"v1",
 										"solving-tests"
 									]
-								}
+								},
+								"description": "### auth\r\n- token\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"isPublic-asc\" or \"isPublic-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"public\"`\r\n    2. `\"private\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "search",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"text\": \"sad\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/solving-tests/search",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"solving-tests",
+										"search"
+									]
+								},
+								"description": "### auth\r\n- token\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"isPublic-asc\" or \"isPublic-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"public\"`\r\n    2. `\"private\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`\r\n\r\n### body\r\n- **search** | string | test search"
+							},
+							"response": []
+						},
+						{
+							"name": "get one",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/v1/solving-tests/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"solving-tests",
+										"1"
+									]
+								},
+								"description": "### auth\r\n- token"
 							},
 							"response": []
 						},
