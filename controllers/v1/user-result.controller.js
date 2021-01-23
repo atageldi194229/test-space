@@ -53,7 +53,7 @@ obj.solveQuestion = async (req, res, next) => {
   let isCorrect = question.isAnswerCorrect(answer);
 
   await SolvingQuestion.upsert(
-    { answer, isCorrect },
+    { answer: JSON.stringify(answer), isCorrect },
     { userResultId, questionId }
   );
 
@@ -128,6 +128,10 @@ obj.getSolvedQuestions = async (req, res, next) => {
         },
       ],
     },
+    include: {
+      association: "user",
+      attributes: ["id", "username", "image"],
+    },
   });
 
   // error test
@@ -164,7 +168,7 @@ obj.getSolvedQuestions = async (req, res, next) => {
       data: questions[i].data,
       userAnswer:
         (questions[i].solvingQuestions.length &&
-          questions[i].solvingQuestions[1]) ||
+          questions[i].solvingQuestions[0]) ||
         null,
     };
   }
