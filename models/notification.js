@@ -1,5 +1,7 @@
 "use strict";
 
+const { Mailer } = require("../services");
+
 const model = (sequelize, DataTypes) => {
   let Notification = sequelize.define(
     "Notification",
@@ -34,13 +36,42 @@ const model = (sequelize, DataTypes) => {
   return Notification;
 };
 
-const methods = ({ Notification, NotificationUser }) => {
-  Notification.setRead = async (userId, notificationId) => {
+const methods = ({ Notification, NotificationUser, User }) => {
+  Notification.setRead = async function (userId, notificationId) {
     // request db
     return await NotificationUser.update(
       { read: true },
       { where: { userId, notificationId } }
     );
+  };
+
+  Notification.send = async function (userIds, { type, title, content }) {
+    // convert userIds to array if is not
+    if (!Array.isArray(userIds)) userIds = [userIds];
+
+    // request db
+    let notification = await Notification.create({ type, title, content });
+
+    // get all users with their emails
+    let users = await User.findAll({
+      where: { id: userIds },
+      attributes: ["id", "email"],
+    });
+
+    // filtering userIds
+    userIds = users.map((e) => e.id);
+
+    // connect notification with users
+    let updatedRows = await NotificationUser.bulkCreate(
+      userIds.map((userId) => ({ userId, notificationId: notification.id }))
+    );
+
+    // get all emails
+    let emails = users.map((e) => e.email);
+
+    await Mailer.sendMail({ to, subject: title, text: content });
+
+    return { notification, users };
   };
 };
 

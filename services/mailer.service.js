@@ -39,7 +39,7 @@ class Mailer {
 
     let payload = {
       from: `"Test Space 👻" <${mailer.user}>`,
-      to: to.join(),
+      to: (Array.isArray(to) && to.join()) || to,
       subject,
       text,
     };

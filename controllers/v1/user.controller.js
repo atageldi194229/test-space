@@ -38,7 +38,7 @@ obj.getMyAccount = async (req, res, next) => {
   // request db
   let user = await User.findOne({
     where: { id },
-    attributes: [...keys.map((e) => e), ...keys.map((e) => e + "A")],
+    attributes: ["active", ...keys.map((e) => e), ...keys.map((e) => e + "A")],
   });
 
   // client response
