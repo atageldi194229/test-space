@@ -2,6 +2,7 @@
 
 const {
   User,
+  Payment,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
@@ -64,8 +65,7 @@ obj.getAll = async (req, res) => {
   let { query } = req,
     limit = parseInt(query.limit) || 20,
     offset = parseInt(query.offset) || 0,
-    sort = query.sort,
-    filter = query.filter;
+    { sort, filter } = query;
 
   // prepare options
   let options = prepareOptions({ limit, offset, sort, filter });
@@ -91,8 +91,7 @@ obj.search = async (req, res) => {
   let { query, body } = req,
     limit = parseInt(query.limit) || 20,
     offset = parseInt(query.offset) || 0,
-    sort = query.sort,
-    filter = query.filter,
+    { sort, filter } = query,
     text = (body.text || "").toLowerCase();
 
   // prepare options
@@ -100,31 +99,29 @@ obj.search = async (req, res) => {
   // search options
   options.where = {
     ...options.where,
-    ...{
-      [Op.or]: [
-        {
-          username: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("User.username")),
-            "LIKE",
-            "%" + text + "%"
-          ),
-        },
-        {
-          phoneNumber: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("User.phone_number")),
-            "LIKE",
-            "%" + text + "%"
-          ),
-        },
-        {
-          email: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("User.email")),
-            "LIKE",
-            "%" + text + "%"
-          ),
-        },
-      ],
-    },
+    [Op.or]: [
+      {
+        username: sequelize.where(
+          sequelize.fn("LOWER", sequelize.col("User.username")),
+          "LIKE",
+          "%" + text + "%"
+        ),
+      },
+      {
+        phoneNumber: sequelize.where(
+          sequelize.fn("LOWER", sequelize.col("User.phone_number")),
+          "LIKE",
+          "%" + text + "%"
+        ),
+      },
+      {
+        email: sequelize.where(
+          sequelize.fn("LOWER", sequelize.col("User.email")),
+          "LIKE",
+          "%" + text + "%"
+        ),
+      },
+    ],
   };
 
   // request db
@@ -134,6 +131,42 @@ obj.search = async (req, res) => {
   res.status(200).json({
     success: true,
     users,
+  });
+};
+
+/**
+ * get one user with more info
+ * action - /admin/users/:id
+ * method - get
+ * token
+ * role - a
+ */
+obj.getOne = async (req, res) => {
+  // client data
+  let id = req.params.id;
+
+  // request db
+  // user
+  let user = await User.findOne({
+    where: { id },
+    attributes: {
+      exclude: ["password"],
+    },
+  });
+
+  // user balance
+  let { tsc, tcc } = await Payment.getBalance(id);
+
+  // client response
+  res.status(200).json({
+    success: true,
+    user: {
+      ...user.dataValues,
+      balance: {
+        tsc,
+        tcc,
+      },
+    },
   });
 };
 

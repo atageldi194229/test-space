@@ -14,6 +14,36 @@ const ErrorResponse = require("../../utils/errorResponse");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
+// tools
+const tools = {
+  filter: (s) => {
+    let where = {};
+    if (s === "allowed") {
+      where.status = 1;
+    } else if (s === "cancelled") {
+      where.status = 2;
+    } else if (s === "waiting") {
+      where.status = 0;
+    }
+
+    return where;
+  },
+  sort: (s) => {
+    try {
+      // validate data
+      let a = s.split("-");
+      a[1] = a[1].toLowerCase();
+
+      let k = ["allowedAt", "createdAt"];
+
+      if (k.includes(a[0]) && ["asc", "desc"].includes(a[1])) {
+        return [a[0], a[1]];
+      }
+    } catch (err) {}
+    return ["createdAt", "desc"];
+  },
+};
+
 /**
  * buy tsc and tcc
  * action - /v1/payments
@@ -21,41 +51,36 @@ const obj = {};
  * token
  */
 obj.getAll = async (req, res, next) => {
-  let allowedAt = new Date(new Date() - 30 * 24 * 60 * 60 * 1000);
   // client data
-  let userId = req.user.id;
+  let userId = req.user.id,
+    { query } = req,
+    limit = parseInt(query.limit) || 100,
+    offset = parseInt(query.offset) || 0,
+    sort = query.sort,
+    filter = query.filter;
 
   // prepare options
   let options = {
+    limit,
+    offset,
     where: {
       userId,
+      ...tools.filter(filter),
     },
-    order: [["createdAt", "desc"]],
-    attributes: [
-      "id",
-      "tsc",
-      "tcc",
-      "isTscUnlimited",
-      "isTccUnlimited",
-      "tscMoney",
-      "tccMoney",
-      "tscUsed",
-      "tccUsed",
-      "status",
-      "allowedAt",
-      "createdAt",
-    ],
+    order: [tools.sort(sort)],
+    attributes: {
+      exclude: ["userId", "updatedAt", "note"],
+    },
   };
   // request db
   let payments = await Payment.findAll(options);
 
   // res to the client with token
+  let allowedAt = new Date(new Date() - 30 * 24 * 60 * 60 * 1000);
   res.status(200).json({
     success: true,
-    payments: payments.map((e) => ({
-      ...e.dataValues,
-      status: (e.allowedAt > allowedAt && 1) || 0,
-    })),
+    allowedAt,
+    payments,
   });
 };
 

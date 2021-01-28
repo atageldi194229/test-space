@@ -45,7 +45,14 @@ function prepareOptions({ limit, offset, sort, filter }) {
   let options = {
     limit,
     offset,
-    where: {},
+    where: {
+      include: [
+        {
+          association: "user",
+          attributes: ["id", "username", "email", "phoneNumber"],
+        },
+      ],
+    },
   };
 
   options.order = [tools.sort(sort)];
