@@ -180,7 +180,7 @@ obj.search = async (req, res) => {
     offset = Number(req.query.offset) || 0,
     sort = req.query.sort,
     filter = req.query.filter,
-    text = (body.text || "").toLowerCase();
+    text = (req.body.text || "").toLowerCase();
 
   // request db
   let solvingTests = await SolvingTest.findAll({
@@ -377,7 +377,7 @@ obj.startSolvingTest = async (req, res, next) => {
     } else if (solvingTest.isTimeToSolve(userResult)) {
       data.status = "solving";
     } else {
-      return next(new ErrorResponse("It is not time to solve"));
+      return next(new ErrorResponse("It is not time to solve", -1, 505));
     }
     data.userResultId = userResult.id;
 
@@ -406,7 +406,7 @@ obj.startSolvingTest = async (req, res, next) => {
         userResult.startedAt.getTime() + solvingTest.solveTime - new Date();
     else data.leftTime = solvingTest.endTime.getTime() - new Date();
   } else {
-    return next(new ErrorResponse("It is not time to solve"));
+    return next(new ErrorResponse("It is not time to solve", -1, 505));
   }
 
   // client response

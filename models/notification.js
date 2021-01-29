@@ -1,6 +1,7 @@
 "use strict";
 
 const { Mailer } = require("../services");
+const notificationContents = require("../config/notifications.json");
 
 const model = (sequelize, DataTypes) => {
   let Notification = sequelize.define(
@@ -45,33 +46,71 @@ const methods = ({ Notification, NotificationUser, User }) => {
     );
   };
 
-  Notification.send = async function (userIds, { type, title, content }) {
+  Notification.send = async function (
+    userIds,
+    { action, data, type, title, content }
+  ) {
     // convert userIds to array if is not
     if (!Array.isArray(userIds)) userIds = [userIds];
-
-    // request db
-    let notification = await Notification.create({ type, title, content });
 
     // get all users with their emails
     let users = await User.findAll({
       where: { id: userIds },
-      attributes: ["id", "email"],
+      attributes: ["id", "email", "language"],
     });
 
     // filtering userIds
     userIds = users.map((e) => e.id);
 
-    // connect notification with users
-    let updatedRows = await NotificationUser.bulkCreate(
-      userIds.map((userId) => ({ userId, notificationId: notification.id }))
-    );
+    // prepare data
+    if (action) {
+      const sendLangNotif = async (lang) => {
+        let langUsers = users.filter((e) => e.language === lang);
 
-    // get all emails
-    let emails = users.map((e) => e.email);
+        if (!langUsers.length) return;
 
-    await Mailer.sendMail({ to, subject: title, text: content });
+        let payload = notificationContents[lang][action];
 
-    return { notification, users };
+        for (let i in data) {
+          payload.content = payload.content.replace(`*${i}*`, data[i]);
+        }
+
+        let notification = await Notification.create(payload);
+
+        await NotificationUser.bulkCreate(
+          langUsers.map((user) => ({
+            userId: user.id,
+            notificationId: notification.id,
+          }))
+        );
+        await Mailer.sendMail({
+          to: langUsers.map((e) => e.email),
+          subject: payload.title,
+          text: payload.content,
+        });
+      };
+
+      await sendLangNotif("tm");
+      await sendLangNotif("ru");
+      await sendLangNotif("en");
+
+      return {};
+    } else {
+      // request db
+      let notification = await Notification.create({ type, title, content });
+
+      // connect notification with users
+      await NotificationUser.bulkCreate(
+        userIds.map((userId) => ({ userId, notificationId: notification.id }))
+      );
+
+      // get all emails
+      let emails = users.map((e) => e.email);
+
+      await Mailer.sendMail({ to: emails, subject: title, text: content });
+
+      return { notification, users };
+    }
   };
 };
 

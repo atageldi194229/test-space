@@ -1044,7 +1044,7 @@
 										"payments"
 									]
 								},
-								"description": "payment is inactive if 30 days left after allowed time \r\n\r\n### auth\r\n- **token**"
+								"description": "payment is inactive if 30 days left after allowed time \r\n\r\n### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"allowedAt-asc\" or \"allowedAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"allowed\"`\r\n    2. `\"cancelled\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
 							},
 							"response": []
 						},
@@ -2219,7 +2219,46 @@
 										"moderators"
 									]
 								},
-								"description": "it gives all moderators <br />\r\nit can use only **administrator**\r\n\r\n### auth\r\n- **token**"
+								"description": "it gives all moderators <br />\r\nit can use only **administrator**\r\n\r\n### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"username-asc\" or \"username-desc\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "search",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"text\": \"asd\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/moderators/search",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"moderators",
+										"search"
+									]
+								},
+								"description": "search from moderators <br />\r\nit can use only **administrator**\r\n\r\n### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"username-asc\" or \"username-desc\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`\r\n\r\n### body\r\n- **text** | `string` | search text"
 							},
 							"response": []
 						},
@@ -2261,6 +2300,36 @@
 								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **username** | `string` | optional\r\n- **password** | `string`| optional"
 							},
 							"response": []
+						},
+						{
+							"name": "delete",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/moderators/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"moderators",
+										"1"
+									]
+								},
+								"description": "### auth\r\n- **token**"
+							},
+							"response": []
 						}
 					]
 				},
@@ -2290,6 +2359,45 @@
 									"path": [
 										"admin",
 										"payments"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"allowedAt-asc\" or \"allowedAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"allowed\"`\r\n    2. `\"cancelled\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "search",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"text\": \"sd\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/payments/search",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"payments",
+										"search"
 									]
 								},
 								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"allowedAt-asc\" or \"allowedAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"allowed\"`\r\n    2. `\"cancelled\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
@@ -2517,6 +2625,36 @@
 									]
 								},
 								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **text** | `string` | search text | optional\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n    2. `\"username-asc\" or \"username-desc\"`\r\n    3. `\"gender-asc\" or \"gender-desc\"`\r\n    4. `\"birthDate-asc\" or \"birthDate-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"active\"`\r\n    2. `\"inactive\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "get one",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/users/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"users",
+										"1"
+									]
+								},
+								"description": "get one user with more information. <br />\r\nFor example: balance: { tsc, tcc }\r\n\r\n### auth\r\n- **token**\r\n\r\n### params\r\nadmin/users/:userId\r\n1. **userId** | `integer`"
 							},
 							"response": []
 						}

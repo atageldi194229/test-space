@@ -25,7 +25,11 @@ const model = (sequelize, DataTypes) => {
       isAdmin: { type: DataTypes.INTEGER, defaultValue: 0 },
       emailSubscribe: { type: DataTypes.BOOLEAN, defaultValue: false },
       gmt: { type: DataTypes.STRING(10) },
-      language: { type: DataTypes.STRING(5) },
+      language: {
+        type: DataTypes.STRING(5),
+        defaultValue: "en",
+        allowNull: false,
+      },
 
       firstNameA: { type: DataTypes.BOOLEAN, defaultValue: true },
       lastNameA: { type: DataTypes.BOOLEAN, defaultValue: true },

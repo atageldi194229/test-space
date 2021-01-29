@@ -2,6 +2,7 @@
 
 const {
   Payment,
+  Notification,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
@@ -45,14 +46,13 @@ function prepareOptions({ limit, offset, sort, filter }) {
   let options = {
     limit,
     offset,
-    where: {
-      include: [
-        {
-          association: "user",
-          attributes: ["id", "username", "email", "phoneNumber"],
-        },
-      ],
-    },
+    where: {},
+    include: [
+      {
+        association: "user",
+        attributes: ["id", "username", "email", "phoneNumber"],
+      },
+    ],
   };
 
   options.order = [tools.sort(sort)];
@@ -88,6 +88,60 @@ obj.getAll = async (req, res) => {
 };
 
 /**
+ * search from payments
+ * action - /admin/payments/search
+ * method - post
+ * token
+ */
+obj.search = async (req, res) => {
+  // client data
+  let { query, body } = req,
+    limit = parseInt(query.limit) || 20,
+    offset = parseInt(query.offset) || 0,
+    sort = query.sort,
+    filter = query.filter,
+    text = (body.text || "").toLowerCase();
+
+  // prepare options
+  let options = prepareOptions({ limit, offset, sort, filter });
+  options.where = {
+    ...options.where,
+    [Op.or]: [
+      {
+        username: sequelize.where(
+          sequelize.fn("LOWER", sequelize.col("user.username")),
+          "LIKE",
+          "%" + text + "%"
+        ),
+      },
+      {
+        email: sequelize.where(
+          sequelize.fn("LOWER", sequelize.col("user.email")),
+          "LIKE",
+          "%" + text + "%"
+        ),
+      },
+      {
+        phoneNumber: sequelize.where(
+          sequelize.fn("LOWER", sequelize.col("user.phone_number")),
+          "LIKE",
+          "%" + text + "%"
+        ),
+      },
+    ],
+  };
+
+  // request db
+  let payments = await Payment.findAll(options);
+
+  // client response
+  res.status(200).json({
+    success: true,
+    payments,
+  });
+};
+
+/**
  * update test
  * action - /admin/payments/:id
  * method - put
@@ -99,6 +153,9 @@ obj.update = async (req, res, next) => {
     modifiedBy = req.user.id,
     { id } = req.params;
 
+  // request db
+  let payment = await Payment.findOne({ where: { id } });
+
   // prepare data
   let data = { status, modifiedBy, note };
   if (status === 1) {
@@ -109,10 +166,37 @@ obj.update = async (req, res, next) => {
     return next(new ErrorResponse("Invalid data"));
   }
 
-  let updatedRows = await Payment.update(data, { where: { id } });
+  let updatedRows = await payment.update(data);
 
   // error test
   if (!updatedRows) return next(new ErrorResponse("Payment is not updated"));
+
+  // send notification
+  if (status === 1) {
+    await Notification.send(payment.userId, {
+      action: "payment +",
+      data: {
+        createdAt: payment.createdAt.toLocaleString(),
+        id: payment.id,
+        tsc: payment.tsc,
+        tcc: payment.tcc,
+        tscMoney: payment.tscMoney,
+        tccMoney: payment.tccMoney,
+      },
+    });
+  } else if (status === 2) {
+    await Notification.send(payment.userId, {
+      action: "payment -",
+      data: {
+        createdAt: payment.createdAt.toLocaleString(),
+        id: payment.id,
+        tsc: payment.tsc,
+        tcc: payment.tcc,
+        tscMoney: payment.tscMoney,
+        tccMoney: payment.tccMoney,
+      },
+    });
+  }
 
   // client response
   res.status(200).json({
