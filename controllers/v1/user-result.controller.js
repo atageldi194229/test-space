@@ -43,7 +43,7 @@ obj.solveQuestion = async (req, res, next) => {
 
   // time test
   if (!solvingTest.isTimeToSolve(userResult))
-    return next(new ErrorResponse("It is not time to solve"));
+    return next(new ErrorResponse("It is not time to solve", -1, 505));
 
   // knowing is it correct answer
   let question = await Question.findOne({
@@ -91,7 +91,7 @@ obj.removeSolvedQuestion = async (req, res, next) => {
 
   // time test
   if (!solvingTest.isTimeToSolve(userResult))
-    return next(new ErrorResponse("It is not time to solve"));
+    return next(new ErrorResponse("It is not time to solve", -1, 505));
 
   // request db
   let updatedRows = await SolvingQuestion.destroy({
