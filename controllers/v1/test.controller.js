@@ -105,7 +105,7 @@ async function prepareOptions(action, { userId, limit, offset, sort, filter }) {
   };
 
   if (ch.sorts.includes(action)) options.order = [sortTests(sort)];
-  if (ch.filters.includes(filter)) {
+  if (ch.filters.includes(action)) {
     options.where = { ...options.where, ...filterTests(filter) };
     options.attributes = [...options.attributes, ...privateAttributes];
   }

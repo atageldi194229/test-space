@@ -180,7 +180,7 @@ obj.search = async (req, res) => {
     offset = Number(req.query.offset) || 0,
     sort = req.query.sort,
     filter = req.query.filter,
-    text = (body.text || "").toLowerCase();
+    text = (req.body.text || "").toLowerCase();
 
   // request db
   let solvingTests = await SolvingTest.findAll({

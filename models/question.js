@@ -111,7 +111,8 @@ const methods = ({ Question }) => {
           break;
         }
       }
-    } else if (answer === correct) isCorrect = true;
+    } else if ([0, 2, 3, 5].includes(this.type) && answer === correct)
+      isCorrect = true;
 
     return isCorrect;
   };
