@@ -59,7 +59,7 @@ class Mailer {
       subject: "Verify your account",
       html: `
         <b>Verification link</b> 
-        <a href="http://testspace.com.tm/api/v1/verify-code/${obj.verifyCode}">${obj.verifyCode}</a>
+        <a href="http://testspace.com.tm:3007/v1/verify-code/${obj.verifyCode}">${obj.verifyCode}</a>
       `,
     });
 

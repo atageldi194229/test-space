@@ -3,6 +3,7 @@
 const {
   User,
   Group,
+  Payment,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
@@ -50,6 +51,16 @@ obj.register = async (req, res) => {
   await Group.create({
     name: "Group",
     description: "Group description",
+    userId: user.id,
+  });
+
+  // add free payment
+  await Payment.create({
+    tcc: 1,
+    tsc: 5,
+    status: 1,
+    allowedAt: new Date(),
+    note: "automatic free for register",
     userId: user.id,
   });
 
