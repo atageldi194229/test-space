@@ -53,8 +53,13 @@ const methods = ({ PrivilegedUser }) => {
     return hash;
   };
 
-  PrivilegedUser.hasRole = function (userId, role) {
-    // Privil
+  PrivilegedUser.hasRole = async function (userId, role) {
+    let user = await PrivilegedUser.findOne({
+      where: { id: userId },
+      attributes: ["role"],
+    });
+
+    return user && user.role === role;
   };
 };
 
