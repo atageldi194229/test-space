@@ -50,7 +50,19 @@ obj.getAllContacts = async (req, res) => {
     include: [
       {
         association: "Users",
-        attributes: ["id", "username", "image"],
+        attributes: {
+          exclude: [
+            "password",
+            "updatedAt",
+            "language",
+            "gmt",
+            "emailSubscribe",
+            "isAdmin",
+            "verifyCode",
+            "status",
+            "active",
+          ],
+        },
       },
     ],
   });
@@ -77,6 +89,16 @@ obj.getAllContacts = async (req, res) => {
         id: ee.id,
         username: ee.username,
         image: ee.image,
+        firstName: ee.firstNameA && ee.firstName,
+        lastName: ee.lastNameA && ee.lastName,
+        email: ee.emailA && ee.email,
+        birthDate: ee.birthDateA && ee.birthDate,
+        phoneNumber: ee.phoneNumberA && ee.phoneNumber,
+        country: ee.countryA && ee.country,
+        city: ee.cityA && ee.city,
+        gender: ee.genderA && Number(ee.gender),
+        job: ee.jobA && ee.job,
+        bio: ee.bioA && ee.bio,
       })),
     })),
   });

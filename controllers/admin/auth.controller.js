@@ -22,7 +22,6 @@ obj.register = async (req, res) => {
   let user = await PrivilegedUser.create({
     username,
     password: PrivilegedUser.hashPassword(password),
-    role,
   });
 
   // create token
