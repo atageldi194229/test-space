@@ -44,12 +44,17 @@ const methods = ({ PrivilegedUser }) => {
   PrivilegedUser.prototype.comparePassword = function (password) {
     return bcrypt.compareSync(password, this.password);
   };
+
   // hashing password
   PrivilegedUser.hashPassword = function (pass) {
     // let's hash password with bcryptjs
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(pass, salt);
     return hash;
+  };
+
+  PrivilegedUser.hasRole = function (userId, role) {
+    // Privil
   };
 };
 

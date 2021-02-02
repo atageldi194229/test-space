@@ -71,10 +71,14 @@ obj.getAll = async (req, res) => {
   let options = prepareOptions({ limit, offset, sort, filter });
   // request db
   let users = await User.findAll(options);
+  let userCount = await User.count({
+    where: options.where,
+  });
 
   // client response
   res.status(200).json({
     success: true,
+    userCount,
     users,
   });
 };
@@ -126,10 +130,14 @@ obj.search = async (req, res) => {
 
   // request db
   let users = await User.findAll(options);
+  let userCount = await User.count({
+    where: options.where,
+  });
 
   // client response
   res.status(200).json({
     success: true,
+    userCount,
     users,
   });
 };
