@@ -79,10 +79,14 @@ obj.getAll = async (req, res) => {
   let options = prepareOptions({ limit, offset, sort, filter });
   // request db
   let payments = await Payment.findAll(options);
+  let paymentCount = await Payment.count({
+    where: options.where,
+  });
 
   // client response
   res.status(200).json({
     success: true,
+    paymentCount,
     payments,
   });
 };
@@ -133,10 +137,14 @@ obj.search = async (req, res) => {
 
   // request db
   let payments = await Payment.findAll(options);
+  let paymentCount = await Payment.count({
+    where: options.where,
+  });
 
   // client response
   res.status(200).json({
     success: true,
+    paymentCount,
     payments,
   });
 };

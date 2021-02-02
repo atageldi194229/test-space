@@ -44,12 +44,22 @@ const methods = ({ PrivilegedUser }) => {
   PrivilegedUser.prototype.comparePassword = function (password) {
     return bcrypt.compareSync(password, this.password);
   };
+
   // hashing password
   PrivilegedUser.hashPassword = function (pass) {
     // let's hash password with bcryptjs
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(pass, salt);
     return hash;
+  };
+
+  PrivilegedUser.hasRole = async function (userId, role) {
+    let user = await PrivilegedUser.findOne({
+      where: { id: userId },
+      attributes: ["role"],
+    });
+
+    return user && user.role === role;
   };
 };
 

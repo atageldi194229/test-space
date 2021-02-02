@@ -63,9 +63,14 @@ obj.getAll = async (req, res) => {
     attributes: ["id", "username"],
   });
 
+  let userCount = await PrivilegedUser.count({
+    where: { role: "m" },
+  });
+
   // client response
   res.status(200).json({
     success: true,
+    userCount,
     users,
   });
 };
@@ -107,10 +112,14 @@ obj.search = async (req, res) => {
 
   // request db
   let users = await PrivilegedUser.findAll(options);
+  let userCount = await PrivilegedUser.count({
+    where: options.where,
+  });
 
   // client response
   res.status(200).json({
     success: true,
+    userCount,
     users,
   });
 };
@@ -151,12 +160,12 @@ obj.update = async (req, res, next) => {
  * token
  * role - a
  */
-obj.delete = async (req, res, next) => {
+obj.destroy = async (req, res, next) => {
   // client data
   const id = req.params.id;
 
   // request db
-  let updatedRows = await PrivilegedUser.destroy(data, {
+  let updatedRows = await PrivilegedUser.destroy({
     where: { id, role: "m" },
   });
 

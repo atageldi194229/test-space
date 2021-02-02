@@ -16,7 +16,7 @@ const obj = {};
  * method - post
  */
 obj.register = async (req, res) => {
-  let { username, password, role } = req.body;
+  let { username, password } = req.body;
 
   // save in the db
   let user = await PrivilegedUser.create({
