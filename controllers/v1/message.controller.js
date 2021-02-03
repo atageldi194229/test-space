@@ -17,10 +17,10 @@ const obj = {};
  */
 obj.create = async (req, res) => {
   // client data
-  let { text } = req.body;
+  let { name, email, text } = req.body;
 
   // request db
-  let message = await Message.create({ text });
+  let message = await Message.create({ name, email, text });
 
   // client response
   res.status(200).json({
