@@ -10,6 +10,7 @@ const PriceRouter = require("./price.router");
 const PaymentRouter = require("./payment.router");
 const TestRouter = require("./test.router");
 const NotificationRouter = require("./notification.router");
+const MessageRouter = require("./message.router");
 
 // require middleware
 const { getUser } = require("../../middleware/jwt.middleware");
@@ -23,5 +24,6 @@ AdminRouter.use("/prices", PriceRouter);
 AdminRouter.use("/payments", PaymentRouter);
 AdminRouter.use("/tests", TestRouter);
 AdminRouter.use("/notifications", NotificationRouter);
+AdminRouter.use("/messages", MessageRouter);
 
 module.exports = AdminRouter;

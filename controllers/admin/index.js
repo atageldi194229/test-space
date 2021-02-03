@@ -7,6 +7,7 @@ const PriceController = require("./price.controller");
 const PaymentController = require("./payment.controller");
 const TestController = require("./test.controller");
 const NotificationController = require("./notification.controller");
+const MessageController = require("./message.controller");
 
 module.exports = {
   AuthController,
@@ -16,4 +17,5 @@ module.exports = {
   PaymentController,
   TestController,
   NotificationController,
+  MessageController,
 };
