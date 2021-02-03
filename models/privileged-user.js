@@ -34,6 +34,11 @@ const model = (sequelize, DataTypes) => {
       as: "modifiedPayments",
       foreignKey: "modifiedBy",
     });
+
+    PrivilegedUser.hasMany(models.Message, {
+      as: "updatedMessages",
+      foreignKey: "updatedBy",
+    });
   };
 
   return PrivilegedUser;
