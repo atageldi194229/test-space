@@ -6,7 +6,7 @@ const {
   search,
   update,
   destroy,
-} = require("../../controllers").Admin.ModeratorController;
+} = require("../../controllers").Admin.MessageController;
 
 const { verify } = require("../../middleware").JwtMiddleware;
 
