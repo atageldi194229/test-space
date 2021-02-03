@@ -99,6 +99,16 @@ obj.search = async (req, res) => {
       ...tools.filter(filter),
       [Op.or]: [
         {
+          email: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("Message.email")),
+            "LIKE",
+            "%" + text + "%"
+          ),
+          name: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("Message.name")),
+            "LIKE",
+            "%" + text + "%"
+          ),
           text: sequelize.where(
             sequelize.fn("LOWER", sequelize.col("Message.text")),
             "LIKE",
