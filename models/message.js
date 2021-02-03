@@ -4,6 +4,8 @@ const model = (sequelize, DataTypes) => {
   let Message = sequelize.define(
     "Message",
     {
+      name: { type: DataTypes.STRING(50) },
+      email: { type: DataTypes.STRING(50) },
       text: { type: DataTypes.TEXT },
       status: {
         type: DataTypes.INTEGER,
