@@ -2049,6 +2049,39 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "messages",
+					"item": [
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"text\": \"AstoloVista Baby\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/messages",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"messages"
+									]
+								},
+								"description": "### body\r\n- **text** | `string`"
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},
@@ -2698,6 +2731,138 @@
 									]
 								},
 								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **userIds** | `array<integer>` | array of user ids\r\n- **type** | `string`| enum: [\"info\", \"warning\", \"success\", \"danger\"] | notification type | optional\r\n- **title** | `string`| notification type | optional\r\n- **content** | `string`| notification content | optional"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "messages",
+					"item": [
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\": 2,\r\n    \"note\": \"Denied, because ...\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/messages/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"messages",
+										"1"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **status** | `integer` | 0 - waiting, 1 - served, 2 - cancelled\r\n- **note** | `string` | note for moderator"
+							},
+							"response": []
+						},
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/messages",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"messages"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"waiting\"`\r\n    2. `\"served\"`\r\n    3. `\"denied\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "search",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/messages",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"messages"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"waiting\"`\r\n    2. `\"served\"`\r\n    3. `\"denied\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`\r\n\r\n### body\r\n- **text** | `string` | text for searching"
+							},
+							"response": []
+						},
+						{
+							"name": "delete",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/messages/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"messages",
+										"1"
+									]
+								},
+								"description": "### auth\r\n- **token**"
 							},
 							"response": []
 						}
