@@ -300,11 +300,7 @@ obj.removeUser = async (req, res, next) => {
  */
 obj.findGroups = async (req, res, next) => {
   // client data
-  let { text } = req.body;
-
-  // validate data
-  text = text && "";
-  text = text.toLowerCase();
+  let text = (req.body.text || "").toLowerCase();
 
   // request db
   let groups = await Group.findAll({
