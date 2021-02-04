@@ -55,11 +55,30 @@ class Mailer {
 
     let info = await this.transporter.sendMail({
       from: `"Test Space 👻✉📝" <${mailer.user}>`,
-      to: `${obj.to}`,
+      to: obj.to,
       subject: "Verify your account",
       html: `
         <b>Verification link</b> 
         <a href="http://testspace.com.tm:3007/v1/verify-code/${obj.verifyCode}">${obj.verifyCode}</a>
+      `,
+    });
+
+    console.log("Message sent: %s", info.messageId);
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  }
+
+  async sendForgetPasswordMessage({ to, verifyCode, link }) {
+    await this.init();
+
+    link = link.replace(":code", verifyCode);
+
+    let info = await this.transporter.sendMail({
+      from: `"Change account password Test Space 👻✉📝" <${mailer.user}>`,
+      to,
+      subject: "Change account password",
+      html: `
+        <b>To change account password open this link: </b> 
+        <a href="${link}">${verifyCode}</a>
       `,
     });
 

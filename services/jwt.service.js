@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 
 const jwtConfig = require("../config/jwt");
 
-const privateKey = fs.readFileSync("config/private.key", "utf8");
-const publicKey = fs.readFileSync("config/public.key", "utf8");
+const privateKey = fs.readFileSync("../config/private.key", "utf8");
+const publicKey = fs.readFileSync("../config/public.key", "utf8");
 
 class JwtService {
   constructor() {}
