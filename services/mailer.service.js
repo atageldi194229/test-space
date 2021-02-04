@@ -16,6 +16,9 @@ class Mailer {
   constructor() {}
 
   async init() {
+    let accessToken = await oAuth2Client.getAccessToken();
+    console.log(accessToken);
+
     const transporterOptions = {
       service: "gmail",
       // host: mailer.host,
@@ -24,10 +27,10 @@ class Mailer {
       auth: {
         type: "OAuth2",
         user: mailer.user,
-        clientId: mailer.clientId,
-        clientSecret: mailer.clientSecret,
-        refreshToken: mailer.refreshToken,
-        accessToken: (await oAuth2Client.getAccessToken()).token,
+        clientId: mailer.OAuth2.clientId,
+        clientSecret: mailer.OAuth2.clientSecret,
+        refreshToken: mailer.OAuth2.refreshToken,
+        accessToken,
       },
     };
 
