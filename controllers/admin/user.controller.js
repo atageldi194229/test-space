@@ -58,7 +58,6 @@ function prepareOptions({ limit, offset, sort, filter }) {
  * action - /admin/users
  * method - get
  * token
- * role - a
  */
 obj.getAll = async (req, res) => {
   // client data
@@ -88,7 +87,6 @@ obj.getAll = async (req, res) => {
  * action - /admin/users/search
  * method - post
  * token
- * role - a
  */
 obj.search = async (req, res) => {
   // client data
@@ -147,7 +145,6 @@ obj.search = async (req, res) => {
  * action - /admin/users/:id
  * method - get
  * token
- * role - a
  */
 obj.getOne = async (req, res) => {
   // client data
@@ -175,6 +172,31 @@ obj.getOne = async (req, res) => {
         tcc,
       },
     },
+  });
+};
+
+/**
+ * get one user with more info
+ * action - /admin/users/:id
+ * method - put
+ * token
+ */
+obj.update = async (req, res, next) => {
+  // client data
+  let id = req.params.id,
+    { password } = req.body;
+
+  // request db
+  let updatedRows = await User.update(
+    { password: User.hashPassword(password) },
+    { where: { id } }
+  );
+
+  if (!updatedRows) return next(new ErrorResponse("Password in not updated"));
+
+  // client response
+  res.status(200).json({
+    success: true,
   });
 };
 

@@ -211,14 +211,56 @@ obj.userChecker = async (req, res) => {
 };
 
 /**
- * used getUser middleware
+ * forget password
+ * action - /v1/forget-password
+ * method - post
  */
-obj.forgetPassword = async (req, res) => {
-  // get user id
-  let { id } = req.user;
+obj.forgetPassword = async (req, res, next) => {
+  // client data
+  let { email, link } = req.body;
 
-  let randStr = uuidv4().substr(-9);
+  // validate
+  if (link.length > 80) return next(new ErrorResponse("Validation error"));
 
+  let user = await User.findOne({
+    where: { email },
+    attributes: ["verifyCode", "email"],
+  });
+
+  // let's send verification code to the mail of user
+  await Mailer.sendForgetPasswordMessage({
+    to: user.email,
+    verifyCode: user.verifyCode,
+    link,
+  });
+
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
+ * update password by verification code
+ * action - /v1/change-password
+ * method - post
+ */
+obj.changePassword = async (req, res, next) => {
+  // client data
+  let { verifyCode, password } = req.body;
+
+  // request db
+  let updatedRows = await User.update(
+    { password: User.hashPassword(password) },
+    {
+      where: { verifyCode },
+    }
+  );
+
+  // error test
+  if (!updatedRows)
+    return next(new ErrorResponse("Invalid verification code", 12));
+
+  // client response
   res.status(200).json({
     success: true,
   });

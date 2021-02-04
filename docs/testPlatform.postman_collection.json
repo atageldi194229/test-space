@@ -154,6 +154,61 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "forget password send email",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"\",\r\n    \"link\": \"http://testspace.com.tm/change-account-password/:code\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/forget-password",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"forget-password"
+									]
+								},
+								"description": "send account email and link\r\nclient link should contain \":code\" substring \r\ncode used for changing account password"
+							},
+							"response": []
+						},
+						{
+							"name": "change password via code",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"verifyCode\": \"\",\r\n    \"password\": \"new_password\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/forget-password",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"forget-password"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -2690,6 +2745,45 @@
 								"description": "get one user with more information. <br />\r\nFor example: balance: { tsc, tcc }\r\n\r\n### auth\r\n- **token**\r\n\r\n### params\r\nadmin/users/:userId\r\n1. **userId** | `integer`"
 							},
 							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"password\": \"new_password\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/users/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"users",
+										"1"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### body\r\n- **password** | `string` | new password"
+							},
+							"response": []
 						}
 					]
 				},
@@ -2823,13 +2917,14 @@
 								"method": "POST",
 								"header": [],
 								"url": {
-									"raw": "{{URL}}/admin/messages",
+									"raw": "{{URL}}/admin/messages/search",
 									"host": [
 										"{{URL}}"
 									],
 									"path": [
 										"admin",
-										"messages"
+										"messages",
+										"search"
 									]
 								},
 								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"waiting\"`\r\n    2. `\"served\"`\r\n    3. `\"denied\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`\r\n\r\n### body\r\n- **text** | `string` | text for searching"
