@@ -90,6 +90,14 @@ const methods = ({ Question }) => {
     let isCorrect = false;
     let { correct } = JSON.parse(this.data);
 
+    console.log("=*=*".repeat(6));
+    console.log("correct", "answer");
+    console.log("=*=*".repeat(6));
+    console.log(typeof correct, typeof answer);
+    console.log("=*=*".repeat(6));
+    console.log(correct, answer);
+    console.log("=*=*".repeat(6));
+
     if (this.type === 1 && correct.length === answer.length) {
       correct.sort((a, b) => a - b);
       answer.sort((a, b) => a - b);
