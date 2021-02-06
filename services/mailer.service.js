@@ -62,7 +62,7 @@ async function sendMail({ to, subject, text }) {
 /**
  * send verification code
  */
-async function sendVerificationCode(obj) {
+async function sendVerificationCode({ to, verifyCode }) {
   let transporter = await init();
 
   let info = await transporter.sendMail({
@@ -71,7 +71,7 @@ async function sendVerificationCode(obj) {
     subject: "Verify your account",
     html: `
         <b>Verification link</b> 
-        <a href="http://testspace.com.tm:3007/v1/verify-code/${obj.verifyCode}">${obj.verifyCode}</a>
+        <a href="http://testspace.com.tm:3007/v1/verify-code/${verifyCode}">${verifyCode}</a>
       `,
   });
 
