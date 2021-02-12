@@ -1,5 +1,6 @@
 const { JwtService } = require("../services");
 const ErrorResponse = require("../utils/errorResponse");
+const { User } = require("../models");
 
 class JwtMiddleware {
   constructor() {}
@@ -22,8 +23,19 @@ class JwtMiddleware {
   }
 
   isUserActive(req, res, next) {
-    if (req.user && req.user.active) return next();
-    return next(new ErrorResponse("User is not verified", 3, 402));
+    if (req.user) {
+      User.isVerified(req.user.id)
+        .then((isVerified) => {
+          if (isVerified) {
+            return next();
+          } else {
+            return next(new ErrorResponse("User is not verified", 3, 402));
+          }
+        });
+      }
+    else {
+      return next(new ErrorResponse("User is not verified", 3, 402));
+    }
   }
 
   verify(req, res, next) {
