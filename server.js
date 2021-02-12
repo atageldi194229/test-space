@@ -20,16 +20,6 @@ const fs = require("fs");
 // Load env vars
 require("dotenv").config({ path: "./config/config.env" });
 
-// Connect to database
-// connectDB();
-
-// Route files
-// const bootcamps = require('./routes/bootcamps');
-// const courses = require('./routes/courses');
-// const auth = require('./routes/auth');
-// const users = require('./routes/users');
-// const reviews = require('./routes/reviews');
-
 const app = express();
 
 // EJS engine
@@ -92,22 +82,21 @@ const HTTP_PORT = process.env.HTTP_PORT || 3007;
 
 // HTTPS SECURE KEY GENERATOR
 // -------------------------------------------------------------------------------
-const selfSigned = require("selfsigned"); //-
-const attrs = [{ name: "commonName", value: "testspace.com" }]; //-
-const pems = selfSigned.generate(attrs, { days: 365 }); //-
+const selfSigned = require("selfsigned");
+const attrs = [{ name: "commonName", value: "testspace.com" }];
+const pems = selfSigned.generate(attrs, { days: 365 });
 const options = {
-  //-
   // key: fs.readFileSync('./config/ssl/privkey.pem'),                         //-
   // cert: fs.readFileSync('./config/ssl/fullchain.pem'),                      //-
-  key: pems.private, //-
-  cert: pems.cert, //-
-  ca: pems.public, //-
-}; //-
-https.createServer(options, app).listen(HTTPS_PORT); //-
-http.createServer(app).listen(HTTP_PORT); //-
-console.log(`Server running in ${process.env.NODE_ENV} mode`); //-
-console.log(`Https port ${HTTPS_PORT}`); //-
-console.log(`Http port ${HTTP_PORT}`); //-
+  key: pems.private, 
+  cert: pems.cert, 
+  ca: pems.public, 
+}; 
+https.createServer(options, app).listen(HTTPS_PORT); 
+http.createServer(app).listen(HTTP_PORT); 
+console.log(`Server running in ${process.env.NODE_ENV} mode`); 
+console.log(`Https port ${HTTPS_PORT}`); 
+console.log(`Http port ${HTTP_PORT}`); 
 // -------------------------------------------------------------------------------
 
 // Handle unhandled promise rejections
