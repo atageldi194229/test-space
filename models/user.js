@@ -88,6 +88,11 @@ const methods = ({ User }) => {
     const hash = bcrypt.hashSync(pass, salt);
     return hash;
   };
+
+  User.isVerified = async function (userId) {
+    let user = await User.findOne({ where: { id: userId }, attributes: ["active"] });
+    return user && user.active || false;
+  }
 };
 
 module.exports = { model, methods };
