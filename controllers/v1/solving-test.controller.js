@@ -529,7 +529,7 @@ obj.startSolvingPublicTest = async (req, res, next) => {
 
   // request db
   let solvingTest = await SolvingTest.findOne({
-    where: { id: solvingTestId, userId, isPublic: true },
+    where: { id: solvingTestId, isPublic: true },
     include: [
       {
         association: "Test",
@@ -628,6 +628,16 @@ obj.finishSolvingPublicTest = async (req, res, next) => {
     like = req.body.like || 0;
 
   // request db
+  let solvingTest = await SolvingTest.findOne({
+    where: { id: solvingTestId, isPublic: true },
+    include: [
+      {
+        association: "Test",
+        attributes: ["id", "name", "description", "isRandom"],
+      },
+    ],
+  });
+
   let userResult = await UserResult.findOne({
     where: {
       solvingTestId,
@@ -641,11 +651,6 @@ obj.finishSolvingPublicTest = async (req, res, next) => {
 
   // increment like count of test
   if (like) {
-    let solvingTest = await SolvingTest.findOne({
-      where: { id: solvingTestId },
-      attributes: ["testId"],
-    });
-
     let updatedRows = await Test.increment(
       { likeCount: like },
       { where: { id: solvingTest.testId } }
