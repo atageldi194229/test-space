@@ -121,7 +121,7 @@ obj.getOne = async (req, res, next) => {
     include: [
       {
         association: "Users",
-        attributes: ["id", "username"],
+        attributes: ["id", "username", "image"],
       },
     ],
   });
@@ -135,7 +135,11 @@ obj.getOne = async (req, res, next) => {
     name: group.name,
     description: group.description,
     // let's remove unneeded properties
-    users: group.Users.map((e) => ({ id: e.id, username: e.username })),
+    users: group.Users.map((e) => ({
+      id: e.id,
+      username: e.username,
+      image: e.image,
+    })),
   };
 
   // client response
