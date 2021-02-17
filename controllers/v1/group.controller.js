@@ -41,11 +41,23 @@ obj.getAll = async (req, res) => {
  */
 obj.getAllContacts = async (req, res) => {
   // client data
-  let userId = req.user.id;
+  let userId = req.user.id,
+    text = (req.query.search || "").toLowerCase();
 
   // request db
   let groups = await Group.findAll({
-    where: { userId },
+    where: {
+      userId,
+      [Op.or]: [
+        {
+          username: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("User.username")), // <- users or Users or user IF ANY ERROR
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+      ],
+    },
     attributes: ["id", "name", "description"],
     include: [
       {
