@@ -67,7 +67,6 @@ obj.register = async (req, res) => {
 
   // create token
   let payload = { id: user.id, active: false };
-  console.log(payload);
   let token = JwtService.sign(payload);
 
   // res to the client with token

@@ -75,6 +75,12 @@ obj.getAll = async (req, res, next) => {
   // request db
   let payments = await Payment.findAll(options);
 
+  for (let payment of payments) {
+    payment.dataValues.daysLeft = Math.floor(
+      30 - (new Date() - payment.allowedAt) / (1000 * 60 * 60 * 24)
+    );
+  }
+
   // res to the client with token
   let allowedAt = new Date(new Date() - 30 * 24 * 60 * 60 * 1000);
   res.status(200).json({

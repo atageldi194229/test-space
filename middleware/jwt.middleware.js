@@ -37,8 +37,6 @@ class JwtMiddleware {
   }
 
   verify(req, res, next) {
-    console.log(req.header);
-    console.log(req.header("Authorization"));
     const bearer = req.header("Authorization") || "";
     const token = bearer.split(" ")[1];
     const valid = JwtService.verify(token);
