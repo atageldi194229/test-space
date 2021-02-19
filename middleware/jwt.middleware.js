@@ -24,21 +24,21 @@ class JwtMiddleware {
 
   isUserActive(req, res, next) {
     if (req.user) {
-      User.isVerified(req.user.id)
-        .then((isVerified) => {
-          if (isVerified) {
-            return next();
-          } else {
-            return next(new ErrorResponse("User is not verified", 3, 402));
-          }
-        });
-      }
-    else {
+      User.isVerified(req.user.id).then((isVerified) => {
+        if (isVerified) {
+          return next();
+        } else {
+          return next(new ErrorResponse("User is not verified", 3, 402));
+        }
+      });
+    } else {
       return next(new ErrorResponse("User is not verified", 3, 402));
     }
   }
 
   verify(req, res, next) {
+    console.log(req.header);
+    console.log(req.header("Authorization"));
     const bearer = req.header("Authorization") || "";
     const token = bearer.split(" ")[1];
     const valid = JwtService.verify(token);
