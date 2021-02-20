@@ -121,9 +121,13 @@ obj.update = async (req, res, next) => {
   // test owner of this question
   let test = await Test.findOne({
     where: { id: question.testId, userId: req.user.id },
+    attributes: ["id", "isEditable"],
   });
+
   // error test
   if (!test) return next(new ErrorResponse("Test is not found"));
+  if (!test.isEditable)
+    return next(new ErrorResponse("Test can not be edited"));
 
   // save files of data if exists and delete trashed files
   if (data) {
@@ -139,6 +143,38 @@ obj.update = async (req, res, next) => {
 
   // update request db
   await question.update(newData, { where: { id } });
+
+  // client response
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
+ * Remove question
+ * action - /v1/questions/:id
+ * method - delete
+ * token
+ */
+obj.remove = async (req, res, next) => {
+  // client data
+  let id = req.params.id;
+  let userId = req.user.id;
+
+  // request db
+  let question = await Question.findOne({ where: { id } });
+  // error test
+  if (!question) return next(new ErrorResponse("Question is not found"));
+
+  // test owner of this question
+  let test = await Test.findOne({
+    where: { id: question.testId, userId },
+  });
+  // error test
+  if (!test) return next(new ErrorResponse("Test is not found"));
+
+  // update request db
+  await Question.destroy({ where: { id } });
 
   // client response
   res.status(200).json({
@@ -175,7 +211,6 @@ obj.getOne = async (req, res, next) => {
     type: question.type,
     data: JSON.parse(question.data),
     isRandom: question.isRandom,
-    editable: question.editable,
   };
 
   // client response

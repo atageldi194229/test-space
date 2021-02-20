@@ -41,6 +41,12 @@ const model = (sequelize, DataTypes) => {
         defaultValue: false,
         allowNull: false,
       },
+      isEditable: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false,
+        comment: "can user edit questions or not",
+      },
       allowedAt: {
         type: DataTypes.DATE,
       },

@@ -2,6 +2,7 @@
 
 const {
   Test,
+  Notification,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
@@ -22,10 +23,6 @@ const tools = {
     } else if (s === "waiting") {
       where.isPublic = true;
       where.allowedAt = null;
-    } else if (s === "editable") {
-      where.editable = true;
-    } else if (s === "non-editable") {
-      where.editable = false;
     }
 
     return where;
@@ -165,10 +162,40 @@ obj.update = async (req, res, next) => {
   // prepare data
   let data = { allowedAt: (allow && new Date()) || null };
 
-  let updatedRows = await Test.update(data, { where: { id } });
+  let test = await test.findOne({
+    where: { id },
+    attributes: ["id", "userId", "name", "image"],
+    include: {
+      association: "user",
+      attributes: ["username", "email"],
+    },
+  });
+
+  let updatedRows = await test.update(data);
 
   // error test
   if (!updatedRows) return next(new ErrorResponse("Test is not updated"));
+
+  // send notification
+  let payload = {
+    test: {
+      id: test.id,
+      name: test.name,
+      image: test.image,
+    },
+  };
+
+  if (allow) {
+    await Notification.send(test.userId, {
+      type: "test-allowed",
+      payload,
+    });
+  } else {
+    await Notification.send(test.userId, {
+      type: "test-cancelled",
+      payload,
+    });
+  }
 
   // client response
   res.status(200).json({

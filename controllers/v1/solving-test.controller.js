@@ -12,6 +12,7 @@ const {
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
 const { ErrorResponse, randomizeArray } = require("../../utils");
+const { firebase } = require("googleapis/build/src/apis/firebase");
 const obj = {};
 
 const Tools = {
@@ -96,6 +97,7 @@ obj.getAll = async (req, res) => {
       correctAnswerAverage: e.correctAnswerAverage,
       incorrectAnswerAverage: e.incorrectAnswerAverage,
       isPublic: e.isPublic,
+      isResultsShared: e.isResultsShared,
       createdAt: e.createdAt,
       test: {
         id: e.Test.id,
@@ -117,17 +119,35 @@ obj.getAll = async (req, res) => {
  */
 obj.getOne = async (req, res) => {
   // client data
-  let userId = req.user.id,
+  let userId = parseInt(req.user.id),
     id = req.params.id;
 
   let solvingTest = await SolvingTest.findOne({
-    where: { id, userId },
-    attributes: ["id", "questionCount", "testId"],
+    where: { id },
+    attributes: [
+      "id",
+      "questionCount",
+      "testId",
+      "invitedUsers",
+      "userId",
+      "isResultsShared",
+    ],
   });
 
   // error test
   if (!solvingTest)
     return next(new ErrorResponse("Could not find solving test"));
+
+  // parse json
+  let invitedUsers = JSON.parse(solvingTest.invitedUsers);
+
+  // permission test
+  if (
+    !(solvingTest.isResultsShared && invitedUsers.includes(userId)) ||
+    solvingTest.userId !== userId
+  ) {
+    return next(new ErrorResponse("Permission denied"));
+  }
 
   let userResults = await UserResult.findAll({
     order: [["createdAt", "desc"]],
@@ -147,23 +167,94 @@ obj.getOne = async (req, res) => {
     },
   });
 
+  // array => object
+  let ur = {};
+  for (let r of userResults) {
+    ur[r.userId] = r;
+  }
+
+  let users = User.findAll({
+    where: { id: invitedUsers },
+    attributes: ["id", "username", "image", "firstName", "lastName"],
+  });
+
   // request db
   let test = await Test.findOne({
-    where: { id: solvingTest.testId, userId },
+    where: { id: solvingTest.testId },
     attributes: {
       exclude: ["updatedAt"],
     },
   });
-
-  // error test
-  if (!test) return next(new ErrorResponse("Could not find test"));
 
   // client response
   res.status(200).json({
     success: true,
     solvingTest,
     test,
-    userResults,
+    users: users.map((u) => ({
+      id: u.id,
+      username: u.username,
+      image: u.image,
+      firstName: u.firstName,
+      lastName: u.lastName,
+      userResult: ur[u.id] && {
+        totalPoints:
+          (100 * ur[u.id].correctAnswerCount) / solvingTest.questionCount,
+        correctAnswerCount: ur[u.id].correctAnswerCount,
+        incorrectAnswerCount: ur[u.id].incorrectAnswerCount,
+        emptyAnswerCount:
+          solvingTest.questionCount -
+          ur[u.id].correctAnswerCount -
+          ur[u.id].incorrectAnswerCount,
+
+        percentage: {
+          correctAnswer:
+            (100 * ur[u.id].correctAnswerCount) / solvingTest.questionCount,
+          incorrectAnswer:
+            (100 * ur[u.id].incorrectAnswerCount) / solvingTest.questionCount,
+          emptyAnswer:
+            (100 *
+              (solvingTest.questionCount -
+                ur[u.id].correctAnswerCount -
+                ur[u.id].incorrectAnswerCount)) /
+            solvingTest.questionCount,
+        },
+
+        startedAt: ur[u.id].startedAt,
+        finishedAt: ur[u.id].finishedAt || ur[u.id].endTime,
+      },
+    })),
+  });
+};
+
+/**
+ * Update solvingTest
+ * action - /v1/solving-test/:id
+ * method - put
+ * token
+ */
+obj.update = async (req, res, next) => {
+  // client data
+  let id = req.params.id;
+  let userId = req.user.id;
+  let { isResultsShared } = req.body;
+
+  // request db
+  let solvingTest = await SolvingTest.findOne({
+    where: { id, userId },
+    attributes: ["id", "isResultsShared"],
+  });
+
+  // error test
+  if (!solvingTest)
+    return next(new ErrorResponse("Could not find solving test"));
+
+  // update request db
+  await solvingTest.update({ isResultsShared }, { where: { id } });
+
+  // client response
+  res.status(200).json({
+    success: true,
   });
 };
 
@@ -241,6 +332,7 @@ obj.search = async (req, res) => {
       correctAnswerAverage: e.correctAnswerAverage,
       incorrectAnswerAverage: e.incorrectAnswerAverage,
       isPublic: e.isPublic,
+      isResultsShared: e.isResultsShared,
       createdAt: e.createdAt,
       test: {
         id: e.Test.id,
@@ -354,6 +446,12 @@ obj.startSolvingTest = async (req, res, next) => {
   // permission test`
   if (!JSON.parse(solvingTest.invitedUsers).includes(parseInt(userId)))
     return next(new ErrorResponse("Permission denied"));
+
+  // test to not editable
+  await Test.update(
+    { isEditable: false },
+    { where: { id: solvingTest.testId } }
+  );
 
   // prepare data
   let data = {};
@@ -540,6 +638,12 @@ obj.startSolvingPublicTest = async (req, res, next) => {
 
   // error test
   if (!solvingTest) return next(new ErrorResponse("Test is not found"));
+
+  // test to not editable
+  await Test.update(
+    { isEditable: false },
+    { where: { id: solvingTest.testId } }
+  );
 
   // prepare data
   let data = {};

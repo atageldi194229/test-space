@@ -180,29 +180,38 @@ obj.update = async (req, res, next) => {
   if (!updatedRows) return next(new ErrorResponse("Payment is not updated"));
 
   // send notification
+  let payload = {
+    id: payment.id,
+    tsc: (payment.isTscUnlimited && "unlimited") || payment.tsc,
+    tcc: (payment.isTccUnlimited && "unlimited") || payment.tcc,
+    tscMoney: payment.tscMoney,
+    tccMoney: payment.tccMoney,
+    totalPrice:
+      (payment.isTscUnlimited
+        ? payment.tscMoney
+        : payment.tscMoney * payment.tsc) +
+      (payment.isTccUnlimited
+        ? payment.tccMoney
+        : payment.tccMoney * payment.tcc),
+    createdAt: payment.createdAt.toLocaleString(),
+  };
+
   if (status === 1) {
+    payload.allowedAt = data.allowedAt;
+    payload.finishesAt = new Date(
+      30 * 24 * 60 * 60 * 1000 + data.allowedAt.getTime()
+    );
+
     await Notification.send(payment.userId, {
-      action: "payment +",
-      data: {
-        createdAt: payment.createdAt.toLocaleString(),
-        id: payment.id,
-        tsc: payment.tsc,
-        tcc: payment.tcc,
-        tscMoney: payment.tscMoney,
-        tccMoney: payment.tccMoney,
-      },
+      type: "payment-allowed",
+      payload,
     });
   } else if (status === 2) {
+    payload.cancelledAt = new Date();
+
     await Notification.send(payment.userId, {
-      action: "payment -",
-      data: {
-        createdAt: payment.createdAt.toLocaleString(),
-        id: payment.id,
-        tsc: payment.tsc,
-        tcc: payment.tcc,
-        tscMoney: payment.tscMoney,
-        tccMoney: payment.tccMoney,
-      },
+      type: "payment-cancelled",
+      payload,
     });
   }
 
