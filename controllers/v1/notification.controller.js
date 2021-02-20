@@ -5,6 +5,7 @@ const {
   Notification,
   NotificationUser,
   SolvingTest,
+  Test,
   sequelize,
   Payment,
   GroupUser,
@@ -42,6 +43,16 @@ obj.sendInvitation = async (req, res, next) => {
   if (!Array.isArray(userIds) || !Array.isArray(groupIds))
     return next(new ErrorResponse("Validation error"));
 
+  // test request db
+  let test = await Test.findOne({
+    where: { id: testId },
+    attributes: ["id", "name", "image", "userId"],
+    include: {
+      association: "user",
+      attributes: ["id", "username", "firstName", "lastName", "image"],
+    },
+  });
+
   // check if client can send invitaition
   let data = await Payment.canSendInvitation(userId, {
     userIds,
@@ -74,18 +85,27 @@ obj.sendInvitation = async (req, res, next) => {
 
   // send invitation start
   // via notification
-  let notification = await Notification.create({
-    content: `You invited to solve test. Link: ${link.replace(
-      ":id",
-      solvingTest.id
-    )}`,
+  await Notification.send(data.userIds, {
+    type: "invitation",
+    payload: {
+      user: {
+        userame: test.user.username,
+        image: test.user.image,
+        firstName: test.user.firstName,
+        lastName: test.user.lastName,
+      },
+      test: {
+        name: test.name,
+        image: test.image,
+      },
+      solvingTest: {
+        startTime: solvingTest.startTime,
+        endTime: solvingTest.endTime,
+        solveTime: solvingTest.solveTime,
+      },
+    },
   });
-  let updatedRows = await NotificationUser.bulkCreate(
-    data.userIds.map((userId) => ({
-      userId,
-      notificationId: notification.id,
-    }))
-  );
+
   // via mail
   let to = (
     await User.findAll({
@@ -229,13 +249,30 @@ obj.destroy = async (req, res, next) => {
     notificationId = req.params.id;
 
   // request db
-  let updatedRows = await NotificationUser.destroy({
+  await NotificationUser.destroy({
     where: { userId, notificationId },
   });
 
-  // error test
-  if (!updatedRows)
-    return next(new ErrorResponse("Could not delete notification"));
+  // client response
+  res.status(200).json({
+    success: true,
+  });
+};
+
+/**
+ * delete all notifications
+ * action - /v1/notifications
+ * method - delete
+ * token
+ */
+obj.destroyAll = async (req, res, next) => {
+  // client data
+  let userId = req.user.id;
+
+  // request db
+  await NotificationUser.destroy({
+    where: { userId },
+  });
 
   // client response
   res.status(200).json({

@@ -8,14 +8,12 @@ const model = (sequelize, DataTypes) => {
     "Notification",
     {
       type: {
-        type: DataTypes.ENUM,
-        values: ["success", "info", "warning", "danger"],
+        type: DataTypes.STRING,
         defaultValue: "info",
-        allowNull: false,
-        comment: "Notification type (success, info, warning, danger)",
+        comment:
+          "Notification type (payment-allowed, payment-cancelled, test-allowed, test-cancelled, invitation, success, info, warning, danger)",
       },
-      title: { type: DataTypes.STRING },
-      content: { type: DataTypes.TEXT },
+      payload: { type: DataTypes.TEXT, comment: "json object" },
     },
     {
       charset: "utf8mb4",
@@ -46,7 +44,31 @@ const methods = ({ Notification, NotificationUser, User }) => {
     );
   };
 
-  Notification.send = async function (
+  Notification.send = async function (userIds, { type, payload }) {
+    // convert userIds to array if is not
+    if (!Array.isArray(userIds)) userIds = [userIds];
+
+    // get all users with their emails
+    let users = await User.findAll({
+      where: { id: userIds },
+      attributes: ["id", "email", "language"],
+    });
+
+    // filtering userIds
+    userIds = users.map((e) => e.id);
+
+    // request db
+    let notification = await Notification.create({ type, payload: JSON.stringify(payload) });
+
+    // connect notification with users
+    await NotificationUser.bulkCreate(
+      userIds.map((userId) => ({ userId, notificationId: notification.id }))
+    );
+
+    return notification;
+  };
+
+  Notification._send = async function (
     userIds,
     { action, data, type, title, content }
   ) {

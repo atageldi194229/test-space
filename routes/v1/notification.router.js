@@ -7,6 +7,7 @@ const {
   getUnread,
   getAll,
   destroy,
+  destroyAll,
 } = require("../../controllers").V1.NotificationController;
 
 const { verify } = require("../../middleware").JwtMiddleware;
@@ -14,6 +15,7 @@ const { verify } = require("../../middleware").JwtMiddleware;
 router.post("/send-invitation", verify, sendInvitation);
 router.get("/unread", verify, getUnread);
 router.get("/", verify, getAll);
+router.delete("/", verify, destroyAll);
 router.delete("/:id", verify, destroy);
 router.post("/:id/read", verify, setRead);
 

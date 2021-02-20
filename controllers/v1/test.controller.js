@@ -34,9 +34,9 @@ function filterTests(s) {
     where.isPublic = true;
     where.allowedAt = null;
   } else if (s === "editable") {
-    where.editable = true;
+    where.isEditable = true;
   } else if (s === "non-editable") {
-    where.editable = false;
+    where.isEditable = false;
   }
 
   return where;
@@ -89,7 +89,7 @@ async function prepareOptions(action, { userId, limit, offset, sort, filter }) {
       "keywords",
       "createdAt",
     ],
-    privateAttributes = ["isRandom", "isPublic", "allowedAt"]; //isRandom, isPublic, allowedAt
+    privateAttributes = ["isRandom", "isPublic", "isEditable", "allowedAt"]; //isRandom, isPublic, allowedAt
 
   let options = {
     limit,
@@ -379,11 +379,9 @@ obj.getOne = async (req, res, next) => {
   // prepare query options
   let options = {
     where: { id, userId: req.user.id },
-    attributes: ["id", "name", "description"],
     include: [
       {
         association: "questions",
-        attributes: ["id", "type", "data", "isRandom", "editable"],
       },
     ],
   };
@@ -394,7 +392,48 @@ obj.getOne = async (req, res, next) => {
   // client response
   res.status(200).json({
     success: true,
-    test,
+    test: {
+      id: test.id,
+      name: test.name,
+      description: test.description,
+      image: test.image,
+      isRandom: test.isRandom,
+      defaultSolveTime: test.defaultSolveTime,
+      likeCount: test.likeCount,
+      solveCount: test.solveCount,
+      language: test.language,
+      keywords: test.keywords,
+      isPublic: test.isPublic,
+      isEditable: test.isEditable,
+      allowedAt: test.allowedAt,
+      archivedAt: test.archivedAt,
+      createdAt: test.createdAt,
+      updatedAt: test.updatedAt,
+
+      questions: questions.map((q) => ({
+        id: q.id,
+        type: q.type,
+        data: q.data,
+        isRandom: q.isRandom,
+
+        solveCount: q.solveCount,
+
+        correctCount: q.correctCount,
+        incorrectCount: q.incorrectCount,
+        emptyCount: q.solveCount - q.correctCount - q.incorrectCount,
+
+        percentage: {
+          correct: (100 * q.correctCount) / q.solveCount,
+          incorrect: (100 * q.incorrectCount) / q.solveCount,
+          empty:
+            (100 * (q.solveCount - q.correctCount - q.incorrectCount)) /
+            q.solveCount,
+        },
+
+        createdAt: q.createdAt,
+        updatedAt: q.updatedAt,
+      })),
+    },
   });
 };
 

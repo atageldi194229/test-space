@@ -29,10 +29,12 @@ obj.send = async (req, res, next) => {
   });
 
   // create notification
-  let notification = await Notification.create({ type, title, content });
-  // associate notification with users
-  let rows = await NotificationUser.bulkCreate(
-    users.map((user) => ({ notificationId: notification.id, userId: user.id }))
+  await Notification.send(
+    users.map((user) => user.id),
+    {
+      type: type || "info",
+      payload: { title, content },
+    }
   );
 
   // send notification to users mails

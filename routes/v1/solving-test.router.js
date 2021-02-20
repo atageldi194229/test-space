@@ -5,6 +5,7 @@ const {
   getAll,
   search,
   getOne,
+  update,
 
   canSolveTest,
   startSolvingTest,
@@ -20,6 +21,7 @@ const { verify, isUserActive } = require("../../middleware").JwtMiddleware;
 router.get("/", verify, getAll);
 router.post("/search", verify, search);
 router.post("/:id", verify, getOne);
+router.put("/:id", verify, update);
 
 router.get("/:id/can-solve", verify, isUserActive, canSolveTest);
 router.post("/:id/start-solve", verify, isUserActive, startSolvingTest);

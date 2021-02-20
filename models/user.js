@@ -58,7 +58,10 @@ const model = (sequelize, DataTypes) => {
     User.hasMany(models.Test, { foreignKey: "userId" });
     User.hasMany(models.SolvingTest, { foreignKey: "userId" });
     User.hasMany(models.Group, { foreignKey: "userId" });
-    User.hasMany(models.UserResult, { foreignKey: "userId" });
+    User.hasMany(models.UserResult, {
+      as: "userResults",
+      foreignKey: "userId",
+    });
     User.belongsToMany(models.Group, {
       through: "GroupUser",
       foreignKey: "userId",
@@ -90,9 +93,12 @@ const methods = ({ User }) => {
   };
 
   User.isVerified = async function (userId) {
-    let user = await User.findOne({ where: { id: userId }, attributes: ["active"] });
-    return user && user.active || false;
-  }
+    let user = await User.findOne({
+      where: { id: userId },
+      attributes: ["active"],
+    });
+    return (user && user.active) || false;
+  };
 };
 
 module.exports = { model, methods };
