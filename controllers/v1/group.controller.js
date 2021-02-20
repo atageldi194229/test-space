@@ -51,7 +51,7 @@ obj.getAllContacts = async (req, res) => {
       [Op.or]: [
         {
           username: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("User.username")), // <- users or Users or user IF ANY ERROR
+            sequelize.fn("LOWER", sequelize.col("users.username")), // <- users or Users or user IF ANY ERROR
             "LIKE",
             "%" + text + "%"
           ),

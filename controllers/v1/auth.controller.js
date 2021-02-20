@@ -43,6 +43,7 @@ obj.register = async (req, res) => {
     phoneNumber,
     birthDate,
     password: hash,
+    active: 1,
 
     verifyCode,
   });
