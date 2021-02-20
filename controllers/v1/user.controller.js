@@ -183,7 +183,7 @@ obj.findUsers = async (req, res) => {
       ],
     },
     order: [[sequelize.fn("LENGTH", sequelize.col("User.username")), "ASC"]],
-    attributes: ["id", "username", "image"],
+    attributes: ["id", "username", "firstName", "lastName", "image"],
   });
 
   // client response
