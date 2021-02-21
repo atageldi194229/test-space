@@ -27,7 +27,7 @@ const tools = {
       let a = s.split("-");
       a[1] = a[1].toLowerCase();
 
-      let k = ["username", "gender", "birthDate", "createdAt"];
+      let k = ["username", "gender", "birthDate", "createdAt", "loggedAt"];
 
       if (k.includes(a[0]) && ["asc", "desc"].includes(a[1])) {
         return [a[0], a[1]];
@@ -160,7 +160,7 @@ obj.getOne = async (req, res) => {
   });
 
   // user balance
-  let { tsc, tcc } = await Payment.getBalance(id);
+  let { tsc, tcc, finishesAt } = await Payment.getBalance(id);
 
   // client response
   res.status(200).json({
@@ -170,6 +170,7 @@ obj.getOne = async (req, res) => {
       balance: {
         tsc,
         tcc,
+        finishesAt,
       },
     },
   });

@@ -43,6 +43,12 @@ const model = (sequelize, DataTypes) => {
       genderA: { type: DataTypes.BOOLEAN, defaultValue: false },
       jobA: { type: DataTypes.BOOLEAN, defaultValue: false },
       bioA: { type: DataTypes.BOOLEAN, defaultValue: false },
+
+      loggedAt: {
+        type: DataTypes.DATE,
+        defaultValue: sequelize.NOW, // if any error remove that row
+        comment: "last logged time",
+      },
     },
     {
       charset: "utf8",

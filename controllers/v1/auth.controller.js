@@ -4,6 +4,7 @@ const {
   User,
   Group,
   Payment,
+  Attendance,
   sequelize,
   Sequelize: { Op },
 } = require("../../models");
@@ -134,6 +135,12 @@ obj.login = async (req, res, next) => {
         active: user.active,
       },
     });
+
+    // update last log time
+    await user.update({ loggedAt: new Date() });
+
+    // note attendance
+    await Attendance.note(user.id);
   } else {
     res.status(404).json({
       success: false,
