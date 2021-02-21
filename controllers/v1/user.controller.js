@@ -158,14 +158,32 @@ obj.findUsers = async (req, res) => {
   let users = await User.findAll({
     where: {
       active: true,
-      username: sequelize.where(
-        sequelize.fn("LOWER", sequelize.col("User.username")),
-        "LIKE",
-        "%" + text + "%"
-      ),
+      [Op.or]: [
+        {
+          username: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("User.username")),
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+        {
+          firstName: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("User.first_name")), // firstName if any ERROR
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+        {
+          lastName: sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("User.last_name")), // lastName if any ERROR
+            "LIKE",
+            "%" + text + "%"
+          ),
+        },
+      ],
     },
     order: [[sequelize.fn("LENGTH", sequelize.col("User.username")), "ASC"]],
-    attributes: ["id", "username", "image"],
+    attributes: ["id", "username", "firstName", "lastName", "image"],
   });
 
   // client response
