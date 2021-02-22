@@ -8,6 +8,8 @@ const PaymentController = require("./payment.controller");
 const TestController = require("./test.controller");
 const NotificationController = require("./notification.controller");
 const MessageController = require("./message.controller");
+const BannerController = require("./banner.controller");
+const StatController = require("./stat.controller");
 
 module.exports = {
   AuthController,
@@ -18,4 +20,6 @@ module.exports = {
   TestController,
   NotificationController,
   MessageController,
+  BannerController,
+  StatController,
 };

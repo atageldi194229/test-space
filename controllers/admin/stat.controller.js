@@ -5,7 +5,7 @@ const {
   Payment,
   Attendance,
   sequelize,
-  Sequelize: { Op },
+  Sequelize: { Op, QueryTypes },
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
 const ErrorResponse = require("../../utils/errorResponse");
@@ -55,20 +55,133 @@ function prepareOptions({ limit, offset, sort, filter }) {
 }
 
 /**
- * attendance by time range
+ * attendance count by time range
  * action - /admin/stats/attendance
  * method - get
  * token
  */
-obj.attendance = async (req, res) => {
+obj.getAttendance = async (req, res) => {
   // client data
   let { query } = req,
     from = new Date(parseInt(query.from)),
-    to = new Date(parseInt(query.to));
+    to = new Date(parseInt(query.to)),
+    limit = query.limit || 20,
+    offset = query.offset || 0;
+
+  let options = {
+    where: {
+      [Op.and]: [
+        {
+          createdAt: {
+            [Op.gte]: from,
+          },
+        },
+        {
+          createdAt: {
+            [Op.lte]: to,
+          },
+        },
+      ],
+    },
+  };
+
+  let count = await Attendance.count(options);
+
+  let attendance = await Attendance.findAll({
+    ...options,
+    limit,
+    offset,
+    include: {
+      association: "user",
+      attributes: ["id", "username", "firstName", "lastName", "email", "image"],
+    },
+  });
 
   // client response
   res.status(200).json({
     success: true,
+    count,
+    attendance,
+  });
+};
+
+/**
+ * register count by time range
+ * action - /admin/stats/registered
+ * method - get
+ * token
+ */
+obj.getRegistered = async (req, res) => {
+  // client data
+  let { query } = req,
+    from = new Date(parseInt(query.from)),
+    to = new Date(parseInt(query.to)),
+    limit = query.limit || 20,
+    offset = query.offset || 0;
+
+  let options = {
+    where: {
+      [Op.and]: [
+        {
+          createdAt: {
+            [Op.gte]: from,
+          },
+        },
+        {
+          createdAt: {
+            [Op.lte]: to,
+          },
+        },
+      ],
+    },
+  };
+
+  let count = await User.count(options);
+
+  let users = await User.findAll({
+    ...options,
+    limit,
+    offset,
+    attributes: ["id", "username", "firstName", "lastName", "email", "image"],
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    count,
+    users,
+  });
+};
+
+/**
+ * payed count by time range
+ * action - /admin/stats/registered
+ * method - get
+ * token
+ */
+obj.getUserPaymentStat = async (req, res) => {
+  // client data
+  let { query } = req,
+    from = new Date(parseInt(query.from)),
+    to = new Date(parseInt(query.to)),
+    limit = query.limit || 20,
+    offset = query.offset || 0;
+
+  let row = await sequelize.query(
+    `
+    SELECT
+    SUM(CASE WHEN user_balance.id is null OR user_balance.payment_history_count = 1 THEN 1 ELSE 0 END) TOLEGSIZ,
+    SUM(CASE WHEN user_balance.payment_history_count > 1 THEN 1 ELSE 0 END) TOLEGLI
+    FROM users
+    LEFT JOIN user_balance ON users.id = user_balance.id
+  `,
+    { type: QueryTypes.SELECT }
+  );
+
+  // client response
+  res.status(200).json({
+    success: true,
+    ...row[0],
   });
 };
 

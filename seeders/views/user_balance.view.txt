@@ -1,0 +1,19 @@
+CREATE VIEW user_balance AS
+SELECT
+users.id,
+SUM( tsc - tsc_used ) tsc,
+SUM( tcc - tcc_used ) tcc,
+SUM( is_tsc_unlimited ) is_tsc_unlimited,
+SUM( is_tcc_unlimited ) is_tcc_unlimited,
+PHC.payment_history_count,
+ADDDATE( LPD.last_payed_date, INTERVAL 1 MONTH ) last_payment_dedline_date
+FROM
+users
+LEFT JOIN payments ON payments.user_id = users.id
+LEFT JOIN ( SELECT user_id, count(*) payment_history_count FROM payments WHERE payments.`status` = 1 GROUP BY user_id ) PHC ON PHC.user_id = users.id
+LEFT JOIN (SELECT user_id, max(allowed_at) last_payed_date FROM payments WHERE payments.`status` = 1 GROUP BY user_id) LPD on LPD.user_id = users.id
+WHERE
+payments.`status` = 1
+AND ADDDATE( payments.allowed_at, INTERVAL 1 MONTH ) >= NOW()
+AND (tsc - tsc_used > 0 OR tcc - tcc_used > 0 OR is_tsc_unlimited = 1 OR is_tcc_unlimited = 1)
+GROUP BY users.id, PHC.payment_history_count, ADDDATE( LPD.last_payed_date, INTERVAL 1 MONTH )

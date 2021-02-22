@@ -363,7 +363,7 @@ obj.canSolveTest = async (req, res, next) => {
     include: [
       {
         association: "Test",
-        attributes: ["id", "name", "description", "isRandom"],
+        attributes: ["id", "name", "description", "isRandom", "image"],
       },
     ],
   });
@@ -387,6 +387,7 @@ obj.canSolveTest = async (req, res, next) => {
       id: solvingTest.Test.id,
       name: solvingTest.Test.name,
       description: solvingTest.Test.description,
+      image: solvingTest.Test.image,
     },
   };
   if (solvingTest.startTime.getTime() > new Date()) {

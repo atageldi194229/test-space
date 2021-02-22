@@ -21,7 +21,7 @@ const model = (sequelize, DataTypes) => {
   Attendance.associate = function (models) {
     // associations there
 
-    Attendance.belongsTo(models.User, { foreignKey: "userId" });
+    Attendance.belongsTo(models.User, { as: "user", foreignKey: "userId" });
   };
 
   return Attendance;

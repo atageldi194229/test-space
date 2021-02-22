@@ -11,6 +11,7 @@ const NotificationController = require("./notification.controller");
 const MessageController = require("./message.controller");
 const SolvingTestController = require("./solving-test.controller");
 const UserResultController = require("./user-result.controller");
+const BannerController = require("./banner.controller");
 
 module.exports = {
   AuthController,
@@ -24,4 +25,5 @@ module.exports = {
   MessageController,
   SolvingTestController,
   UserResultController,
+  BannerController,
 };

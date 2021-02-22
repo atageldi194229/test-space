@@ -14,7 +14,6 @@ const {
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
 const ErrorResponse = require("../../utils/errorResponse");
-const notificationUser = require("../../models/notification-user");
 const { Mailer } = require("../../services");
 const obj = {};
 
@@ -175,7 +174,7 @@ obj.getUnread = async (req, res, next) => {
   notifications = notifications.map((e) => ({
     id: e.id,
     type: e.type,
-    content: e.content,
+    payload: e.payload,
     createdAt: e.createdAt,
   }));
 
@@ -220,7 +219,7 @@ obj.getAll = async (req, res) => {
     id: e.id,
     read: read[e.id],
     type: e.type,
-    content: e.content,
+    payload: e.payload,
     createdAt: e.createdAt,
   }));
 
