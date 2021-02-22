@@ -50,8 +50,7 @@
 											"\r",
 											"pm.globals.set(\"TOKEN\", resData.token);"
 										],
-										"type": "text/javascript",
-										"id": "daff0fc6-b83c-4be6-a952-6e35942a6d3f"
+										"type": "text/javascript"
 									}
 								}
 							],
@@ -211,9 +210,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "tests",
@@ -725,9 +722,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "questions",
@@ -883,9 +878,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "prices",
@@ -908,9 +901,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "users",
@@ -1107,9 +1098,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "payments",
@@ -1260,9 +1249,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "groups",
@@ -1573,15 +1560,11 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "pages",
-					"item": [],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					"item": []
 				},
 				{
 					"name": "notifications",
@@ -1768,9 +1751,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "user results",
@@ -1885,9 +1866,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "solving tests",
@@ -2230,9 +2209,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "messages",
@@ -2265,12 +2242,9 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "admin",
@@ -2317,8 +2291,7 @@
 											"\r",
 											"pm.globals.set(\"ADMIN_TOKEN\", resData.token);"
 										],
-										"type": "text/javascript",
-										"id": "04aa94c3-dc40-4629-b958-85b68ae9be45"
+										"type": "text/javascript"
 									}
 								}
 							],
@@ -2348,9 +2321,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "prices",
@@ -2412,9 +2383,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "moderators",
@@ -2556,9 +2525,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "payments",
@@ -2670,9 +2637,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "tests",
@@ -2784,9 +2749,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "users",
@@ -2928,9 +2891,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "notifications",
@@ -2973,9 +2934,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "messages",
@@ -3108,9 +3067,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "stats",
@@ -3123,7 +3080,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "{{XTOKEN}}",
+											"value": "{{ADMIN_TOKEN}}",
 											"type": "string"
 										}
 									]
@@ -3153,7 +3110,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "{{XTOKEN}}",
+											"value": "{{ADMIN_TOKEN}}",
 											"type": "string"
 										}
 									]
@@ -3183,7 +3140,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "{{XTOKEN}}",
+											"value": "{{ADMIN_TOKEN}}",
 											"type": "string"
 										}
 									]
@@ -3213,7 +3170,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "{{XTOKEN}}",
+											"value": "{{ADMIN_TOKEN}}",
 											"type": "string"
 										}
 									]
@@ -3235,13 +3192,9 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
