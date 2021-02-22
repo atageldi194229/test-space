@@ -3111,6 +3111,133 @@
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
+				},
+				{
+					"name": "stats",
+					"item": [
+						{
+							"name": "get attendance",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{XTOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/stats/attendance",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"stats",
+										"attendance"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **from** | `integer` | example: `new Date().getTime()`\r\n- **to** | `integer` | example: `new Date().getTime()`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "get user payment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{XTOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/stats/user-payment",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"stats",
+										"user-payment"
+									]
+								},
+								"description": "### auth\r\n- **token**"
+							},
+							"response": []
+						},
+						{
+							"name": "get registered",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{XTOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/stats/registered",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"stats",
+										"registered"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **from** | `integer` | example: `new Date().getTime()`\r\n- **to** | `integer` | example: `new Date().getTime()`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "tests",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{XTOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/stats/tests",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"stats",
+										"tests"
+									]
+								},
+								"description": "### auth\r\n- **token**"
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}

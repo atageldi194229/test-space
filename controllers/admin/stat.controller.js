@@ -2,6 +2,8 @@
 
 const {
   User,
+  Test,
+  SolvingTest,
   Payment,
   Attendance,
   sequelize,
@@ -154,8 +156,8 @@ obj.getRegistered = async (req, res) => {
 };
 
 /**
- * payed count by time range
- * action - /admin/stats/registered
+ * user and payment
+ * action - /admin/stats/user-payment
  * method - get
  * token
  */
@@ -182,6 +184,29 @@ obj.getUserPaymentStat = async (req, res) => {
   res.status(200).json({
     success: true,
     ...row[0],
+  });
+};
+
+/**
+ * test count
+ * action - /admin/stats/tests
+ * method - get
+ * token
+ */
+obj.getTestCount = async (req, res) => {
+  // client data
+  let { query } = req;
+  let from = new Date(parseInt(query.from)),
+    to = new Date(parseInt(query.to));
+
+  let testCount = await Test.count({});
+  let solvedTestCount = await SolvingTest.count({ where: { isPublic: false } });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    testCount,
+    solvedTestCount,
   });
 };
 

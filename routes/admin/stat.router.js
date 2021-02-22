@@ -1,17 +1,18 @@
 const express = require("express");
-const { getPublic } = require("../../controllers/v1/test.controller");
 const router = express.Router();
 
 const {
   getAttendance,
-  getPayedUsers,
+  getUserPaymentStat,
   getRegistered,
+  getTestCount,
 } = require("../../controllers").Admin.StatController;
 
 const { verify } = require("../../middleware").JwtMiddleware;
 
 router.get("/attendance", verify, getAttendance);
-router.get("/payed-users", verify, getPayedUsers);
+router.get("/user-payment", verify, getUserPaymentStat);
 router.get("/registered", verify, getRegistered);
+router.get("/tests", verify, getTestCount);
 
 module.exports = router;
