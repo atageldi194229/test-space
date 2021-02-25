@@ -565,7 +565,7 @@ obj.finishSolvingTest = async (req, res, next) => {
   if (like) {
     let solvingTest = await SolvingTest.findOne({
       where: { id: solvingTestId },
-      attributes: ["testId"],
+      attributes: ["testId", "questionCount"],
     });
 
     let updatedRows = await Test.increment(
@@ -577,6 +577,10 @@ obj.finishSolvingTest = async (req, res, next) => {
   // client response
   res.status(200).json({
     success: true,
+    userResult: {
+      totalPoints:
+        (100 * userResult.correctAnswerCount) / solvingTest.questionCount,
+    },
   });
 };
 
