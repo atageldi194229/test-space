@@ -179,12 +179,33 @@ obj.getOne = async (req, res) => {
   });
 
   // request db
-  let test = await Test.findOne({
+  let options = {
     where: { id: solvingTest.testId },
     attributes: {
       exclude: ["updatedAt"],
     },
-  });
+  };
+
+  // question stats
+  if (userId === solvingTest.userId) {
+    options.include = {
+      association: "questions",
+      attributes: [
+        "id",
+        "type",
+        "data",
+        "isRandom",
+        "createdAt",
+        "updatedAt",
+        [
+          "(SELECT SUM(is_correct)) FROM solving_questions WHERE solving_questions.question_id = questions.id AND )",
+          "correctCount",
+        ],
+      ],
+    };
+  }
+
+  let test = await Test.findOne(options);
 
   // client response
   res.status(200).json({
@@ -390,10 +411,10 @@ obj.canSolveTest = async (req, res, next) => {
       image: solvingTest.Test.image,
     },
   };
-  if (solvingTest.startTime.getTime() > new Date()) {
+  if (solvingTest.startTime.getTime() > new Date().getTime()) {
     data.status = "waiting";
-    data.leftTime = new Date() - solvingTest.startTime.getTime();
-  } else if (solvingTest.endTime.getTime() < new Date()) {
+    data.leftTime = new Date().getTime() - solvingTest.startTime.getTime();
+  } else if (solvingTest.endTime.getTime() < new Date().getTime()) {
     data.status = "ended";
   } else {
     let userResult = await UserResult.findOne({
@@ -403,13 +424,14 @@ obj.canSolveTest = async (req, res, next) => {
     if (
       userResult &&
       !userResult.finishedAt &&
-      userResult.startedAt.getTime() + solvingTest.solveTime > new Date() &&
-      solvingTest.endTime.getTime() > new Date()
+      userResult.startedAt.getTime() + solvingTest.solveTime >
+        new Date().getTime() &&
+      solvingTest.endTime.getTime() > new Date().getTime()
     ) {
       data.status = "solving";
     } else {
       data.status = "active";
-      data.leftTime = solvingTest.endTime.getTime() - new Date();
+      data.leftTime = solvingTest.endTime.getTime() - new Date().getTime();
     }
   }
 
@@ -500,10 +522,15 @@ obj.startSolvingTest = async (req, res, next) => {
       attributes: ["questionId", "answer"],
     });
 
-    if (solvingTest.solveTime + new Date() < solvingTest.endTime.getTime())
+    if (
+      solvingTest.solveTime + new Date().getTime() <
+      solvingTest.endTime.getTime()
+    )
       data.leftTime =
-        userResult.startedAt.getTime() + solvingTest.solveTime - new Date();
-    else data.leftTime = solvingTest.endTime.getTime() - new Date();
+        userResult.startedAt.getTime() +
+        solvingTest.solveTime -
+        new Date().getTime();
+    else data.leftTime = solvingTest.endTime.getTime() - new Date().getTime();
   } else {
     return next(new ErrorResponse("It is not time to solve", -1, 505));
   }
@@ -598,7 +625,9 @@ obj.checkStatus = async (req, res, next) => {
       solvingTestId,
       userId,
       finishedAt: null,
-      startedAt: { [Op.gte]: new Date(new Date() - solvingTest.solveTime) },
+      startedAt: {
+        [Op.gte]: new Date(new Date().getTime() - solvingTest.solveTime),
+      },
     },
   });
 
@@ -666,7 +695,9 @@ obj.startSolvingPublicTest = async (req, res, next) => {
       solvingTestId,
       userId,
       finishedAt: null,
-      startedAt: { [Op.gte]: new Date(new Date() - solvingTest.solveTime) },
+      startedAt: {
+        [Op.gte]: new Date(new Date().getTime() - solvingTest.solveTime),
+      },
     },
   });
 
@@ -711,7 +742,8 @@ obj.startSolvingPublicTest = async (req, res, next) => {
   });
 
   data.leftTime =
-    solvingTest.solveTime - (new Date() - userResult.startedAt.getTime());
+    solvingTest.solveTime -
+    (new Date().getTime() - userResult.startedAt.getTime());
 
   // client response
   res.status(200).json({
@@ -748,7 +780,9 @@ obj.finishSolvingPublicTest = async (req, res, next) => {
       solvingTestId,
       userId,
       finishedAt: null,
-      startedAt: { [Op.gte]: new Date(new Date() - solvingTest.solveTime) },
+      startedAt: {
+        [Op.gte]: new Date(new Date().getTime() - solvingTest.solveTime),
+      },
     },
   });
 

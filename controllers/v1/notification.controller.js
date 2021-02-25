@@ -88,20 +88,24 @@ obj.sendInvitation = async (req, res, next) => {
     type: "invitation",
     payload: {
       user: {
+        id: test.user.id,
         userame: test.user.username,
         image: test.user.image,
         firstName: test.user.firstName,
         lastName: test.user.lastName,
       },
       test: {
+        id: test.id,
         name: test.name,
         image: test.image,
       },
       solvingTest: {
+        id: solvingTest.id,
         startTime: solvingTest.startTime,
         endTime: solvingTest.endTime,
         solveTime: solvingTest.solveTime,
       },
+      link: link.replace(":id", solvingTest.id),
     },
   });
 

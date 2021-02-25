@@ -88,7 +88,7 @@ obj.create = async (req, res) => {
     file = req.files["image"];
 
   // save image
-  image = saveFile(file, "banner");
+  let image = saveFile(file, "banner");
 
   let banner = await Banner.create({
     image,
@@ -118,7 +118,7 @@ obj.update = async (req, res) => {
     body: { keywords, payload, startTime, endTime, isActive },
   } = req;
 
-  let banner = await Banner.create({
+  let banner = await Banner.update({
     keywords,
     payload,
     startTime,
@@ -145,12 +145,15 @@ obj.remove = async (req, res) => {
     params: { id },
   } = req;
 
-  let banner = await Banner.destroy({ where: { id } });
+  let banner = await Banner.findOne({ where: { id } });
+
+  deleteFile(banner.image);
+
+  await banner.destroy();
 
   // client response
   res.status(200).json({
     success: true,
-    banner,
   });
 };
 

@@ -16,7 +16,7 @@ const obj = {};
  */
 obj.getAll = async (req, res, next) => {
   // get from client
-  let search = (req.query.search || "").toLowerCase();
+  let text = (req.query.search || "").toLowerCase();
 
   let NOW = new Date();
 
@@ -25,7 +25,7 @@ obj.getAll = async (req, res, next) => {
     endTime: { [Op.gte]: NOW },
     isActive: true,
     keywords: sequelize.where(
-      sequelize.fn("LOWER", sequelize.col("Test.keywords")),
+      sequelize.fn("LOWER", sequelize.col("Banner.keywords")),
       "LIKE",
       "%" + text + "%"
     ),
