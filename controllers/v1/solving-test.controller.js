@@ -148,6 +148,25 @@ const addAllUsersResults = (data, { users, ur, solvingTest }) => {
       finishedAt: ur[u.id].finishedAt || ur[u.id].endTime,
     },
   }));
+
+  data.average = {
+    totalPoints: 0,
+    correctAnwer: 0,
+    incorrectAnswer: 0,
+    emptyAnswer: 0,
+  };
+
+  for (let e of data.users) {
+    data.average.totalPoints += e.userResult.totalPoints;
+    data.average.correctAnswer += e.userResult.percentage.correctAnswer;
+    data.average.incorrectAnswer += e.userResult.percentage.incorrectAnswer;
+    data.average.emptyAnswer += e.userResult.percentage.emptyAnswer;
+  }
+
+  data.average.totalPoints /= data.users.length;
+  data.average.correctAnswer /= data.users.length;
+  data.average.incorrectAnswer /= data.users.length;
+  data.average.emptyAnswer /= data.users.length;
 };
 
 const addUsersQuestionResult = (data, { userResults, test }) => {
@@ -156,7 +175,7 @@ const addUsersQuestionResult = (data, { userResults, test }) => {
 
   // init
   for (let q of test.questions) {
-    qq[q.questionId] = { correctCount: 0, incorrectCount: 0 };
+    qq[q.id] = { correctCount: 0, incorrectCount: 0 };
   }
 
   // calc
