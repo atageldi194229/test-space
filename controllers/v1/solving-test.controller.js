@@ -114,7 +114,7 @@ obj.getAll = async (req, res) => {
 
 // ++++++++++++  helper functions  ++++++++++++++++
 
-const addAllUsersResults = (data, { users, ur, solvingTest }) => {
+const addAllUsersResults = (data, { users, ur, questionCount }) => {
   data.users = users.map((u) => ({
     id: u.id,
     username: u.username,
@@ -122,26 +122,23 @@ const addAllUsersResults = (data, { users, ur, solvingTest }) => {
     firstName: u.firstName,
     lastName: u.lastName,
     userResult: ur[u.id] && {
-      totalPoints:
-        (100 * ur[u.id].correctAnswerCount) / solvingTest.questionCount,
+      totalPoints: (100 * ur[u.id].correctAnswerCount) / questionCount,
       correctAnswerCount: ur[u.id].correctAnswerCount,
       incorrectAnswerCount: ur[u.id].incorrectAnswerCount,
       emptyAnswerCount:
-        solvingTest.questionCount -
+        questionCount -
         ur[u.id].correctAnswerCount -
         ur[u.id].incorrectAnswerCount,
 
       percentage: {
-        correctAnswer:
-          (100 * ur[u.id].correctAnswerCount) / solvingTest.questionCount,
-        incorrectAnswer:
-          (100 * ur[u.id].incorrectAnswerCount) / solvingTest.questionCount,
+        correctAnswer: (100 * ur[u.id].correctAnswerCount) / questionCount,
+        incorrectAnswer: (100 * ur[u.id].incorrectAnswerCount) / questionCount,
         emptyAnswer:
           (100 *
-            (solvingTest.questionCount -
+            (questionCount -
               ur[u.id].correctAnswerCount -
               ur[u.id].incorrectAnswerCount)) /
-          solvingTest.questionCount,
+          questionCount,
       },
 
       startedAt: ur[u.id].startedAt,
@@ -322,6 +319,8 @@ obj.getOne = async (req, res) => {
 
   let test = await Test.findOne(options);
 
+  let questionCount = await Question.count({ where: { testId: test.id } });
+
   // client response
   let data = {
     success: true,
@@ -332,16 +331,13 @@ obj.getOne = async (req, res) => {
   addAllUsersResults(data, {
     users: userResults.map((e) => e.user),
     ur,
-    solvingTest,
+    questionCount,
   });
 
+  // if teacher
   if (userId === solvingTest.userId) {
     addUsersQuestionResult(data, { userResults, test });
   }
-
-  // if teacher
-  if (solvingTest.userId !== userId)
-    addUsersQuestionResult(data.questions, { userResults });
 
   res.status(200).json(data);
 };
