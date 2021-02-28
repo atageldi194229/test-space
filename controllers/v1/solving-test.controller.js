@@ -150,23 +150,26 @@ const addAllUsersResults = (data, { users, ur, solvingTest }) => {
   }));
 };
 
-const addUsersQuestionResult = (data, { userResults }) => {
-  let solveCount = 0,
-    correctCount = 0,
-    incorrectCount = 0;
-  let sq = {};
+const addUsersQuestionResult = (data, { userResults, test }) => {
+  let solveCount = 0;
+  let qq = {};
 
+  // init
+  for (let q of test.questions) {
+    qq[q.questionId] = { correctCount: 0, incorrectCount: 0 };
+  }
+
+  // calc
   for (let ur of userResults) {
     solveCount++;
     for (let sq of ur.solvingQuestions) {
-      // continue there
-
-      if (sq.isCorrect) correctCount++;
-      else incorrectCount++;
+      if (sq.isCorrect) qq[sq.questionId].correctCount++;
+      else qq[sq.questionId].incorrectCount++;
     }
   }
 
-  data.questions = test.questions.map((q) => ({
+  // create
+  data.testQuestions = test.questions.map((q) => ({
     id: q.id,
     type: q.type,
     data: q.data,
@@ -174,16 +177,16 @@ const addUsersQuestionResult = (data, { userResults }) => {
 
     solveCount,
 
-    correctCount,
-    incorrectCount,
-    emptyCount: solveCount - correctCount - incorrectCount,
+    correctCount: qq[q.id].correctCount,
+    incorrectCount: qq[q.id].incorrectCount,
+    emptyCount: solveCount - qq[q.id].correctCount - qq[q.id].incorrectCount,
 
     percentage: {
-      correct: (100 * q.correctCount) / q.solveCount,
-      incorrect: (100 * q.incorrectCount) / q.solveCount,
+      correct: (100 * qq[q.id].correctCount) / solveCount,
+      incorrect: (100 * qq[q.id].incorrectCount) / solveCount,
       empty:
-        (100 * (q.solveCount - q.correctCount - q.incorrectCount)) /
-        q.solveCount,
+        (100 * (solveCount - qq[q.id].correctCount - qq[q.id].incorrectCount)) /
+        solveCount,
     },
 
     createdAt: q.createdAt,
@@ -284,10 +287,10 @@ obj.getOne = async (req, res) => {
         "isRandom",
         "createdAt",
         "updatedAt",
-        [
-          "(SELECT SUM(is_correct)) FROM solving_questions WHERE solving_questions.question_id = questions.id AND )",
-          "correctCount",
-        ],
+        // [
+        //   "(SELECT SUM(is_correct)) FROM solving_questions WHERE solving_questions.question_id = questions.id AND )",
+        //   "correctCount",
+        // ],
       ],
     };
   }
@@ -302,6 +305,10 @@ obj.getOne = async (req, res) => {
   };
 
   addAllUsersResults(data, { users, ur, solvingTest });
+
+  if (userId === solvingTest.userId) {
+    addUsersQuestionResult(data, { userResults, test });
+  }
 
   // if teacher
   if (solvingTest.userId !== userId)
