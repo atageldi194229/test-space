@@ -651,6 +651,7 @@ obj.finishSolvingTest = async (req, res, next) => {
   res.status(200).json({
     success: true,
     userResult: {
+      id: userResult.id,
       totalPoints:
         (100 * userResult.correctAnswerCount) / solvingTest.questionCount,
     },
@@ -876,6 +877,7 @@ obj.finishSolvingPublicTest = async (req, res, next) => {
   // client response
   res.status(200).json({
     success: true,
+    userResult: { id: userResult.id },
   });
 };
 
