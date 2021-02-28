@@ -634,13 +634,14 @@ obj.finishSolvingTest = async (req, res, next) => {
 
   if (userResult) await userResult.update({ finishedAt: new Date() });
 
+  // get solvingTest from db
+  let solvingTest = await SolvingTest.findOne({
+    where: { id: solvingTestId },
+    attributes: ["testId", "questionCount"],
+  });
+
   // increment like count of test
   if (like) {
-    let solvingTest = await SolvingTest.findOne({
-      where: { id: solvingTestId },
-      attributes: ["testId", "questionCount"],
-    });
-
     let updatedRows = await Test.increment(
       { likeCount: like },
       { where: { id: solvingTest.testId } }
