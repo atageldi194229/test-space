@@ -413,7 +413,7 @@ obj.getOne = async (req, res, next) => {
       createdAt: test.createdAt,
       updatedAt: test.updatedAt,
 
-      questions: questions.map((q) => ({
+      questions: test.questions.map((q) => ({
         id: q.id,
         type: q.type,
         data: q.data,
@@ -782,14 +782,6 @@ obj.getPopular = get("popular");
 obj.getArchived = get("archived");
 
 /**
- * get all solved tests
- * action - /v1/tests/solved
- * method - get
- * token
- */
-obj.getSolved = get("solved");
-
-/**
  * get all pinned tests
  * action - /v1/tests/pinned
  * method - get
@@ -812,6 +804,72 @@ obj.pin = pinningTest("create");
  * token
  */
 obj.unpin = pinningTest("destroy");
+
+/**
+ * get all solved tests
+ * action - /v1/tests/solved
+ * method - get
+ * token
+ */
+obj.getSolved = async (req, res, next) => {
+  // client data
+  const { query, user } = req,
+    userId = user.id,
+    limit = parseInt(query.limit) || 20,
+    offset = parseInt(query.offset) || 0,
+    sort = query.sort;
+
+  let userResults = await UserResult.findAll({
+    where: {
+      userId,
+      [Op.or]: [
+        {
+          finishedAt: { [Op.ne]: null },
+        },
+        {
+          endTime: { [Op.lt]: new Date() },
+        },
+      ],
+    },
+    attributes: ["solvingTestId"],
+  });
+
+  let solvingTests = await SolvingTest.findAll({
+    limit,
+    offset,
+    where: { id: userResults.map((e) => e.solvingTestId) },
+    attributes: ["testId", "isPublic", "isResultsShared", "isUserResultShared"],
+    include: {
+      order: [sortTests(sort)],
+      association: "Test",
+      where: {
+        isPublic: true,
+        allowedAt: {
+          [Op.ne]: null,
+        },
+        archivedAt: null,
+      },
+      attributes: [
+        "id",
+        "name",
+        "description",
+        "defaultSolveTime",
+        "likeCount",
+        "solveCount",
+        "image",
+        "language",
+        "keywords",
+        "createdAt",
+      ],
+    },
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    solvingTests,
+  });
+};
 
 // When exporting all collected data
 let keys = Object.keys(obj);

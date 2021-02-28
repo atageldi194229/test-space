@@ -98,6 +98,7 @@ obj.getAll = async (req, res) => {
       incorrectAnswerAverage: e.incorrectAnswerAverage,
       isPublic: e.isPublic,
       isResultsShared: e.isResultsShared,
+      isUserResultShared: e.isUserResultShared,
       createdAt: e.createdAt,
       test: {
         id: e.Test.id,
@@ -110,6 +111,87 @@ obj.getAll = async (req, res) => {
     })),
   });
 };
+
+// ++++++++++++  helper functions  ++++++++++++++++
+
+const addAllUsersResults = (data, { users, ur, solvingTest }) => {
+  data.users = users.map((u) => ({
+    id: u.id,
+    username: u.username,
+    image: u.image,
+    firstName: u.firstName,
+    lastName: u.lastName,
+    userResult: ur[u.id] && {
+      totalPoints:
+        (100 * ur[u.id].correctAnswerCount) / solvingTest.questionCount,
+      correctAnswerCount: ur[u.id].correctAnswerCount,
+      incorrectAnswerCount: ur[u.id].incorrectAnswerCount,
+      emptyAnswerCount:
+        solvingTest.questionCount -
+        ur[u.id].correctAnswerCount -
+        ur[u.id].incorrectAnswerCount,
+
+      percentage: {
+        correctAnswer:
+          (100 * ur[u.id].correctAnswerCount) / solvingTest.questionCount,
+        incorrectAnswer:
+          (100 * ur[u.id].incorrectAnswerCount) / solvingTest.questionCount,
+        emptyAnswer:
+          (100 *
+            (solvingTest.questionCount -
+              ur[u.id].correctAnswerCount -
+              ur[u.id].incorrectAnswerCount)) /
+          solvingTest.questionCount,
+      },
+
+      startedAt: ur[u.id].startedAt,
+      finishedAt: ur[u.id].finishedAt || ur[u.id].endTime,
+    },
+  }));
+};
+
+const addUsersQuestionResult = (data, { userResults }) => {
+  let solveCount = 0,
+    correctCount = 0,
+    incorrectCount = 0;
+  let sq = {};
+
+  for (let ur of userResults) {
+    solveCount++;
+    for (let sq of ur.solvingQuestions) {
+      // continue there
+
+      if (sq.isCorrect) correctCount++;
+      else incorrectCount++;
+    }
+  }
+
+  data.questions = test.questions.map((q) => ({
+    id: q.id,
+    type: q.type,
+    data: q.data,
+    isRandom: q.isRandom,
+
+    solveCount,
+
+    correctCount,
+    incorrectCount,
+    emptyCount: solveCount - correctCount - incorrectCount,
+
+    percentage: {
+      correct: (100 * q.correctCount) / q.solveCount,
+      incorrect: (100 * q.incorrectCount) / q.solveCount,
+      empty:
+        (100 * (q.solveCount - q.correctCount - q.incorrectCount)) /
+        q.solveCount,
+    },
+
+    createdAt: q.createdAt,
+    updatedAt: q.updatedAt,
+  }));
+};
+
+// ++++++++++++  helper functions  ++++++++++++++++
 
 /**
  * Get one shared test
@@ -128,9 +210,11 @@ obj.getOne = async (req, res) => {
       "id",
       "questionCount",
       "testId",
+      "participantCount",
       "invitedUsers",
       "userId",
       "isResultsShared",
+      "isUserResultShared",
     ],
   });
 
@@ -143,7 +227,7 @@ obj.getOne = async (req, res) => {
 
   // permission test
   if (
-    !(solvingTest.isResultsShared && invitedUsers.includes(userId)) ||
+    !(solvingTest.isResultsShared && invitedUsers.includes(userId)) &&
     solvingTest.userId !== userId
   ) {
     return next(new ErrorResponse("Permission denied"));
@@ -165,6 +249,9 @@ obj.getOne = async (req, res) => {
     attributes: {
       exclude: ["updatedAt", "solvingTestId"],
     },
+    include: {
+      association: "solvingQuestions",
+    },
   });
 
   // array => object
@@ -173,7 +260,7 @@ obj.getOne = async (req, res) => {
     ur[r.userId] = r;
   }
 
-  let users = User.findAll({
+  let users = await User.findAll({
     where: { id: invitedUsers },
     attributes: ["id", "username", "image", "firstName", "lastName"],
   });
@@ -208,44 +295,19 @@ obj.getOne = async (req, res) => {
   let test = await Test.findOne(options);
 
   // client response
-  res.status(200).json({
+  let data = {
     success: true,
     solvingTest,
     test,
-    users: users.map((u) => ({
-      id: u.id,
-      username: u.username,
-      image: u.image,
-      firstName: u.firstName,
-      lastName: u.lastName,
-      userResult: ur[u.id] && {
-        totalPoints:
-          (100 * ur[u.id].correctAnswerCount) / solvingTest.questionCount,
-        correctAnswerCount: ur[u.id].correctAnswerCount,
-        incorrectAnswerCount: ur[u.id].incorrectAnswerCount,
-        emptyAnswerCount:
-          solvingTest.questionCount -
-          ur[u.id].correctAnswerCount -
-          ur[u.id].incorrectAnswerCount,
+  };
 
-        percentage: {
-          correctAnswer:
-            (100 * ur[u.id].correctAnswerCount) / solvingTest.questionCount,
-          incorrectAnswer:
-            (100 * ur[u.id].incorrectAnswerCount) / solvingTest.questionCount,
-          emptyAnswer:
-            (100 *
-              (solvingTest.questionCount -
-                ur[u.id].correctAnswerCount -
-                ur[u.id].incorrectAnswerCount)) /
-            solvingTest.questionCount,
-        },
+  addAllUsersResults(data, { users, ur, solvingTest });
 
-        startedAt: ur[u.id].startedAt,
-        finishedAt: ur[u.id].finishedAt || ur[u.id].endTime,
-      },
-    })),
-  });
+  // if teacher
+  if (solvingTest.userId !== userId)
+    addUsersQuestionResult(data.questions, { userResults });
+
+  res.status(200).json(data);
 };
 
 /**
@@ -258,12 +320,12 @@ obj.update = async (req, res, next) => {
   // client data
   let id = req.params.id;
   let userId = req.user.id;
-  let { isResultsShared } = req.body;
+  let { isResultsShared, isUserResultShared } = req.body;
 
   // request db
   let solvingTest = await SolvingTest.findOne({
     where: { id, userId },
-    attributes: ["id", "isResultsShared"],
+    attributes: ["id", "isResultsShared", "isUserResultShared"],
   });
 
   // error test
@@ -271,7 +333,10 @@ obj.update = async (req, res, next) => {
     return next(new ErrorResponse("Could not find solving test"));
 
   // update request db
-  await solvingTest.update({ isResultsShared }, { where: { id } });
+  await solvingTest.update(
+    { isResultsShared, isUserResultShared },
+    { where: { id } }
+  );
 
   // client response
   res.status(200).json({
@@ -354,6 +419,7 @@ obj.search = async (req, res) => {
       incorrectAnswerAverage: e.incorrectAnswerAverage,
       isPublic: e.isPublic,
       isResultsShared: e.isResultsShared,
+      isUserResultShared: e.isUserResultShared,
       createdAt: e.createdAt,
       test: {
         id: e.Test.id,
