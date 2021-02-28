@@ -271,9 +271,15 @@ obj.getOne = async (req, res) => {
     attributes: {
       exclude: ["updatedAt", "solvingTestId"],
     },
-    include: {
-      association: "solvingQuestions",
-    },
+    include: [
+      {
+        association: "solvingQuestions",
+      },
+      {
+        association: "user",
+        attributes: ["id", "username", "image", "firstName", "lastName"],
+      },
+    ],
   });
 
   // array => object
@@ -282,10 +288,10 @@ obj.getOne = async (req, res) => {
     ur[r.userId] = r;
   }
 
-  let users = await User.findAll({
-    where: { id: invitedUsers },
-    attributes: ["id", "username", "image", "firstName", "lastName"],
-  });
+  // let users = await User.findAll({
+  //   where: { id: invitedUsers },
+  //   attributes: ["id", "username", "image", "firstName", "lastName"],
+  // });
 
   // request db
   let options = {
@@ -323,7 +329,11 @@ obj.getOne = async (req, res) => {
     test,
   };
 
-  addAllUsersResults(data, { users, ur, solvingTest });
+  addAllUsersResults(data, {
+    users: userResults.map((e) => e.user),
+    ur,
+    solvingTest,
+  });
 
   if (userId === solvingTest.userId) {
     addUsersQuestionResult(data, { userResults, test });
