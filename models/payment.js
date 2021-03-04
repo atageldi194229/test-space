@@ -125,7 +125,14 @@ const methods = ({ Payment, GroupUser, Sequelize: { Op } }) => {
       }
     }
 
-    return { tsc, tcc, payments };
+    // finishesAt
+    let finishesAt = new Date(new Date() - days30 * 10);
+    for (let p of payments) {
+      if (finishesAt < p.allowedAt) finishesAt = p.allowedAt;
+    }
+    finishesAt = new Date(finishesAt.getTime() + days30);
+
+    return { tsc, tcc, payments, finishesAt };
   };
 
   Payment.canSendInvitation = async function (userId, { userIds, groupIds }) {

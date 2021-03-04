@@ -62,6 +62,12 @@ const model = (sequelize, DataTypes) => {
         allowNull: false,
         comment: "share test results to other invited users or not",
       },
+      isUserResultShared: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+        comment: "share test results to other invited users or not",
+      },
     },
     {
       charset: "utf8mb4",

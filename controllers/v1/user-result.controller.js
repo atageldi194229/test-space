@@ -139,11 +139,18 @@ obj.getSolvedQuestions = async (req, res, next) => {
 
   let solvingTest = await SolvingTest.findOne({
     where: { id: userResult.solvingTestId },
-    attributes: ["id", "testId", "userId"],
+    attributes: ["id", "testId", "userId", "isUserResultShared", "isPublic"],
   });
 
   // error test
-  if (!(userResult.userId === userId || solvingTest.userId === userId))
+  if (
+    !(
+      (!solvingTest.isPublic &&
+        solvingTest.isUserResultShared &&
+        userResult.userId === userId) ||
+      solvingTest.userId === userId
+    )
+  )
     return next(new ErrorResponse("Could not find userResult"));
 
   let questions = await Question.findAll({

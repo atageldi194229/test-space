@@ -50,8 +50,7 @@
 											"\r",
 											"pm.globals.set(\"TOKEN\", resData.token);"
 										],
-										"type": "text/javascript",
-										"id": "daff0fc6-b83c-4be6-a952-6e35942a6d3f"
+										"type": "text/javascript"
 									}
 								}
 							],
@@ -211,9 +210,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "tests",
@@ -336,7 +333,7 @@
 							"response": []
 						},
 						{
-							"name": "get one public",
+							"name": "get one test solved users",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -363,7 +360,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{URL}}/v1/tests/1/public",
+									"raw": "{{URL}}/v1/tests/1/users",
 									"host": [
 										"{{URL}}"
 									],
@@ -371,9 +368,10 @@
 										"v1",
 										"tests",
 										"1",
-										"public"
+										"users"
 									]
-								}
+								},
+								"description": "limit offset has"
 							},
 							"response": []
 						},
@@ -724,10 +722,49 @@
 								"description": "### body\r\n- **text** | `string` |search text\r\n- **action** | `string`| search from where ex:\r\n    1. `\"all\"` | from all users tests\r\n    2. `\"public\"` | from all public tests\r\n    3. `\"latest\"` | from all latest tests\r\n    4. `\"popular\"` | from all best tests\r\n    5. `\"archived\"` | from all archived tests\r\n    6. `\"solved\"` | from all users solved tests\r\n    7. `\"pinned\"` | from all users pinned tests\r\n\r\n### query\r\n- **sort** | `string` | to sort | format: `\"key-order\"` | ex:\r\n    1. `\"name-asc\" or \"name-desc\"`\r\n    2. `\"likeCount-asc\" or \"likeCount-desc\"`\r\n    3. `\"solveCount-asc\" or \"solveCount-desc\"`\r\n    4. `\"createdAt-asc\" or \"createdAt-desc\"`\r\n- **filter** | `string` | to filter | ex: \r\n    1. `\"public\"`\r\n    2. `\"private\"`\r\n    3. `\"waiting\"`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
 							},
 							"response": []
+						},
+						{
+							"name": "get one Copy",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/v1/tests/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"tests",
+										"1"
+									]
+								}
+							},
+							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "questions",
@@ -883,9 +920,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "prices",
@@ -908,9 +943,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "users",
@@ -1107,9 +1140,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "payments",
@@ -1260,9 +1291,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "groups",
@@ -1573,15 +1602,11 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "pages",
-					"item": [],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					"item": []
 				},
 				{
 					"name": "notifications",
@@ -1768,9 +1793,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "user results",
@@ -1885,9 +1908,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "solving tests",
@@ -2230,9 +2251,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "messages",
@@ -2265,12 +2284,9 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "admin",
@@ -2317,8 +2333,7 @@
 											"\r",
 											"pm.globals.set(\"ADMIN_TOKEN\", resData.token);"
 										],
-										"type": "text/javascript",
-										"id": "04aa94c3-dc40-4629-b958-85b68ae9be45"
+										"type": "text/javascript"
 									}
 								}
 							],
@@ -2348,9 +2363,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "prices",
@@ -2412,9 +2425,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "moderators",
@@ -2556,9 +2567,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "payments",
@@ -2670,9 +2679,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "tests",
@@ -2784,9 +2791,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "users",
@@ -2928,9 +2933,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "notifications",
@@ -2973,9 +2976,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "messages",
@@ -3108,13 +3109,134 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
+				},
+				{
+					"name": "stats",
+					"item": [
+						{
+							"name": "get attendance",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/stats/attendance",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"stats",
+										"attendance"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **from** | `integer` | example: `new Date().getTime()`\r\n- **to** | `integer` | example: `new Date().getTime()`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "get user payment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/stats/user-payment",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"stats",
+										"user-payment"
+									]
+								},
+								"description": "### auth\r\n- **token**"
+							},
+							"response": []
+						},
+						{
+							"name": "get registered",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/stats/registered",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"stats",
+										"registered"
+									]
+								},
+								"description": "### auth\r\n- **token**\r\n\r\n### query\r\n- **from** | `integer` | example: `new Date().getTime()`\r\n- **to** | `integer` | example: `new Date().getTime()`\r\n- **limit** | `integer`\r\n- **offset** | `integer`"
+							},
+							"response": []
+						},
+						{
+							"name": "tests",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/stats/tests",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"stats",
+										"tests"
+									]
+								},
+								"description": "### auth\r\n- **token**"
+							},
+							"response": []
+						}
+					]
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

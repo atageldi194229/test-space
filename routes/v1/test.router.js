@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   create,
   getOne,
+  getUsersSolvedTest,
   getOnePublic,
   update,
   updateImage,
@@ -36,6 +37,7 @@ router.post("/search", verify, search);
 
 router.post("/", verify, isUserActive, create);
 router.get("/:id", verify, getOne);
+router.get("/:id/users", verify, getUsersSolvedTest);
 router.get("/:id/public", verify, getOnePublic);
 router.put("/:id", verify, update);
 router.put("/:id/image", verify, updateImage);

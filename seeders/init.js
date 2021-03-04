@@ -1,16 +1,31 @@
 const { sequelize } = require("../models");
 const triggers = require("./triggers");
+const views = require("./views");
 
 (async () => {
-  // 1st drop triggers if exists
-  for (let i = 0; i < triggers.length; i++) {
-    await sequelize.query(`DROP TRIGGER IF EXISTS \`${triggers[i].name}\`;`);
+  // -> DROP
+  // triggers if exists
+  for (let trigger of triggers) {
+    await sequelize.query(`DROP TRIGGER IF EXISTS \`${trigger.name}\`;`);
   }
-  // 2nd create triggers
-  for (let i = 0; i < triggers.length; i++) {
+  // views if exists
+  for (let view of views) {
+    await sequelize.query(`DROP VIEW IF EXISTS \`${view.name}\`;`);
+  }
+
+  // -> CREATE
+  // triggers
+  for (let trigger of triggers) {
     await sequelize
-      .query(triggers[i].query)
-      .catch(console.log.bind(null, triggers[i].name));
+      .query(trigger.query)
+      .catch(console.log.bind(null, trigger.name));
   }
+
+  // views
+  for (let view of views) {
+    await sequelize.query(view.query).catch(console.log.bind(null, view.name));
+  }
+
+  // exit
   process.exit();
 })();

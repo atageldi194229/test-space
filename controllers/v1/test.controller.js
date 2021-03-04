@@ -389,6 +389,9 @@ obj.getOne = async (req, res, next) => {
   // request db
   let test = await Test.findOne(options);
 
+  // error test
+  if (!test) return next(new ErrorResponse("Test is not found"));
+
   // client response
   res.status(200).json({
     success: true,
@@ -410,7 +413,7 @@ obj.getOne = async (req, res, next) => {
       createdAt: test.createdAt,
       updatedAt: test.updatedAt,
 
-      questions: questions.map((q) => ({
+      questions: test.questions.map((q) => ({
         id: q.id,
         type: q.type,
         data: q.data,
@@ -434,6 +437,105 @@ obj.getOne = async (req, res, next) => {
         updatedAt: q.updatedAt,
       })),
     },
+  });
+};
+
+/**
+ * get all users that solved given test
+ * action - /v1/tests/:id/users
+ * method - get
+ * token
+ */
+obj.getUsersSolvedTest = async (req, res, next) => {
+  // client data
+  let { id } = req.params;
+  let userId = req.user.id;
+  let { query } = req,
+    limit = parseInt(query.limit) || 20,
+    offset = parseInt(query.offset) || 0;
+
+  // request db
+  let test = await Test.findOne({ where: { id, userId } });
+
+  // error test
+  if (!test) return next(new ErrorResponse("Test is not found"));
+
+  // request db
+  let options = {
+    order: [["createdAt", "desc"]],
+    where: {
+      [Op.or]: [
+        {
+          finishedAt: { [Op.ne]: null },
+        },
+        {
+          endTime: { [Op.lt]: new Date() },
+        },
+      ],
+    },
+    attributes: {
+      exclude: ["updatedAt", "solvingTestId"],
+    },
+    include: [
+      {
+        association: "SolvingTest",
+        where: {
+          testId: test.id,
+        },
+        attributes: ["testId", "questionCount"],
+      },
+      {
+        association: "user",
+        attributes: ["id", "username", "image", "firstName", "lastName"],
+      },
+    ],
+  };
+
+  let count = await UserResult.count(options);
+
+  let userResults = await UserResult.findAll({
+    limit,
+    offset,
+    ...options,
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    count,
+    users: userResults.map((ur) => {
+      let u = ur.user;
+      let st = ur.SolvingTest;
+
+      return {
+        id: u.id,
+        username: u.username,
+        image: u.image,
+        firstName: u.firstName,
+        lastName: u.lastName,
+        userResult: {
+          totalPoints: (100 * ur.correctAnswerCount) / st.questionCount,
+          correctAnswerCount: ur.correctAnswerCount,
+          incorrectAnswerCount: ur.incorrectAnswerCount,
+          emptyAnswerCount:
+            st.questionCount - ur.correctAnswerCount - ur.incorrectAnswerCount,
+
+          percentage: {
+            correctAnswer: (100 * ur.correctAnswerCount) / st.questionCount,
+            incorrectAnswer: (100 * ur.incorrectAnswerCount) / st.questionCount,
+            emptyAnswer:
+              (100 *
+                (st.questionCount -
+                  ur.correctAnswerCount -
+                  ur.incorrectAnswerCount)) /
+              st.questionCount,
+          },
+
+          startedAt: ur.startedAt,
+          finishedAt: ur.finishedAt || ur.endTime,
+        },
+      };
+    }),
   });
 };
 
@@ -680,14 +782,6 @@ obj.getPopular = get("popular");
 obj.getArchived = get("archived");
 
 /**
- * get all solved tests
- * action - /v1/tests/solved
- * method - get
- * token
- */
-obj.getSolved = get("solved");
-
-/**
  * get all pinned tests
  * action - /v1/tests/pinned
  * method - get
@@ -710,6 +804,78 @@ obj.pin = pinningTest("create");
  * token
  */
 obj.unpin = pinningTest("destroy");
+
+/**
+ * get all solved tests
+ * action - /v1/tests/solved
+ * method - get
+ * token
+ */
+obj.getSolved = async (req, res, next) => {
+  // client data
+  const { query, user } = req,
+    userId = user.id,
+    limit = parseInt(query.limit) || 20,
+    offset = parseInt(query.offset) || 0,
+    sort = query.sort;
+
+  let userResults = await UserResult.findAll({
+    where: {
+      userId,
+      [Op.or]: [
+        {
+          finishedAt: { [Op.ne]: null },
+        },
+        {
+          endTime: { [Op.lt]: new Date() },
+        },
+      ],
+    },
+    attributes: ["solvingTestId"],
+  });
+
+  let solvingTests = await SolvingTest.findAll({
+    limit,
+    offset,
+    where: { id: userResults.map((e) => e.solvingTestId) },
+    attributes: ["testId", "isPublic", "isResultsShared", "isUserResultShared"],
+    include: {
+      order: [sortTests(sort)],
+      association: "Test",
+      where: {
+        isPublic: true,
+        allowedAt: {
+          [Op.ne]: null,
+        },
+        archivedAt: null,
+      },
+      attributes: [
+        "id",
+        "name",
+        "description",
+        "defaultSolveTime",
+        "likeCount",
+        "solveCount",
+        "image",
+        "language",
+        "keywords",
+        "createdAt",
+      ],
+    },
+  });
+
+  solvingTests = solvingTests.map((st) => {
+    let ur = userResults.find((e) => e.solvingTestId);
+    st.dataValues.userResultId = ur.id;
+    return st;
+  });
+
+  // client response
+  res.status(200).json({
+    success: true,
+    solvingTests,
+  });
+};
 
 // When exporting all collected data
 let keys = Object.keys(obj);
