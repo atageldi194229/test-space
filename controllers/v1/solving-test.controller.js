@@ -148,7 +148,7 @@ const addAllUsersResults = (data, { users, ur, questionCount }) => {
 
   data.average = {
     totalPoints: 0,
-    correctAnwer: 0,
+    correctAnswer: 0,
     incorrectAnswer: 0,
     emptyAnswer: 0,
   };
@@ -478,7 +478,7 @@ obj.canSolveTest = async (req, res, next) => {
 
   // request db
   let solvingTest = await SolvingTest.findOne({
-    where: { id: solvingTestId, userId },
+    where: { id: solvingTestId },
     include: [
       {
         association: "Test",
@@ -553,7 +553,7 @@ obj.startSolvingTest = async (req, res, next) => {
 
   // request db
   let solvingTest = await SolvingTest.findOne({
-    where: { id: solvingTestId, userId },
+    where: { id: solvingTestId },
     include: [
       {
         association: "Test",

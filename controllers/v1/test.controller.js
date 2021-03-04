@@ -864,6 +864,12 @@ obj.getSolved = async (req, res, next) => {
     },
   });
 
+  solvingTests = solvingTests.map((st) => {
+    let ur = userResults.find((e) => e.solvingTestId);
+    st.dataValues.userResultId = ur.id;
+    return st;
+  });
+
   // client response
   res.status(200).json({
     success: true,

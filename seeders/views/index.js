@@ -10,7 +10,7 @@ fs.readdirSync(__dirname)
     return (
       file.indexOf(".") !== 0 &&
       file !== basename &&
-      file.slice(-12) === ".view.txt"
+      file.slice(-9) === ".view.txt"
     );
   })
   .forEach((file) => {
