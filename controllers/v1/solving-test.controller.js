@@ -365,10 +365,7 @@ obj.update = async (req, res, next) => {
     return next(new ErrorResponse("Could not find solving test"));
 
   // update request db
-  await solvingTest.update(
-    { isResultsShared, isUserResultShared },
-    { where: { id } }
-  );
+  await solvingTest.update({ isResultsShared, isUserResultShared });
 
   // client response
   res.status(200).json({

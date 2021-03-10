@@ -831,22 +831,28 @@ obj.getSolved = async (req, res, next) => {
         },
       ],
     },
-    attributes: ["solvingTestId"],
+    attributes: ["id", "solvingTestId"],
   });
 
   let solvingTests = await SolvingTest.findAll({
     limit,
     offset,
     where: { id: userResults.map((e) => e.solvingTestId) },
-    attributes: ["testId", "isPublic", "isResultsShared", "isUserResultShared"],
+    attributes: [
+      "id",
+      "testId",
+      "isPublic",
+      "isResultsShared",
+      "isUserResultShared",
+    ],
     include: {
       order: [sortTests(sort)],
       association: "Test",
       where: {
-        isPublic: true,
-        allowedAt: {
-          [Op.ne]: null,
-        },
+        // isPublic: true,
+        // allowedAt: {
+        //   [Op.ne]: null,
+        // },
         archivedAt: null,
       },
       attributes: [
