@@ -38,11 +38,11 @@ obj.send = async (req, res, next) => {
   );
 
   // send notification to users mails
-  await Mailer.sendMail({
-    to: users.map((user) => user.email),
-    subject: title,
-    text: content,
-  });
+  // await Mailer.sendMail({
+  //   to: users.map((user) => user.email),
+  //   subject: title,
+  //   text: content,
+  // });
 
   // client response
   res.status(200).json({
