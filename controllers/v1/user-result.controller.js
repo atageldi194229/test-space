@@ -148,7 +148,8 @@ obj.getSolvedQuestions = async (req, res, next) => {
       (!solvingTest.isPublic &&
         solvingTest.isUserResultShared &&
         userResult.userId === userId) ||
-      solvingTest.userId === userId
+      solvingTest.userId === userId ||
+      solvingTest.isPublic
     )
   )
     return next(new ErrorResponse("Could not find userResult"));
