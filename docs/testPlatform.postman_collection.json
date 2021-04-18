@@ -2285,6 +2285,35 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "banners",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "search",
+										"value": "main page reklama",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{URL}}/v1/banners",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"v1",
+										"banners"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},
@@ -3231,6 +3260,154 @@
 									]
 								},
 								"description": "### auth\r\n- **token**"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "banner",
+					"item": [
+						{
+							"name": "get all",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/admin/banners",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"banners"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"keywords\": \"\",\r\n    \"payload\": \"\",\r\n    \"startTime\": \"\",\r\n    \"endTime\": \"\",\r\n    \"isActive\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/banners",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"banners"
+									]
+								},
+								"description": "# body\n- keywords,\n- payload,\n- startTime,\n- endTime,\n- isActive \n\n# files\n- image"
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"keywords\": \"\",\r\n    \"payload\": \"\",\r\n    \"startTime\": \"\",\r\n    \"endTime\": \"\",\r\n    \"isActive\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/banners/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"banners",
+										"1"
+									]
+								},
+								"description": "# body\n- keywords,\n- payload,\n- startTime,\n- endTime,\n- isActive"
+							},
+							"response": []
+						},
+						{
+							"name": "remove",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ADMIN_TOKEN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{URL}}/admin/banners/1",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"admin",
+										"banners",
+										"1"
+									]
+								}
 							},
 							"response": []
 						}

@@ -52,7 +52,15 @@ obj.getAttendance = async (req, res) => {
     offset,
     include: {
       association: "user",
-      attributes: ["id", "username", "firstName", "lastName", "email", "image"],
+      attributes: [
+        "id",
+        "username",
+        "firstName",
+        "lastName",
+        "email",
+        "image",
+        "phoneNumber",
+      ],
     },
   });
 
@@ -101,7 +109,15 @@ obj.getRegistered = async (req, res) => {
     ...options,
     limit,
     offset,
-    attributes: ["id", "username", "firstName", "lastName", "email", "image"],
+    attributes: [
+      "id",
+      "username",
+      "firstName",
+      "lastName",
+      "email",
+      "image",
+      "phoneNumber",
+    ],
   });
 
   // client response
