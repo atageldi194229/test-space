@@ -162,9 +162,9 @@ obj.update = async (req, res, next) => {
   // prepare data
   let data = { allowedAt: (allow && new Date()) || null };
 
-  let test = await test.findOne({
+  let test = await Test.findOne({
     where: { id },
-    attributes: ["id", "userId", "name", "image"],
+    // attributes: ["id", "userId", "name", "image"],
     include: {
       association: "user",
       attributes: ["username", "email"],
