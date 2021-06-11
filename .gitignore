@@ -3,3 +3,4 @@ config
 .vscode
 .idea
 .push.settings.jsonc
+public/uploads
