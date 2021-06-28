@@ -61,6 +61,7 @@ obj.getAll = async (req, res, next) => {
 
   // prepare options
   let options = {
+    distinct: "id",
     limit,
     offset,
     where: {
@@ -126,6 +127,7 @@ obj.buyTscAndTcc = async (req, res, next) => {
   if (body.tsc === "unlimited") {
     data.isTscUnlimited = true;
     data.tscPriceId = tscUnlimitedPrice.id;
+    data.tscMoney = tscUnlimitedPrice.data;
   } else {
     data.tsc = Number(body.tsc) || 0;
 
@@ -147,6 +149,7 @@ obj.buyTscAndTcc = async (req, res, next) => {
   if (body.tcc === "unlimited") {
     data.isTccUnlimited = true;
     data.tccPriceId = tccUnlimitedPrice.id;
+    data.tccMoney = tccUnlimitedPrice.data;
   } else {
     data.tcc = Number(body.tcc) || 0;
 

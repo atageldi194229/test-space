@@ -1,7 +1,7 @@
 "use strict";
 
-const { Mailer } = require("../services");
-const notificationContents = require("../config/notifications.json");
+// const { Mailer } = require("../services");
+// const notificationContents = require("../config/notifications.json");
 
 const model = (sequelize, DataTypes) => {
   let Notification = sequelize.define(
@@ -105,11 +105,11 @@ const methods = ({ Notification, NotificationUser, User }) => {
             notificationId: notification.id,
           }))
         );
-        await Mailer.sendMail({
-          to: langUsers.map((e) => e.email),
-          subject: payload.title,
-          text: payload.content,
-        });
+        // await Mailer.sendMail({
+        //   to: langUsers.map((e) => e.email),
+        //   subject: payload.title,
+        //   text: payload.content,
+        // });
       };
 
       await sendLangNotif("tm");
@@ -129,7 +129,7 @@ const methods = ({ Notification, NotificationUser, User }) => {
       // get all emails
       let emails = users.map((e) => e.email);
 
-      await Mailer.sendMail({ to: emails, subject: title, text: content });
+      // await Mailer.sendMail({ to: emails, subject: title, text: content });
 
       return { notification, users };
     }

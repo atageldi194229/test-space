@@ -34,6 +34,7 @@ obj.register = async (req, res) => {
     token,
     user: {
       username: user.username,
+      role:  user.role,
     },
   });
 };
@@ -49,7 +50,6 @@ obj.login = async (req, res, next) => {
   // let's get user by given username
   let user = await PrivilegedUser.findOne({
     where: { username },
-    attributes: ["id", "username", "password", "role"],
   });
 
   // user validation
@@ -65,6 +65,7 @@ obj.login = async (req, res, next) => {
       token,
       user: {
         username: user.username,
+        role: user.role,
       },
     });
   } else {

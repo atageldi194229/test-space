@@ -156,6 +156,7 @@ obj.findUsers = async (req, res) => {
 
   // request db
   let users = await User.findAll({
+    distinct: "id",
     where: {
       active: true,
       [Op.or]: [

@@ -12,18 +12,6 @@ const obj = {};
 
 // tools
 const tools = {
-  filter: (s) => {
-    let where = {};
-    if (s === "served") {
-      where.status = 1;
-    } else if (s === "denied") {
-      where.status = 2;
-    } else if (s === "waiting") {
-      where.status = 0;
-    }
-
-    return where;
-  },
   sort: (s) => {
     try {
       // validate data
@@ -38,6 +26,14 @@ const tools = {
     } catch (err) {}
     return ["createdAt", "desc"];
   },
+  search: (text, from) => {
+    text = (text || "").toLowerCase();
+    return sequelize.where(
+        sequelize.fn("LOWER", sequelize.col(from)),
+        "LIKE",
+        "%" + text + "%"
+    );
+  }
 };
 
 /**
@@ -51,81 +47,29 @@ obj.getAll = async (req, res) => {
   let { query } = req,
     limit = parseInt(query.limit) || 20,
     offset = parseInt(query.offset) || 0,
-    { sort, filter } = query;
+    { sort , search } = query;
 
   // prepare options
   let options = {
-    limit,
-    offset,
-    order: [tools.sort(sort)],
-    where: { ...tools.filter(filter) },
-  };
-
-  // request db
-  let messages = await Message.findAll(options);
-
-  let messageCount = await Message.count({
-    where: options.where,
-  });
-
-  // client response
-  res.status(200).json({
-    success: true,
-    messageCount,
-    messages,
-  });
-};
-
-/**
- * search from messages
- * action - /admin/messages/search
- * method - post
- * token
- */
-obj.search = async (req, res) => {
-  // client data
-  let text = (req.body.text || "").toLowerCase(),
-    { query } = req,
-    limit = parseInt(query.limit) || 20,
-    offset = parseInt(query.offset) || 0,
-    { sort, filter } = query;
-
-  // search options
-  let options = {
+    distinct: "id",
     limit,
     offset,
     order: [tools.sort(sort)],
     where: {
-      ...tools.filter(filter),
       [Op.or]: [
-        {
-          email: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("Message.email")),
-            "LIKE",
-            "%" + text + "%"
-          ),
-          name: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("Message.name")),
-            "LIKE",
-            "%" + text + "%"
-          ),
-          text: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("Message.text")),
-            "LIKE",
-            "%" + text + "%"
-          ),
-          note: sequelize.where(
-            sequelize.fn("LOWER", sequelize.col("Message.note")),
-            "LIKE",
-            "%" + text + "%"
-          ),
-        },
+        tools.search(search, "Message.email"),
+        tools.search(search, "Message.name"),
+        tools.search(search, "Message.text"),
+        tools.search(search, "Message.note"),
       ],
     },
   };
 
+  console.log(JSON.stringify(options, null, 2));
+
   // request db
   let messages = await Message.findAll(options);
+
   let messageCount = await Message.count({
     where: options.where,
   });

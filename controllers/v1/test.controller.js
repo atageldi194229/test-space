@@ -61,7 +61,16 @@ function sortTests(s) {
   return ["createdAt", "desc"];
 }
 
-async function prepareOptions(action, { userId, limit, offset, sort, filter }) {
+function searchTests(text, from) {
+  text = (text || "").toLowerCase();
+  return sequelize.where(
+      sequelize.fn("LOWER", sequelize.col(from)),
+      "LIKE",
+      "%" + text + "%"
+  );
+}
+
+async function prepareOptions(action, { userId, limit, offset, sort, filter, search }) {
   let ch = {
     actions: [
       "all",
@@ -92,9 +101,15 @@ async function prepareOptions(action, { userId, limit, offset, sort, filter }) {
     privateAttributes = ["isRandom", "isPublic", "isEditable", "allowedAt"]; //isRandom, isPublic, allowedAt
 
   let options = {
+    distinct: "id",
     limit,
     offset,
-    where: {},
+    where: {
+      [Op.or]: [
+        searchTests(search, "Test.name"),
+        searchTests(search, "Test.keywords"),
+      ]
+    },
     attributes: publicAttributes,
     include: [
       {
@@ -187,7 +202,9 @@ async function prepareOptions(action, { userId, limit, offset, sort, filter }) {
       });
 
       let solvingTests = await SolvingTest.findAll({
-        where: { id: userResults.map((e) => e.solvingTestId) },
+        where: {
+          id: userResults.map((e) => e.solvingTestId),
+        },
         attributes: ["testId"],
       });
 
@@ -697,7 +714,8 @@ const get = (action) => async (req, res) => {
     limit = parseInt(query.limit) || 20,
     offset = parseInt(query.offset) || 0,
     sort = query.sort,
-    filter = query.filter;
+    filter = query.filter,
+    search = query.search;
 
   // prepare options
   let options = await prepareOptions(action, {
@@ -706,6 +724,7 @@ const get = (action) => async (req, res) => {
     offset,
     sort,
     filter,
+    search,
   });
 
   // request db
@@ -817,9 +836,11 @@ obj.getSolved = async (req, res, next) => {
     userId = user.id,
     limit = parseInt(query.limit) || 20,
     offset = parseInt(query.offset) || 0,
-    sort = query.sort;
+    sort = query.sort,
+    search = query.search;
 
   let userResults = await UserResult.findAll({
+    order: [["createdAt", "desc"]],
     where: {
       userId,
       [Op.or]: [
@@ -837,7 +858,13 @@ obj.getSolved = async (req, res, next) => {
   let solvingTests = await SolvingTest.findAll({
     limit,
     offset,
-    where: { id: userResults.map((e) => e.solvingTestId) },
+    where: {
+      id: userResults.map((e) => e.solvingTestId),
+      [Op.or]: [
+        searchTests(search, "Test.name"),
+        searchTests(search, "Test.keywords"),
+      ]
+    },
     attributes: [
       "id",
       "testId",
@@ -870,11 +897,17 @@ obj.getSolved = async (req, res, next) => {
     },
   });
 
-  solvingTests = solvingTests.map((st) => {
-    let ur = userResults.find((e) => e.solvingTestId === st.id);
-    st.dataValues.userResultId = ur.id;
-    return st;
-  });
+  solvingTests = userResults.map((e) => {
+    let st = solvingTests.find(ee => ee.id === e.solvingTestId);
+    if (!st) return null;
+    return { ...st.toJSON(), userResultId: e.id };
+  }).filter(e => e);
+
+  // solvingTests = solvingTests.map((st) => {
+  //   let ur = userResults.find((e) => e.solvingTestId === st.id);
+  //   st.dataValues.userResultId = ur.id;
+  //   return st;
+  // });
 
   // client response
   res.status(200).json({

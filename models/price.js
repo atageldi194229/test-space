@@ -38,7 +38,7 @@ const model = (sequelize, DataTypes) => {
 
   Price.associate = function (models) {
     // associations there
-    Price.belongsTo(models.User, { foreignKey: "createdBy" });
+    Price.belongsTo(models.PrivilegedUser, { foreignKey: "createdBy" });
   };
 
   return Price;

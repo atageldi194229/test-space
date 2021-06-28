@@ -3,7 +3,7 @@
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 
-const mailer = require("../config/mailer.json");
+// const mailer = require("../config/mailer.json");
 
 /**
  * init function

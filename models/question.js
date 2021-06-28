@@ -113,7 +113,9 @@ const methods = ({ Question }) => {
           break;
         }
       }
-    } else if ([0, 2, 3, 5].includes(this.type) && answer === correct)
+    } else if (this.type === 5 && correct.length === answer.length) {
+      isCorrect = JSON.stringify(correct) === JSON.stringify(answer);
+    } else if ([0, 2, 3].includes(this.type) && answer === correct)
       isCorrect = true;
 
     return isCorrect;

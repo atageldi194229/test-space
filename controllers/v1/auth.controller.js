@@ -11,7 +11,7 @@ const {
 const asyncHandler = require("../../middleware/async");
 const bcrypt = require("bcryptjs");
 const ErrorResponse = require("../../utils/errorResponse");
-const { JwtService, Mailer } = require("../../services");
+const { JwtService } = require("../../services");
 const { v4: uuidv4 } = require("uuid");
 const obj = {};
 
@@ -85,10 +85,10 @@ obj.register = async (req, res) => {
   });
 
   // let's send verification code to the mail of user
-  Mailer.sendVerificationCode({
-    to: email,
-    verifyCode,
-  });
+  // Mailer.sendVerificationCode({
+  //   to: email,
+  //   verifyCode,
+  // });
 };
 
 obj.login = async (req, res, next) => {
@@ -177,10 +177,10 @@ obj.resendVerificationCode = async (req, res) => {
   });
 
   // let's send verification code to the mail of user
-  Mailer.sendVerificationCode({
-    to: user.email,
-    verifyCode: user.verifyCode,
-  });
+  // Mailer.sendVerificationCode({
+  //   to: user.email,
+  //   verifyCode: user.verifyCode,
+  // });
 
   // res to the client with token
   res.status(200).json({
@@ -235,11 +235,11 @@ obj.forgetPassword = async (req, res, next) => {
   });
 
   // let's send verification code to the mail of user
-  await Mailer.sendForgetPasswordMessage({
-    to: user.email,
-    verifyCode: user.verifyCode,
-    link,
-  });
+  // await Mailer.sendForgetPasswordMessage({
+  //   to: user.email,
+  //   verifyCode: user.verifyCode,
+  //   link,
+  // });
 
   res.status(200).json({
     success: true,

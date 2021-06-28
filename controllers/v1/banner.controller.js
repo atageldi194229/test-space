@@ -21,6 +21,7 @@ obj.getAll = async (req, res, next) => {
   let NOW = new Date();
 
   let banners = await Banner.findAll({
+    distinct: "id",
     startTime: { [Op.lte]: NOW },
     endTime: { [Op.gte]: NOW },
     isActive: true,

@@ -41,6 +41,15 @@ const Tools = {
     } catch (err) {}
     return ["createdAt", "desc"];
   },
+
+  search: (text, from) => {
+    text = (text || "").toLowerCase();
+    return sequelize.where(
+        sequelize.fn("LOWER", sequelize.col(from)),
+        "LIKE",
+        "%" + text + "%"
+    );
+  }
 };
 
 /**
@@ -55,7 +64,8 @@ obj.getAll = async (req, res) => {
     limit = Number(req.query.limit) || 20,
     offset = Number(req.query.offset) || 0,
     sort = req.query.sort,
-    filter = req.query.filter;
+    filter = req.query.filter,
+    search = req.query.search;
 
   // request db
   let solvingTests = await SolvingTest.findAll({
@@ -70,6 +80,14 @@ obj.getAll = async (req, res) => {
           allowedAt: sequelize.literal(
             "(`SolvingTest`.`is_public` = FALSE OR `Test`.`allowed_at` IS NOT NULL AND `Test`.`is_public` = TRUE)"
           ),
+          // search
+          [Op.or]: [
+            {
+              name: Tools.search(search, "Test.name"),
+              description: Tools.search(search, "Test.description"),
+              keywords: Tools.search(search, "Test.keywords"),
+            },
+          ],
         },
         attributes: [
           "id",
@@ -218,7 +236,7 @@ const addUsersQuestionResult = (data, { userResults, test }) => {
  * method - get
  * token
  */
-obj.getOne = async (req, res) => {
+obj.getOne = async (req, res, next) => {
   // client data
   let userId = parseInt(req.user.id),
     id = req.params.id;
@@ -234,6 +252,7 @@ obj.getOne = async (req, res) => {
       "userId",
       "isResultsShared",
       "isUserResultShared",
+      "isPublic",
     ],
   });
 
@@ -246,6 +265,7 @@ obj.getOne = async (req, res) => {
 
   // permission test
   if (
+      !solvingTest.isPublic &&
     !(solvingTest.isResultsShared && invitedUsers.includes(userId)) &&
     solvingTest.userId !== userId
   ) {
@@ -694,7 +714,7 @@ obj.checkStatus = async (req, res, next) => {
 
   // request db
   let solvingTest = await SolvingTest.findOne({
-    where: { id: solvingTestId, userId, isPublic: true },
+    where: { id: solvingTestId, isPublic: true },
     include: [
       {
         association: "Test",

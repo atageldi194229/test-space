@@ -14,7 +14,7 @@ const {
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
 const ErrorResponse = require("../../utils/errorResponse");
-const { Mailer } = require("../../services");
+// const { Mailer } = require("../../services");
 const obj = {};
 
 /**
@@ -116,12 +116,12 @@ obj.sendInvitation = async (req, res, next) => {
       attributes: ["email"],
     })
   ).map((e) => e.email);
-  await Mailer.sendTestInvitation({
-    to,
-    link: link.replace(":id", solvingTest.id),
-    testId: solvingTest.id, // correct it
-    userId: req.user.id,
-  }).catch(console.log);
+  // await Mailer.sendTestInvitation({
+  //   to,
+  //   link: link.replace(":id", solvingTest.id),
+  //   testId: solvingTest.id, // correct it
+  //   userId: req.user.id,
+  // }).catch(console.log);
   // send invitation end
 
   // res to the client with token

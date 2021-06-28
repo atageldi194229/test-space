@@ -9,7 +9,7 @@ const {
 } = require("../../models");
 const asyncHandler = require("../../middleware/async");
 const ErrorResponse = require("../../utils/errorResponse");
-const { Mailer } = require("../../services");
+// const { Mailer } = require("../../services");
 const obj = {};
 
 /**

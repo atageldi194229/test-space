@@ -22,6 +22,7 @@ obj.getAll = async (req, res) => {
 
   // request db
   let groups = await Group.findAll({
+    distinct: "id",
     where: { userId: req.user.id },
     attributes: ["id", "name", "description"],
   });
@@ -46,6 +47,7 @@ obj.getAllContacts = async (req, res) => {
 
   // request db
   let groups = await Group.findAll({
+    distinct: "id",
     where: {
       userId,
       [Op.or]: [

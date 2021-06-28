@@ -96,6 +96,7 @@ obj.search = async (req, res) => {
     { sort, filter } = query,
     text = (body.text || "").toLowerCase();
 
+
   // prepare options
   let options = prepareOptions({ limit, offset, sort, filter });
   // search options
