@@ -203,6 +203,81 @@ obj.update = async (req, res, next) => {
   });
 };
 
+
+/**
+ * Get one test with their questions
+ * action - /admin/tests/:id
+ * method - get
+ * token
+ */
+ obj.getOne = async (req, res, next) => {
+  // client data
+  let { id } = req.params;
+
+  // prepare query options
+  let options = {
+    where: { id },
+    include: [
+      {
+        association: "questions",
+      },
+    ],
+  };
+
+  // request db
+  let test = await Test.findOne(options);
+
+  // error test
+  if (!test) return next(new ErrorResponse("Test is not found"));
+
+  // client response
+  res.status(200).json({
+    success: true,
+    test: {
+      id: test.id,
+      name: test.name,
+      description: test.description,
+      image: test.image,
+      isRandom: test.isRandom,
+      defaultSolveTime: test.defaultSolveTime,
+      likeCount: test.likeCount,
+      solveCount: test.solveCount,
+      language: test.language,
+      keywords: test.keywords,
+      isPublic: test.isPublic,
+      isEditable: test.isEditable,
+      allowedAt: test.allowedAt,
+      archivedAt: test.archivedAt,
+      createdAt: test.createdAt,
+      updatedAt: test.updatedAt,
+
+      questions: test.questions.map((q) => ({
+        id: q.id,
+        type: q.type,
+        data: q.data,
+        isRandom: q.isRandom,
+
+        solveCount: q.solveCount,
+
+        correctCount: q.correctCount,
+        incorrectCount: q.incorrectCount,
+        emptyCount: q.solveCount - q.correctCount - q.incorrectCount,
+
+        percentage: {
+          correct: (100 * q.correctCount) / q.solveCount,
+          incorrect: (100 * q.incorrectCount) / q.solveCount,
+          empty:
+            (100 * (q.solveCount - q.correctCount - q.incorrectCount)) /
+            q.solveCount,
+        },
+
+        createdAt: q.createdAt,
+        updatedAt: q.updatedAt,
+      })),
+    },
+  });
+};
+
 // When exporting all collected data
 let keys = Object.keys(obj);
 // exclude some functions
