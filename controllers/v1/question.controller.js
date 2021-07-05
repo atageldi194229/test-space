@@ -85,7 +85,7 @@ obj.create = async (req, res, next) => {
   if (!testId) return next(new ErrorResponse("Invalid testId"));
 
   // if question type is 'matching' let's randomize it's answers
-  if (type === 4) data = randomizeMatchingQuestion(data);
+  if (Number(type) === 4) data = randomizeMatchingQuestion(data);
 
   // save to db
   let question = await Question.create({
