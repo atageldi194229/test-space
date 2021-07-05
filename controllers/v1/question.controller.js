@@ -85,7 +85,7 @@ obj.create = async (req, res, next) => {
   if (!testId) return next(new ErrorResponse("Invalid testId"));
 
   // if question type is 'matching' let's randomize it's answers
-  if (type === 4) randomizeMatchingQuestion(data);
+  if (type === 4) data = randomizeMatchingQuestion(data);
 
   // save to db
   let question = await Question.create({
@@ -135,7 +135,7 @@ obj.update = async (req, res, next) => {
     if (deletedFiles) deleteFiles(JSON.parse(deletedFiles));
 
     // if question type is 'matching' let's randomize it's answers
-    if (question.type === 4) randomizeMatchingQuestion(data);
+    if (question.type === 4) data = randomizeMatchingQuestion(data);
 
     // add to the new data
     newData.data = JSON.stringify(data);
