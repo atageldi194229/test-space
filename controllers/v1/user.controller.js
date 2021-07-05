@@ -82,6 +82,7 @@ obj.updateMyAccount = async (req, res, next) => {
   let id = req.user.id;
 
   let keys = [
+    "phoneNumber",
     "firstName",
     "lastName",
     "birthDate",
