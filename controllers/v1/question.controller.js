@@ -135,7 +135,7 @@ obj.update = async (req, res, next) => {
     if (deletedFiles) deleteFiles(JSON.parse(deletedFiles));
 
     // if question type is 'matching' let's randomize it's answers
-    if (question.type === 4) data = randomizeMatchingQuestion(data);
+    if (Number(question.type) === 4) data = randomizeMatchingQuestion(data);
 
     // add to the new data
     newData.data = JSON.stringify(data);
